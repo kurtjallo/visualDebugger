@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Fix Review — FlowFixer</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="config.js"></script>
     <!-- diff2html CSS (CDN for browser preview; will be bundled by esbuild later) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/diff2html@3.4.48/bundles/css/diff2html.min.css" />
     <style>
@@ -193,11 +194,9 @@
                 ttsBtn.textContent = '🔊 Read Aloud'; return;
             }
             const textToRead = MOCK_DIFF_DATA.whatChanged + '. ' + MOCK_DIFF_DATA.whyItFixes + '. Key takeaway: ' + MOCK_DIFF_DATA.keyTakeaway;
-            let apiKey = sessionStorage.getItem('elevenlabs_key');
-            if (!apiKey) {
-                apiKey = prompt('Enter your ElevenLabs API key (or cancel for browser TTS):');
-                if (apiKey) sessionStorage.setItem('elevenlabs_key', apiKey);
-            }
+            // Use API key from config.js, fall back to browser speech
+            const apiKey = (typeof ELEVENLABS_API_KEY !== 'undefined' && ELEVENLABS_API_KEY !== 'your_api_key_here')
+                ? ELEVENLABS_API_KEY : null;
             ttsBtn.textContent = '⏳ Loading...';
             if (apiKey) {
                 try {

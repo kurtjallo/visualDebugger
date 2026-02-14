@@ -1,4 +1,4 @@
-# FlowFixer — Product Requirements Document
+'# FlowFixer — Product Requirements Document
 
 > **Project:** FlowFixer — AI Bug Tutor for VS Code
 > **Theme:** Education
@@ -10,35 +10,20 @@
 
 ## 1. Problem Statement
 
-When students and junior developers compile or run their code and hit an error, they're met with a wall of cryptic error messages they don't understand. They can't read stack traces. They don't know what "TypeError: Cannot read properties of undefined" actually means. So they copy-paste the error into an AI tool, accept the fix, and move on — without ever understanding what went wrong.
+"Vibe coding" has created a generation of developers who ship code they don't understand. AI tools like Copilot and Cursor fix bugs silently — the developer clicks "accept" and moves on without learning what went wrong or why. There is no feedback loop between fixing a bug and understanding it.
 
-**The result:** Students never learn to read error messages. They never build debugging intuition. They can't distinguish a syntax error from a logic error from a runtime crash. They become dependent on AI to fix problems they should be able to diagnose themselves.
+**The result:** Students and junior devs build speed but not skill. They hit the same bugs repeatedly. They can't debug without AI. They have no vocabulary for the mistakes they make.
 
 ---
 
 ## 2. Solution
 
-A VS Code extension with a **two-phase learning loop** that activates when a student hits an error:
-
-### Phase 1 — Error Explanation (before the fix)
-When the student compiles/runs code and gets an error:
-- **Locates** exactly where the bug is in their code
-- **Explains** what the error message means in plain English
-- **Teaches** how to fix it and how to prevent it in the future
-- **Shows** best practices related to this type of bug
-
-### Phase 2 — AI Fix Review (after the fix)
-When the student prompts an AI tool (Copilot, Cursor, ChatGPT) to fix the code:
-- **Shows a visual diff** of what the AI changed (green = added, red = removed)
-- **Explains** what the AI did and why that fixes the problem
-- **Reinforces** the lesson from Phase 1
-
-### Three Bug Categories
-| Category | What It Covers | Example |
-|----------|---------------|---------|
-| **Syntax Error** | Code that can't be parsed — missing brackets, typos, malformed expressions | `SyntaxError: Unexpected token '}'` |
-| **Logic Error** | Code that runs but produces wrong results — wrong operators, bad conditions, off-by-one | Counter shows wrong number, condition never triggers |
-| **Runtime Error** | Code that crashes during execution — null refs, type errors, missing imports | `TypeError: Cannot read properties of undefined` |
+A VS Code extension that intercepts AI-assisted bug fixes and turns each one into a micro-learning moment:
+- Shows **what** changed (visual diff)
+- Shows **how** it looks (live preview before/after)
+- Explains **why** it broke (bug classification + root cause)
+- Tests **if you understood** (quiz before revealing the fix)
+- Tracks **your patterns** (personal bug dashboard over time)
 
 ---
 
@@ -46,11 +31,11 @@ When the student prompts an AI tool (Copilot, Cursor, ChatGPT) to fix the code:
 
 | User | Context | Need |
 |------|---------|------|
-| **CS students** (bootcamp / university) | Learning to code, using AI assistants daily | Understand error messages and bugs, not just fix them |
-| **Junior developers** | First job, can't read stack traces | Build debugging intuition, learn to self-diagnose |
-| **Self-taught devs** | Learning from YouTube / tutorials + AI | Understand the difference between bug types |
+| **CS students** (bootcamp / university) | Learning to code, using AI assistants daily | Understand bugs, not just fix them |
+| **Junior developers** | First job, vibe-coding through tickets | Build debugging intuition, stop repeating mistakes |
+| **Self-taught devs** | Learning from YouTube / tutorials + AI | Fill knowledge gaps they don't know they have |
 
-**Scope for hackathon:** Web developers working with HTML/CSS/JavaScript/TypeScript/React.
+**Scope for hackathon:** Web developers working with HTML/CSS/JavaScript/React.
 
 ---
 
@@ -60,60 +45,58 @@ When the student prompts an AI tool (Copilot, Cursor, ChatGPT) to fix the code:
 
 | ID | Feature | Description | Acceptance Criteria |
 |----|---------|-------------|-------------------|
-| F1 | **Extension Shell** | VS Code extension that activates on web projects, registers commands, and hosts webview panels | Extension installs from VSIX, activates on JS/TS files, opens side panel |
-| F2 | **Error Interception** | Detects compiler/runtime errors from the terminal or diagnostics API and captures the error output | Catches errors from terminal output and VS Code diagnostics, extracts error message + file + line |
-| F3 | **Error Explanation Panel** | Webview panel that explains the error: where the bug is, what it means, how to fix it, how to prevent it, best practices | Panel shows error location, plain-English explanation, fix suggestion, prevention tips, and best practices — all readable by a beginner |
-| F4 | **Bug Classification** | LLM classifies the error into one of 3 categories (Syntax, Logic, Runtime) | Returns JSON with category, explanation, fix guidance, prevention tips, and best practices — under 5 seconds |
-| F5 | **Diff Detection** | Detects when a file changes after the user prompts an AI tool to fix the code, captures before/after state | Captures old content vs new content on file save, produces a structured diff |
-| F6 | **Visual Diff Panel** | Webview panel showing syntax-highlighted diff of what the AI changed | Diff renders with color-coded additions (green) and deletions (red), syntax highlighted, with explanation of what the AI did |
-| F7 | **Demo App** | A small React app with 3 pre-planted bugs (one per category) for the live demo | Each bug is triggerable, produces a clear error, and is fixable by AI with a visible diff |
+| F1 | **Extension Shell** | VS Code extension that activates on web projects, registers commands, and hosts webview panels | Extension installs from VSIX, activates on JS/TS/CSS files, opens side panel |
+| F2 | **Diff Detection** | Detects when a file changes (simulating an AI fix) and captures the before/after state | Captures old content vs new content on file save, produces a structured diff |
+| F3 | **Visual Diff Panel** | Webview panel showing syntax-highlighted side-by-side or inline diff | Diff renders in a webview with color-coded additions (green) and deletions (red), syntax highlighted |
+| F4 | **Bug Classification** | LLM analyzes the diff and classifies into one of 8 bug categories | Returns JSON with category, explanation, concept name, and quiz — under 5 seconds |
+| F5 | **"Why It Broke" Explanation** | Plain-English explanation of the root cause displayed in the panel | 2–3 sentence explanation referencing specific lines, readable by a beginner |
+| F6 | **Bug Dashboard** | Webview panel showing bug history as charts — category breakdown, trend over time | Heatmap or bar chart of bug categories, line chart of bugs over sessions, "focus area" recommendation |
+| F7 | **Demo App** | A small React app with 3–5 pre-planted bugs for the live demo | Each bug is triggerable, fixable, and produces a clear visual change |
 
 ### P1 — Should Ship (Strengthens Demo)
 
 | ID | Feature | Description | Acceptance Criteria |
 |----|---------|-------------|-------------------|
-| F8 | **Bug Dashboard** | Webview panel showing bug history — category breakdown, trend over time | Bar chart of bug categories, line chart of bugs over sessions, "focus area" recommendation |
-| F9 | **"Test Yourself" Quiz** | After showing the error explanation, prompts user with a multiple-choice question to test understanding | Quiz renders in webview, user selects answer, gets feedback (correct/incorrect + why) |
-| F10 | **TTS Read-Aloud** | ElevenLabs-powered "read aloud" button on explanation cards | Clicking button plays natural TTS of the explanation. Accessible for visual learners |
+| F8 | **Live Preview Panel** | Embedded iframe in VS Code showing the running web app — updates on file change | Webview with iframe pointing to localhost:3000 (or similar), auto-refreshes on save |
+| F9 | **"Test Yourself" Quiz** | Before showing the explanation, prompts user with a multiple-choice question | Quiz renders in webview, user selects answer, gets feedback (correct/incorrect + why), then explanation reveals |
+| F10 | **Concept Tag** | Links each bug to a CS concept (e.g., "CSS Cascade", "Immutability") | Concept name displayed as a badge/tag below the explanation |
 | F11 | **Seed Data** | Pre-populated bug history for demo (simulating a week of student coding) | Dashboard shows realistic data: 15–20 bugs across categories with timestamps |
 
 ### P2 — Nice to Have (Polish)
 
 | ID | Feature | Description |
 |----|---------|-------------|
-| F12 | **Animations** | Smooth transitions when panels open, explanation cards slide in |
-| F13 | **Live Preview Panel** | Embedded iframe showing the running app — updates on file change |
+| F12 | **Animations** | Smooth transitions when diff panel opens, quiz slides in, dashboard updates |
+| F13 | **Sound/Haptic** | Subtle sound effect on bug classification (optional, adds demo flair) |
 | F14 | **Export Report** | "Download your bug report" as PDF/PNG from the dashboard |
-| F15 | **Streaks/Gamification** | "You've gone 5 compiles without a syntax error!" encouragement messages |
+| F15 | **Streaks/Gamification** | "You've gone 3 fixes without a CSS bug!" encouragement messages |
 
 ---
 
 ## 5. User Stories
 
-### Phase 1 — Error Explanation
+### Core Flow
 ```
-AS A student who just hit a compile/runtime error,
-WHEN I see a confusing error message I don't understand,
-I WANT FlowFixer to explain where the bug is, what the error means,
-  how to fix it, and how to prevent it in the future,
-SO THAT I learn to read and understand error messages on my own.
+AS A student using AI to code,
+WHEN I accept an AI-suggested fix,
+I WANT to see what changed, why it was broken, and what concept I need to learn,
+SO THAT I build real debugging skills instead of just accepting fixes blindly.
 ```
 
-### Phase 2 — AI Fix Review
+### Quiz Flow
 ```
-AS A student who just asked AI to fix my code,
-WHEN the AI changes my file,
-I WANT to see exactly what the AI changed (red/green diff)
-  and an explanation of what it did and why,
-SO THAT I understand the fix instead of blindly accepting it.
+AS A student,
+WHEN a bug is detected and classified,
+I WANT to be quizzed on what I think went wrong BEFORE seeing the answer,
+SO THAT I engage in active recall and learn more effectively.
 ```
 
 ### Dashboard Flow
 ```
 AS A student reviewing my progress,
 WHEN I open the Bug Dashboard,
-I WANT to see my bug patterns over time (syntax vs logic vs runtime),
-SO THAT I know which type of bugs I struggle with most.
+I WANT to see my bug patterns over time with a recommended focus area,
+SO THAT I know what concepts to study next.
 ```
 
 ---
@@ -121,42 +104,40 @@ SO THAT I know which type of bugs I struggle with most.
 ## 6. Technical Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                     VS Code Extension                         │
-│                                                               │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────────────┐ │
-│  │   Error      │  │  File        │  │   Webview Host      │ │
-│  │   Listener   │  │  Watcher     │  │   (Panels)          │ │
-│  └──────┬──────┘  └──────┬───────┘  └─────────────────────┘ │
-│         │                │            │      │      │        │
-│  Phase 1: Error    Phase 2: Diff     │      │      │        │
-│  detected          detected          │      │      │        │
-│         │                │           ┌▼──┐ ┌▼───┐ ┌▼──────┐ │
-│         ▼                ▼           │Err│ │Diff│ │Dash-  │ │
-│  ┌──────────────────────────┐       │or │ │View│ │board  │ │
-│  │   Extension Host (TS)    │       │Pan│ │    │ │       │ │
-│  │                          │       │el │ │    │ │       │ │
-│  │  - listenForErrors()     │       └───┘ └────┘ └───────┘ │
-│  │  - captureOldState()     │                               │
-│  │  - computeDiff()         │                               │
-│  │  - callGemini()          │                               │
-│  │  - updateDashboard()     │                               │
-│  └───────────┬──────────────┘                               │
-│              │                                               │
-└──────────────┼───────────────────────────────────────────────┘
-               │
-               ▼
+┌─────────────────────────────────────────────────┐
+│                  VS Code Extension                │
+│                                                   │
+│  ┌──────────┐  ┌──────────┐  ┌────────────────┐ │
+│  │  File     │  │ Diff     │  │  Webview Host  │ │
+│  │  Watcher  │──│ Engine   │──│  (Panels)      │ │
+│  └──────────┘  └──────────┘  └────────────────┘ │
+│       │              │         │    │    │        │
+│       │              │         │    │    │        │
+│  ┌────▼──────────────▼─┐  ┌───▼┐ ┌▼──┐ ┌▼─────┐ │
+│  │  Extension Host     │  │Diff│ │Quiz│ │Dash- │ │
+│  │  (TypeScript)       │  │View│ │View│ │board │ │
+│  │                     │  └────┘ └────┘ └──────┘ │
+│  │  - onDidSaveText    │                         │
+│  │  - captureOldState  │                         │
+│  │  - computeDiff      │                         │
+│  │  - callLLM          │                         │
+│  │  - updateDashboard  │                         │
+│  └─────────┬───────────┘                         │
+│            │                                      │
+└────────────┼──────────────────────────────────────┘
+             │
+             ▼
     ┌─────────────────┐     ┌─────────────────┐
     │   Gemini API    │     │  MongoDB Atlas   │
     │   (Primary LLM) │     │  (Bug History)   │
     │                 │     │                 │
-    │  Phase 1:       │     │  - category     │
-    │  error → explain│     │  - timestamps   │
-    │                 │     │  - explanations │
-    │  Phase 2:       │     │  - fix diffs    │
-    │  diff → explain │     └─────────────────┘
-    └─────────────────┘
-                            ┌─────────────────┐
+    │  Input: diff    │     │  - categories   │
+    │  Output: JSON   │     │  - timestamps   │
+    │  - category     │     │  - explanations │
+    │  - explanation  │     │  - quiz results │
+    │  - concept      │     └─────────────────┘
+    │  - quiz         │
+    └─────────────────┘     ┌─────────────────┐
                             │  ElevenLabs     │
                             │  (TTS - P1)     │
                             │  Input: text    │
@@ -168,295 +149,237 @@ SO THAT I know which type of bugs I struggle with most.
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Extension type | VS Code Webview Extension | Need rich UI panels (error explanation, diff, dashboard) — webviews are the only way |
-| Error detection | VS Code Diagnostics API + Terminal output parsing | Diagnostics API catches linter/compiler errors; terminal parsing catches runtime crashes |
+| Extension type | VS Code Webview Extension | Need rich UI panels (diff, quiz, dashboard) — webviews are the only way |
 | Bundler | **esbuild** | Industry standard for VS Code extensions. 100x faster than webpack, builds extension host + webview in parallel |
 | Diff computation | **`diff`** npm library + **`diff2html`** for rendering | `diff` computes diffs, `diff2html` renders syntax-highlighted side-by-side/inline diffs out of the box |
-| LLM provider | **Gemini API** | Targets MLH "Best Use of Gemini API" prize. Gemini handles structured JSON output well |
+| LLM provider | **Gemini API** (primary), Claude API (fallback) | Targets MLH "Best Use of Gemini API" prize. Gemini handles structured JSON output well |
 | Dashboard rendering | **Chart.js v4** in webview | Canvas-based, no framework dependency, small bundle, proven in VS Code webviews |
 | Webview framework | **`@vscode-elements/elements`** (Lit-based) | Replaced deprecated `@vscode/webview-ui-toolkit`. ~5kb, native VS Code look-and-feel, used by GitLens |
 | State storage | **MongoDB Atlas** (primary) + VS Code `globalState` (offline fallback) | Targets MLH "Best Use of MongoDB Atlas" prize. Enables cross-device persistence and richer querying |
 | Secrets | **`context.secrets`** API | Encrypted storage for API keys (Gemini, MongoDB, ElevenLabs) |
 | TTS | **ElevenLabs API** (P1) | "Read aloud" for bug explanations. Targets MLH "Best Use of ElevenLabs" prize. Accessibility angle |
 | Demo app hosting | **DigitalOcean App Platform** | Targets MLH "Best Use of DigitalOcean" prize. Shows production-ready deployment |
+| Live preview | Iframe to localhost dev server (or DigitalOcean URL) | Simplest approach — embed the running app. Refreshes on postMessage from extension |
 | Scaffolding | **`yo code`** (Yeoman) | Still the official standard, no real competitor |
 
 ---
 
-## 7. Core Flows (Detailed)
+## 7. Team Roles & Responsibilities
 
-### Phase 1: Error → Explanation
+### Engineer 1: "Extension Lead" — owns the VS Code extension infrastructure
+
+**Focus:** Extension scaffold, file watching, diff engine, webview hosting, inter-panel communication.
+
+| Task | Priority | Hours | Dependencies |
+|------|----------|-------|-------------|
+| T1: Scaffold extension with `yo code` (TypeScript) | P0 | 0.5h | None |
+| T2: Implement `onWillSaveTextDocument` to capture pre-save state | P0 | 1h | T1 |
+| T3: Implement `onDidSaveTextDocument` to compute diff (before vs after) | P0 | 1.5h | T2 |
+| T4: Create webview panel host infrastructure (register 3 panels: diff, quiz, dashboard) | P0 | 2h | T1 |
+| T5: Build message passing between extension host ↔ webviews (postMessage protocol) | P0 | 1.5h | T4 |
+| T6: Integrate LLM API call in extension host (send diff → receive classification JSON) | P0 | 1.5h | T3 |
+| T7: Wire up full flow: save → diff → LLM → populate diff panel + quiz panel | P0 | 2h | T3, T5, T6 |
+| T8: Implement live preview panel (iframe to localhost) with auto-refresh | P1 | 2h | T4 |
+| T9: Polish extension activation, commands, status bar indicator | P2 | 1h | T7 |
+| **Total** | | **~13h** | |
+
+### Engineer 2: "UI/Webview Lead" — owns all webview panels and visual polish
+
+**Focus:** Diff view, quiz view, dashboard view, all HTML/CSS/JS inside webviews, animations.
+
+| Task | Priority | Hours | Dependencies |
+|------|----------|-------|-------------|
+| T10: Design and build Diff Panel webview (syntax-highlighted side-by-side diff) | P0 | 3h | T5 (message protocol ready) |
+| T11: Build "Why It Broke" explanation card inside diff panel (category badge, explanation text, concept tag) | P0 | 1.5h | T10 |
+| T12: Build Quiz Panel webview (question, 4 options, submit, feedback reveal) | P1 | 2.5h | T5 |
+| T13: Build Bug Dashboard webview (bar chart of categories, trend line, focus recommendation) | P0 | 3h | T5 |
+| T14: Create seed data module (15–20 realistic bug entries for dashboard demo) | P1 | 1h | T13 |
+| T15: CSS polish — consistent color scheme, dark theme compatible, smooth transitions | P2 | 2h | T10, T12, T13 |
+| T16: Build "reveal" animation — quiz answer → explanation card slides in → diff highlights | P2 | 1.5h | T11, T12 |
+| **Total** | | **~14.5h** | |
+
+### Engineer 3: "LLM + Demo Lead" — owns prompt engineering, demo app, and presentation
+
+**Focus:** LLM prompt crafting, bug classification quality, demo React app with planted bugs, demo script, backup recording.
+
+| Task | Priority | Hours | Dependencies |
+|------|----------|-------|-------------|
+| T17: Set up LLM API integration module (Gemini SDK, request/response types, error handling) | P0 | 1.5h | None |
+| T18: Write and test bug classification prompt (few-shot, structured JSON output) | P0 | 3h | T17 |
+| T19: Test prompt against 10+ different bug diffs, iterate on quality | P0 | 2h | T18 |
+| T20: Build demo React app (simple UI — buttons, forms, cards) | P0 | 2h | None |
+| T21: Plant 3–5 bugs in demo app (CSS specificity, null ref, state mutation, off-by-one, async) | P0 | 2h | T20 |
+| T22: Test full end-to-end flow with each planted bug | P0 | 2h | T7, T10, T18, T21 |
+| T23: Write demo script (minute-by-minute walkthrough for judges) | P0 | 1h | T22 |
+| T24: Record backup demo video | P1 | 1h | T22 |
+| T25: Prepare pitch deck / talking points (problem, solution, demo, impact) | P0 | 1.5h | T23 |
+| T26: Rehearse demo 3+ times with full team | P0 | 1h | T25 |
+| **Total** | | **~17h** | |
+
+---
+
+## 8. Task Dependency Graph
 
 ```
-1. Student runs/compiles code
-2. Error occurs (terminal output or VS Code diagnostic)
-3. Extension captures:
-   - Error message (e.g., "TypeError: Cannot read properties of undefined (reading 'map')")
-   - File path + line number
-   - Surrounding code context (±10 lines around the error)
-4. Extension sends to Gemini API:
-   - Error message + code context
-   - Prompt: "Classify this bug (syntax/logic/runtime), explain it for a beginner"
-5. Gemini returns JSON:
-   - category: "Runtime Error"
-   - location: "line 15, App.tsx"
-   - explanation: "You're trying to call .map() on a variable that is undefined..."
-   - howToFix: "Check that 'data' is defined before calling .map() on it..."
-   - howToPrevent: "Always initialize state with a default value..."
-   - bestPractices: "Use optional chaining (data?.map) or provide a fallback..."
-6. Error Explanation Panel opens with all info
-```
-
-### Phase 2: AI Fix → Diff Review
-
-```
-1. Student prompts AI tool (Copilot/Cursor/ChatGPT) to fix the bug
-2. AI modifies the file
-3. Extension detects file change (onWillSave captures before, onDidSave captures after)
-4. Extension computes diff (before vs after)
-5. Extension sends diff to Gemini API:
-   - Prompt: "Explain what this AI fix changed and why it fixes the problem"
-6. Gemini returns JSON:
-   - whatChanged: "Added a null check on line 15 before calling .map()"
-   - whyItFixes: "The original code assumed 'data' was always an array, but..."
-7. Diff Panel opens:
-   - Red highlighted: removed/changed code
-   - Green highlighted: new code
-   - Explanation card: what the AI did and why
+Hour 0─2: SETUP (all together)
+├── T1:  Scaffold extension ──────────────────────┐
+├── T17: Set up LLM module                        │
+├── T20: Build demo React app                     │
+│                                                  │
+Hour 2─6: PARALLEL TRACKS                         │
+│                                                  │
+│  Track A (Eng 1):                                │
+│  T2 → T3 → T6 ─────────────────┐               │
+│                                  │               │
+│  Track B (Eng 1 + Eng 2):       │               │
+│  T4 → T5 ───────────────────────┤               │
+│                                  │               │
+│  Track C (Eng 2):               │               │
+│  T10 (diff panel) ──────────────┤               │
+│                                  │               │
+│  Track D (Eng 3):               │               │
+│  T18 → T19 (prompts) ──────────┤               │
+│  T21 (plant bugs) ──────────────┤               │
+│                                  │               │
+Hour 6─10: INTEGRATION                            │
+│  T7:  Wire full flow (Eng 1) ◄──┘               │
+│  T11: Explanation card (Eng 2)                   │
+│  T12: Quiz panel (Eng 2)                         │
+│  T13: Dashboard (Eng 2)                          │
+│                                                  │
+Hour 10─14: FEATURES + PREVIEW                    │
+│  T8:  Live preview panel (Eng 1)                │
+│  T14: Seed data (Eng 2)                          │
+│  T22: End-to-end testing (Eng 3)                │
+│                                                  │
+Hour 14─18: POLISH + DEMO PREP                    │
+│  T9:  Extension polish (Eng 1)                  │
+│  T15: CSS polish (Eng 2)                         │
+│  T16: Animations (Eng 2)                         │
+│  T23: Demo script (Eng 3)                        │
+│  T24: Backup video (Eng 3)                       │
+│                                                  │
+Hour 18─21: FINAL POLISH                           │
+│  Bug fixes, edge cases (All)                     │
+│  T25: Pitch prep (Eng 3)                         │
+│                                                  │
+Hour 21─24: REHEARSE + SUBMIT                      │
+│  T26: Rehearse 3x (All)                          │
+│  Final testing, submit                           │
 ```
 
 ---
 
-## 8. Team Roles & Responsibilities
-
-### Engineer 1: "Extension Core" — owns extension infrastructure, error detection, diff detection, wiring
-
-**Owns:** `extension.ts`, `errorListener.ts`, `diffEngine.ts`, `storage.ts`, `esbuild.js`, `package.json`, `tsconfig.json`, `panels/ErrorPanel.ts`, `panels/DiffPanel.ts`, `panels/DashboardPanel.ts`
-
-| Hour | Task | Priority | Files |
-|------|------|----------|-------|
-| 0–1 | T1: Scaffold extension with `yo code` (TypeScript) + esbuild | P0 | `extension.ts`, `esbuild.js`, `package.json`, `tsconfig.json` |
-| 1–3 | T2: Implement error listener (Diagnostics API + terminal output parsing) | P0 | `errorListener.ts` |
-| 3–4.5 | T3: Implement file watcher (onWillSave/onDidSave) for diff detection | P0 | `diffEngine.ts` |
-| 4.5–6 | T4: Create webview panel host + T5: postMessage protocol | P0 | `panels/ErrorPanel.ts`, `panels/DiffPanel.ts`, `panels/DashboardPanel.ts` |
-| 6–8 | T6: Wire Phase 1 flow: error detected → Gemini → populate error panel | P0 | `extension.ts` |
-| 8–10 | T7: Wire Phase 2 flow: file change → diff → Gemini → populate diff panel | P0 | `extension.ts` |
-| 10–11.5 | T8: MongoDB Atlas integration for storing bug history | P1 | `storage.ts` |
-| 11.5–14 | Bug fixes, help with integration | — | All extension files |
-| 14–16 | T9: Polish extension activation, commands, status bar indicator | P2 | `extension.ts` |
-| 16+ | End-to-end testing, bug fixes | — | — |
-| **Total** | | | **~16h active** |
-
-### Engineer 2: "UI / Webview" — owns all webview HTML/CSS/JS, visual design, TTS
-
-**Owns:** `webview/error.html`, `webview/diff.html`, `webview/dashboard.html`, `webview/styles.css`, `ttsClient.ts`, `seedData.ts`
-
-| Hour | Task | Priority | Files |
-|------|------|----------|-------|
-| 0–1 | T10a: Set up shared webview styles, install @vscode-elements | P0 | `webview/styles.css` |
-| 1–4 | T10: Design and build Error Explanation Panel (location, category badge, explanation, fix, prevention, best practices) | P0 | `webview/error.html` |
-| 4–7 | T11: Design and build Diff Panel (diff2html side-by-side + AI explanation card) | P0 | `webview/diff.html` |
-| 7–9.5 | T12: Build Bug Dashboard (Chart.js — bar chart of 3 categories, trend line, focus area) | P1 | `webview/dashboard.html` |
-| 9.5–10.5 | T15: Create seed data module (15–20 realistic bug entries) | P1 | `seedData.ts` |
-| 10.5–12 | T14: ElevenLabs TTS integration — "read aloud" button on explanation cards | P1 | `ttsClient.ts`, `webview/error.html` |
-| 12–14 | T13: Build Quiz component inside Error Explanation Panel | P1 | `webview/error.html` |
-| 14–16 | T16: CSS polish — dark theme, transitions, animations | P2 | `webview/styles.css` |
-| 16+ | Visual bug fixes, demo polish | — | — |
-| **Total** | | | **~16h active** |
-
-### Engineer 3: "LLM + Demo" — owns Gemini integration, prompts, demo app, presentation
-
-**Owns:** `llmClient.ts`, `types.ts`, `demo-app/`, `docs/`
-
-| Hour | Task | Priority | Files |
-|------|------|----------|-------|
-| 0–2 | T17: Set up Gemini SDK + request/response types | P0 | `llmClient.ts`, `types.ts` |
-| 2–4.5 | T18: Write and test Phase 1 prompt — error → explanation JSON (few-shot) | P0 | `llmClient.ts` |
-| 4.5–6.5 | T19: Write and test Phase 2 prompt — diff → explanation JSON (few-shot) | P0 | `llmClient.ts` |
-| 6.5–8.5 | T20: Build demo React app (simple UI — counter, data loader, form) | P0 | `demo-app/src/App.tsx`, `demo-app/src/styles.css` |
-| 8.5–10 | T21: Plant 3 bugs (1 syntax, 1 logic, 1 runtime) that produce clear errors | P0 | `BrokenSyntax.tsx`, `BrokenLogic.tsx`, `BrokenRuntime.tsx` |
-| 10–11 | T23: Deploy demo app to DigitalOcean App Platform | P1 | `demo-app/` |
-| 11–13 | T22: Test full end-to-end flow: error → explain → AI fix → diff review | P0 | — |
-| 13–14 | T24: Write demo script (minute-by-minute walkthrough) | P0 | `docs/demo-script.md` |
-| 14–15 | T25: Record backup demo video | P1 | — |
-| 15–16.5 | T26: Prepare pitch deck / talking points | P0 | `docs/pitch-notes.md` |
-| 16.5+ | T27: Rehearse demo 3+ times with full team | P0 | — |
-| **Total** | | | **~17.5h active** |
-
----
-
-## 9. Handoff Points & Sync Schedule
-
-All 3 engineers must sync at these checkpoints:
-
-| Hour | Sync | What Must Be True | Action If Not |
-|------|------|-------------------|---------------|
-| **0** | **Kick-off** | Repo cloned, API keys distributed, roles confirmed | — |
-| **6** | **Standup** | Eng 1: panels can receive messages. Eng 2: error panel renders mock data. Eng 3: Gemini returns valid JSON. | Pair to unblock. |
-| **10** | **Integration** | Eng 3's LLM wired into Eng 1's flow, populating Eng 2's panels. Phase 1 works end-to-end. | All hands on integration. Drop P1 features if needed. |
-| **14** | **Demo dry-run #1** | Full Phase 1 + Phase 2 flow works with all 3 planted bugs | Fix blockers, simplify scope |
-| **18** | **Demo dry-run #2** | Timed 2-minute demo, polished transitions, dashboard with seed data | Cut P2 features, focus on reliability |
-| **21** | **Final rehearsal** | Full pitch + demo, no stops, backup video ready | Lock code. No more changes. |
-
-## 10. Task Dependency Graph
-
-```
-Hour 0─2: SETUP (all 3 engineers)
-│
-│  Eng 1: T1 (scaffold extension + esbuild)
-│  Eng 2: T10a (shared styles + @vscode-elements)
-│  Eng 3: T17 (Gemini SDK setup + types)
-│
-Hour 2─6: PARALLEL TRACKS
-│
-│  Eng 1: T2 (error listener) → T3 (file watcher) → T4+T5 (panels + messaging)
-│  Eng 2: T10 (error explanation panel) ────────────────────────────────────────┐
-│  Eng 3: T18 (Phase 1 prompt) → T19 (Phase 2 prompt) ─────────────────────────┤
-│                                                                                │
-│  ┌─── Hour 6: STANDUP ── can panels receive messages? does LLM return JSON? ──┤
-│                                                                                │
-Hour 6─10: INTEGRATION                                                          │
-│                                                                                │
-│  Eng 1: T6 (wire Phase 1) → T7 (wire Phase 2) ◄──────────────────────────────┘
-│  Eng 2: T11 (diff panel) → T12 (dashboard)
-│  Eng 3: T20 (demo app) → T21 (plant bugs)
-│
-│  ┌─── Hour 10: INTEGRATION SYNC ── Phase 1 must work end-to-end ──┐
-│                                                                     │
-Hour 10─14: FEATURES + TESTING                                       │
-│                                                                     │
-│  Eng 1: T8 (MongoDB Atlas)                                         │
-│  Eng 2: T15 (seed data) → T14 (ElevenLabs TTS) → T13 (quiz)      │
-│  Eng 3: T23 (DigitalOcean deploy) → T22 (end-to-end testing) ◄────┘
-│
-│  ┌─── Hour 14: DEMO DRY-RUN #1 ── full flow with all 3 bugs ──┐
-│                                                                  │
-Hour 14─18: POLISH + DEMO PREP                                    │
-│                                                                  │
-│  Eng 1: T9 (extension polish) + bug fixes                       │
-│  Eng 2: T16 (CSS polish, animations)                             │
-│  Eng 3: T24 (demo script) → T25 (backup video)                  │
-│
-│  ┌─── Hour 18: DEMO DRY-RUN #2 ── timed, polished ──┐
-│                                                        │
-Hour 18─21: FINAL POLISH                                 │
-│  All: Bug fixes, edge cases                            │
-│  Eng 3: T26 (pitch prep)                               │
-│                                                        │
-│  ┌─── Hour 21: FINAL REHEARSAL ── no stops ──┐        │
-│                                                │        │
-Hour 21─24: REHEARSE + SUBMIT                    │        │
-│  All: T27 (rehearse 3x)                        │        │
-│  Final testing, submit, CODE FREEZE            │        │
-```
-
----
-
-## 10. Demo Script (2 Minutes)
+## 9. Demo Script (2 Minutes)
 
 | Time | Action | What Judges See |
 |------|--------|----------------|
-| 0:00–0:15 | **Pitch the problem** | "Students hit errors they can't read, paste them into AI, accept the fix, and learn nothing. FlowFixer changes that." |
-| 0:15–0:30 | **Show the broken app** | React app running. Student clicks a button — app crashes. Terminal shows: `TypeError: Cannot read properties of undefined (reading 'map')` |
-| 0:30–0:50 | **Phase 1: FlowFixer explains the error** | Error Explanation Panel opens automatically. Shows: bug location (line 15), category badge [Runtime Error], plain-English explanation, "How to fix it", "How to prevent it", best practices. Student now UNDERSTANDS the bug. |
-| 0:50–1:10 | **Student asks AI to fix it** | Student prompts Copilot/Cursor: "fix this error". AI modifies the file. |
-| 1:10–1:30 | **Phase 2: FlowFixer shows what AI changed** | Diff Panel opens. Red = removed code, Green = new code. Explanation card: "The AI added a null check before calling .map() and initialized the state with an empty array." Student now understands the fix. |
-| 1:30–1:45 | **Show the dashboard** | Bug Dashboard with seeded week of data. Bar chart: Runtime (8), Logic (5), Syntax (3). "Focus area: Runtime errors — practice null checking and defensive programming." |
-| 1:45–2:00 | **Close with impact** | "FlowFixer turns every error into a lesson and every AI fix into a teachable moment. Vibe coding makes you fast. FlowFixer makes you fast AND smart." |
+| 0:00–0:20 | **Pitch the problem** | "AI tools fix bugs for you. But fixing isn't learning. Meet FlowFixer." |
+| 0:20–0:40 | **Show the broken app** | React app running with a broken button (doesn't respond to clicks). Live preview panel shows the bug. |
+| 0:40–1:00 | **Trigger the fix** | "Fix this onClick handler" → file changes → FlowFixer intercepts |
+| 1:00–1:10 | **Quiz pops up** | "What do you think went wrong?" — 4 options appear |
+| 1:10–1:20 | **Answer the quiz** | Select answer → feedback: "Correct! The handler was bound to the wrong element." |
+| 1:20–1:40 | **Explanation reveals** | Visual diff highlights the change. "Why It Broke" card: "Bug Type: Event Binding. Your onClick was on the wrapper div, not the button itself." Concept: "Event Delegation in JavaScript." Live preview updates — button now works. |
+| 1:40–2:00 | **Show the dashboard** | Switch to Bug Dashboard. Heatmap shows a week of data. "This student struggles most with State Management and CSS Layout. Recommended focus: React useState." Close with tagline: "Vibe coding makes you fast. FlowFixer makes you fast AND smart." |
 
 ---
 
-## 11. Bug Categories (Classification Taxonomy)
+## 10. Bug Categories (Classification Taxonomy)
 
-| Category | What It Covers | Example Error | Concept Link |
-|----------|---------------|---------------|-------------|
-| **Syntax Error** | Code that can't be parsed — missing brackets, typos, malformed expressions, invalid JSX | `SyntaxError: Unexpected token '}'` | Syntax fundamentals, language grammar |
-| **Logic Error** | Code that runs without crashing but produces wrong results — wrong operators, bad conditions, off-by-one, wrong return values | Button does nothing, counter shows wrong number | Boolean logic, control flow, boundary conditions |
-| **Runtime Error** | Code that compiles but crashes during execution — null/undefined references, type errors, missing imports, async issues | `TypeError: Cannot read properties of undefined` | Defensive programming, error handling, type safety |
-
----
-
-## 12. Planted Demo Bugs
-
-| # | Bug | Category | Error Output | The Fix |
-|---|-----|----------|-------------|---------|
-| 1 | Missing closing parenthesis in JSX return statement | **Syntax** | `SyntaxError: Unexpected token, expected ","` | Add the missing `)` to close the return statement |
-| 2 | `<=` instead of `<` in loop condition, rendering one extra undefined item | **Logic** | No crash — but app renders an extra empty/broken item in the list | Change `<=` to `<` in the loop condition |
-| 3 | Calling `.map()` on state that is `undefined` before fetch resolves | **Runtime** | `TypeError: Cannot read properties of undefined (reading 'map')` | Initialize state as `[]` and/or add null check before `.map()` |
+| Category | Example Bug | Concept Link |
+|----------|------------|-------------|
+| CSS Layout / Specificity | `.btn` overridden by `.container .btn` | CSS Cascade & Specificity |
+| Null / Undefined Reference | `Cannot read property 'x' of undefined` | Defensive Programming, Optional Chaining |
+| Off-by-one Error | `for (i = 0; i <= arr.length)` | Array Indexing, Boundary Conditions |
+| Async / Race Condition | State read before `await` resolves | Event Loop, Promises, async/await |
+| State Management | Direct mutation of React state | Immutability, React re-rendering |
+| Type Mismatch | String concatenation instead of addition | Type Coercion, TypeScript |
+| Logic Error | Wrong conditional operator (`&&` vs `\|\|`) | Boolean Logic, De Morgan's Laws |
+| Syntax Error | Missing closing bracket, typo in variable name | Syntax Fundamentals |
 
 ---
 
-## 13. Risk Register
+## 11. Planted Demo Bugs
+
+| # | Bug | Category | Visual Effect | The Fix |
+|---|-----|----------|--------------|---------|
+| 1 | `onClick` on wrapper `<div>` instead of `<button>` | Event Binding | Button doesn't respond to clicks | Move `onClick` to the `<button>` element |
+| 2 | `.btn` styles overridden by `.card .btn` in another stylesheet | CSS Specificity | Button appears unstyled / wrong color | Increase specificity or fix selector |
+| 3 | `setCount(count + 1)` inside a closure that captures stale `count` | State Management | Counter increments erratically | Use `setCount(prev => prev + 1)` |
+| 4 | `fetch` result used before `await` | Async | Data shows as "undefined" on screen | Add `await` before `fetch` call |
+| 5 | `array.length` in condition uses `<=` instead of `<` | Off-by-one | App crashes on last item render | Change `<=` to `<` |
+
+---
+
+## 12. Risk Register
 
 | # | Risk | Likelihood | Impact | Mitigation | Owner |
 |---|------|-----------|--------|-----------|-------|
 | R1 | VS Code webview takes too long to set up | Medium | High | Start with `yo code` template. Eng 1 owns this exclusively for first 4h. Test webview "hello world" in first 30 min. | Eng 1 |
 | R2 | LLM returns inconsistent/bad JSON | Medium | High | Use Gemini with structured output mode. Add JSON schema validation. Have 3 fallback hardcoded responses for demo bugs. | Eng 3 |
-| R3 | Error interception misses errors or catches noise | Medium | Medium | Use VS Code Diagnostics API as primary source (reliable). Terminal parsing as secondary. Test with planted bugs early. | Eng 1 |
-| R4 | Diff detection misses AI changes or fires on manual saves | Medium | Medium | Track "error active" state — only show diff panel if an error was recently explained. Use `onWillSave` + `onDidSave` pair. | Eng 1 |
+| R3 | Diff detection misses changes or fires incorrectly | Medium | Medium | Use `onWillSaveTextDocument` (captures before) + `onDidSaveTextDocument` (captures after). Test early with manual saves. | Eng 1 |
+| R4 | Live preview iframe doesn't refresh reliably | Low | Medium | Fallback: remove live preview from demo, show diff + explanation only. Or use screenshots. | Eng 1 |
 | R5 | Demo breaks on stage | Medium | Critical | Pre-plant bugs tested 10+ times. Pre-record backup video. Script every click. | Eng 3 |
-| R6 | Run out of time on P1 features | Medium | Low | P0 features alone make a complete demo. Dashboard, quiz, and TTS are enhancement, not core. | All |
-| R7 | LLM API rate limits or downtime | Low | Critical | Cache Gemini responses for demo bugs locally. If API is down, serve cached responses. | Eng 3 |
-| R8 | Team burnout / coordination breakdown | Medium | Medium | Mandatory break at hour 12 (30 min). Sync standups at hours 6, 10, 14, 18. Clear ownership per task. | All |
+| R6 | Run out of time on P1 features | Medium | Low | P0 features alone make a complete demo. Quiz and live preview are enhancement, not core. | All |
+| R7 | LLM API rate limits or downtime | Low | Critical | Cache Gemini responses for demo bugs locally. If API is down, fall back to Claude API, then serve cached responses. | Eng 3 |
 | R9 | MongoDB Atlas connection issues during demo | Low | Medium | Fall back to VS Code globalState for offline storage. Seed data works either way. | Eng 1 |
 | R10 | ElevenLabs TTS adds latency to demo | Low | Low | TTS is P1 and optional. Pre-cache audio for demo bugs. Skip button always available. | Eng 2 |
+| R8 | Team burnout / coordination breakdown | Medium | Medium | Mandatory break at hour 12 (30 min). Sync standups at hours 6, 10, 14, 18. Clear ownership per task. | All |
 
 ---
 
-## 14. Definition of Done
+## 13. Definition of Done
 
 ### Minimum Viable Demo (must hit all):
 - [ ] Extension installs from VSIX on a clean VS Code instance
-- [ ] Running code with a bug triggers the Error Explanation Panel (Phase 1)
-- [ ] Error Explanation Panel shows: location, category, explanation, how to fix, how to prevent, best practices
-- [ ] After an AI fix, the Diff Panel shows syntax-highlighted red/green diff with explanation (Phase 2)
-- [ ] LLM correctly classifies and explains all 3 demo bugs (syntax, logic, runtime)
-- [ ] Full two-phase demo flow runs end-to-end without errors 3 consecutive times
+- [ ] Saving a file with a "fix" triggers the diff panel
+- [ ] Diff panel shows syntax-highlighted before/after
+- [ ] LLM classification returns category + explanation for at least 3 demo bugs
+- [ ] Bug Dashboard displays seeded data with category chart + trend line
+- [ ] Full demo flow runs end-to-end without errors 3 consecutive times
 
 ### Stretch Goals:
-- [ ] Bug Dashboard displays seeded data with category chart + trend line
-- [ ] Quiz component tests understanding after error explanation
-- [ ] ElevenLabs TTS reads explanation aloud
-- [ ] Demo app deployed on DigitalOcean
-- [ ] Bug history persisted in MongoDB Atlas
+- [ ] Quiz panel works with multiple-choice + feedback
+- [ ] Live preview panel shows before/after of running app
+- [ ] Animations / transitions between panels
+- [ ] Export bug report
 
 ---
 
-## 15. Communication Plan
+## 14. Communication Plan
 
 | When | What | Format |
 |------|------|--------|
 | Hour 0 | Kick-off: confirm roles, set up repo, API keys | All together, in-person |
 | Hour 6 | Standup: Track A/B/C/D status, blockers | 5-min standup |
-| Hour 10 | Integration check: can Phase 1 + Phase 2 flows work end-to-end? | All together, pair on issues |
-| Hour 14 | Demo dry-run #1: test the full two-phase flow | All together |
+| Hour 10 | Integration check: can all pieces talk to each other? | All together, pair on issues |
+| Hour 14 | Demo dry-run #1: test the full flow | All together |
 | Hour 18 | Demo dry-run #2: time it, polish script | All together |
 | Hour 21 | Final rehearsal: full pitch + demo, no stops | All together |
 | Ongoing | Blockers | Shout immediately, don't wait for standup |
 
 ---
 
-## 16. Repository Structure
+## 15. Repository Structure
 
 ```
 flowfixer/
 ├── extension/                    # VS Code extension (TypeScript)
 │   ├── src/
 │   │   ├── extension.ts          # Entry point, activation, command registration
-│   │   ├── errorListener.ts      # Error interception (Diagnostics API + terminal parsing)
 │   │   ├── diffEngine.ts         # File watching, before/after capture, diff computation
-│   │   ├── llmClient.ts          # Gemini API calls, JSON parsing, caching
+│   │   ├── llmClient.ts          # Gemini API calls, JSON parsing, caching (Claude fallback)
 │   │   ├── ttsClient.ts          # ElevenLabs TTS API integration
 │   │   ├── storage.ts            # MongoDB Atlas client + globalState fallback
 │   │   ├── panels/
-│   │   │   ├── ErrorPanel.ts     # Error Explanation webview panel provider
-│   │   │   ├── DiffPanel.ts      # Diff Review webview panel provider
+│   │   │   ├── DiffPanel.ts      # Diff webview panel provider
+│   │   │   ├── QuizPanel.ts      # Quiz webview panel provider
 │   │   │   └── DashboardPanel.ts # Dashboard webview panel provider
 │   │   ├── webview/
-│   │   │   ├── error.html        # Error Explanation panel (Phase 1 UI)
-│   │   │   ├── diff.html         # Diff Review panel (Phase 2 UI, diff2html)
+│   │   │   ├── diff.html         # Diff panel (diff2html + @vscode-elements)
+│   │   │   ├── quiz.html         # Quiz panel (@vscode-elements)
 │   │   │   ├── dashboard.html    # Dashboard panel (Chart.js v4)
-│   │   │   └── styles.css        # Shared webview styles (@vscode-elements)
+│   │   │   └── styles.css        # Shared webview styles
 │   │   ├── seedData.ts           # Pre-loaded demo bug history
 │   │   └── types.ts              # Shared TypeScript interfaces
 │   ├── esbuild.js                # Build script (extension + webview targets)
@@ -467,9 +390,11 @@ flowfixer/
 │   ├── src/
 │   │   ├── App.tsx
 │   │   ├── components/
-│   │   │   ├── BrokenSyntax.tsx  # Bug: missing closing parenthesis
-│   │   │   ├── BrokenLogic.tsx   # Bug: off-by-one in loop condition
-│   │   │   └── BrokenRuntime.tsx # Bug: .map() on undefined state
+│   │   │   ├── Counter.tsx       # Bug: stale closure in setState
+│   │   │   ├── Button.tsx        # Bug: onClick on wrong element
+│   │   │   ├── DataLoader.tsx    # Bug: missing await
+│   │   │   ├── ItemList.tsx      # Bug: off-by-one in loop
+│   │   │   └── Card.tsx          # Bug: CSS specificity issue
 │   │   └── styles.css
 │   ├── package.json
 │   └── vite.config.ts
@@ -483,19 +408,19 @@ flowfixer/
 
 ---
 
-## 17. Target Prizes
+## 16. Target Prizes
 
 ### Primary Targets (no extra code needed)
 | Prize | Strategy |
 |-------|----------|
 | **Best Overall Hack** | Build it well — ambitious, technical, great narrative |
 | **Best UI & UX Designed Hack** | Polish webview panels, smooth transitions, dark theme compat |
-| **Best Community Impact Hack** | Emphasize education narrative — every error becomes a lesson |
+| **Best Community Impact Hack** | Emphasize "anti-vibe-coding" education narrative in pitch |
 
 ### Sponsor Prize Targets (integrated into tech stack)
 | Prize | Integration | Effort |
 |-------|-------------|--------|
-| **MLH Best Use of Gemini API** | Gemini as primary LLM for both Phase 1 + Phase 2 | Core (already in stack) |
+| **MLH Best Use of Gemini API** | Gemini as primary LLM for bug classification | Core (already in stack) |
 | **MLH Best Use of MongoDB Atlas** | Atlas for bug history persistence | ~2h |
 | **MLH Best Use of ElevenLabs** | TTS "read aloud" on explanation cards | ~1-2h (P1) |
 | **MLH Best Use of DigitalOcean** | Deploy demo app on App Platform | ~1h |
@@ -509,11 +434,12 @@ flowfixer/
 
 ---
 
-## 18. API Keys & Accounts Needed
+## 17. API Keys & Accounts Needed
 
 | Service | What For | Setup Time | Who |
 |---------|---------|-----------|-----|
-| **Google (Gemini API)** | LLM for error explanation + diff explanation | 5 min | Eng 3 |
+| **Google (Gemini API)** | Primary LLM for bug classification | 5 min | Eng 3 |
+| **Anthropic (Claude API)** — fallback | Backup LLM | 5 min | Eng 3 |
 | **MongoDB Atlas** | Bug history database (free tier) | 10 min | Eng 1 |
 | **ElevenLabs** | TTS for explanation read-aloud | 5 min | Eng 2 |
 | **DigitalOcean** | Demo app hosting ($200 free credits) | 10 min | Eng 1 |
@@ -523,71 +449,37 @@ flowfixer/
 
 ---
 
-## Appendix: Prompt Templates
-
-### Phase 1 — Error Explanation Prompt
+## Appendix: Prompt Template
 
 ```
-You are a coding education assistant. A student just hit an error they don't understand. Your job is to explain it clearly so they can learn from it.
+You are a coding education assistant analyzing a bug fix. You will receive a diff showing the before (buggy) and after (fixed) code.
 
 ## Input
 - Language: {{language}}
 - File: {{filename}}
-- Error message: {{errorMessage}}
-- Code context (lines around the error):
-{{codeContext}}
-
-## Instructions
-Analyze this error and respond in JSON:
-
-{
-  "category": "one of: Syntax Error | Logic Error | Runtime Error",
-  "location": "File and line number where the bug is",
-  "explanation": "2-3 sentences explaining what this error message MEANS in plain English. Write for a student who has never seen this error before.",
-  "howToFix": "Step-by-step instructions for how to fix this specific bug. Reference the actual code.",
-  "howToPrevent": "1-2 sentences on how to avoid this type of bug in the future.",
-  "bestPractices": "1-2 sentences on the industry best practice related to this bug type.",
-  "quiz": {
-    "question": "A question testing if the student understands WHY this error occurred",
-    "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
-    "correct": "B",
-    "explanation": "Why the correct answer is right"
-  }
-}
-
-## Rules
-- Explain for beginners, not experts
-- Reference the actual code, not abstract concepts
-- The error explanation should decode the error message — what does each part mean?
-- Keep explanation under 60 words
-- Keep howToFix actionable and specific
-```
-
-### Phase 2 — AI Fix Explanation Prompt
-
-```
-You are a coding education assistant. A student had a bug, and an AI tool just fixed it. Your job is to explain what the AI changed and why.
-
-## Input
-- Language: {{language}}
-- File: {{filename}}
-- Original error: {{originalError}}
-- Diff (before → after):
+- Diff:
 {{diff}}
 
 ## Instructions
 Analyze this diff and respond in JSON:
 
 {
-  "whatChanged": "1-2 sentences describing exactly what the AI modified in the code",
-  "whyItFixes": "2-3 sentences explaining WHY these changes fix the original error. Connect it back to the root cause.",
-  "keyTakeaway": "One sentence the student should remember from this fix"
+  "category": "one of: CSS Layout / Specificity | Null / Undefined Reference | Off-by-one Error | Async / Race Condition | State Management | Type Mismatch | Logic Error | Syntax Error",
+  "explanation": "2-3 sentences explaining WHY the original code was broken. Write for a student. Use plain English. Reference specific lines.",
+  "concept": "The CS/programming concept this relates to (e.g., 'Immutability', 'Event Loop')",
+  "fix_summary": "One sentence describing what the fix did",
+  "quiz": {
+    "question": "A question testing if the student understands WHY the bug occurred",
+    "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
+    "correct": "B",
+    "explanation": "Why the correct answer is right and a common wrong answer is wrong"
+  }
 }
 
 ## Rules
 - Explain for beginners, not experts
-- Reference specific lines from the diff
-- Connect the fix back to the original error
-- Keep whatChanged under 30 words
-- Keep whyItFixes under 50 words
+- Reference the actual code in the diff, not abstract concepts
+- The quiz should test understanding of the ROOT CAUSE, not just recognition of the fix
+- Keep explanation under 50 words
+- Keep quiz question under 30 words
 ```

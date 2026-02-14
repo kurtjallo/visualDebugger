@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Error Explanation — FlowFixer</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="config.js"></script>
 </head>
 
 <body>
@@ -201,12 +202,9 @@
                 'How to prevent it: ' + MOCK_ERROR_DATA.howToPrevent,
             ].join('. ');
 
-            // Try ElevenLabs first, fall back to browser speech
-            let apiKey = sessionStorage.getItem('elevenlabs_key');
-            if (!apiKey) {
-                apiKey = prompt('Enter your ElevenLabs API key (or cancel for browser TTS):');
-                if (apiKey) sessionStorage.setItem('elevenlabs_key', apiKey);
-            }
+            // Use API key from config.js, fall back to browser speech
+            const apiKey = (typeof ELEVENLABS_API_KEY !== 'undefined' && ELEVENLABS_API_KEY !== 'your_api_key_here')
+                ? ELEVENLABS_API_KEY : null;
 
             ttsBtn.textContent = '⏳ Loading...';
 
