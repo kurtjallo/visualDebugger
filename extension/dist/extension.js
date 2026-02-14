@@ -72235,17 +72235,21 @@ var MongoStorage = class {
   constructor(uri) {
     this.uri = uri;
   }
-  client;
-  collection;
+  client = null;
+  collection = null;
   connected = false;
   async connect() {
     if (this.connected) return true;
     try {
       const { MongoClient } = await Promise.resolve().then(() => __toESM(require_lib3()));
-      this.client = new MongoClient(this.uri);
+      this.client = new MongoClient(this.uri, {
+        serverSelectionTimeoutMS: 4e3
+      });
       await this.client.connect();
       const db = this.client.db("flowfixer");
       this.collection = db.collection("bugs");
+      await db.command({ ping: 1 });
+      await this.collection.createIndex({ id: 1 }, { unique: true });
       this.connected = true;
       console.log(`${LOG4} [MongoDB] connected`);
       return true;
@@ -72255,14 +72259,18 @@ var MongoStorage = class {
     }
   }
   async save(record) {
-    if (!await this.connect()) {
+    if (!await this.connect() || !this.collection) {
       throw new Error("MongoDB not connected");
     }
-    await this.collection.insertOne(record);
+    await this.collection.updateOne(
+      { id: record.id },
+      { $set: record },
+      { upsert: true }
+    );
     console.log(`${LOG4} [MongoDB] saved bug record: ${record.id}`);
   }
   async getAll() {
-    if (!await this.connect()) {
+    if (!await this.connect() || !this.collection) {
       throw new Error("MongoDB not connected");
     }
     return this.collection.find({}).sort({ timestamp: 1 }).toArray();
@@ -72272,8 +72280,11 @@ var MongoStorage = class {
   }
   dispose() {
     if (this.client) {
-      this.client.close().catch(() => {
+      void this.client.close().catch(() => {
       });
+      this.client = null;
+      this.collection = null;
+      this.connected = false;
     }
   }
 };
@@ -72293,6 +72304,20 @@ var FlowFixerStorage = class {
   async testMongoConnection() {
     if (!this.mongo) return false;
     return this.mongo.ping();
+  }
+  async syncLocalToMongo() {
+    if (!this.mongo) return 0;
+    const local = await this.globalStateStorage.getAll();
+    let synced = 0;
+    for (const record of local) {
+      try {
+        await this.mongo.save(record);
+        synced++;
+      } catch (err) {
+        console.warn(`${LOG4} sync to MongoDB failed for ${record.id}:`, err);
+      }
+    }
+    return synced;
   }
   async save(record) {
     await this.globalStateStorage.save(record);
@@ -72985,20 +73010,31 @@ async function activate(context) {
       }
     }),
     vscode6.commands.registerCommand("flowfixer.setMongoUri", async () => {
-      const uri = await vscode6.window.showInputBox({
-        prompt: "Enter your MongoDB Atlas connection URI",
+      const currentUri = await context.secrets.get("flowfixer.mongoUri");
+      const uriInput = await vscode6.window.showInputBox({
+        prompt: "Enter your MongoDB Atlas connection URI (leave empty to disable)",
         password: true,
+        value: currentUri ?? "",
         ignoreFocusOut: true
       });
-      if (uri) {
-        await context.secrets.store("flowfixer.mongoUri", uri);
-        storage.setMongoUri(uri);
-        const connected = await storage.testMongoConnection();
-        if (connected) {
-          vscode6.window.showInformationMessage("FlowFixer: MongoDB URI saved and connected.");
-        } else {
-          vscode6.window.showWarningMessage("FlowFixer: URI saved, but connection failed. Using local fallback storage.");
-        }
+      if (uriInput === void 0) {
+        return;
+      }
+      const uri = uriInput.trim();
+      if (!uri) {
+        await context.secrets.delete("flowfixer.mongoUri");
+        storage.setMongoUri(void 0);
+        vscode6.window.showInformationMessage("FlowFixer: MongoDB disabled. Using local fallback storage.");
+        return;
+      }
+      await context.secrets.store("flowfixer.mongoUri", uri);
+      storage.setMongoUri(uri);
+      const connected = await storage.testMongoConnection();
+      if (connected) {
+        const synced = await storage.syncLocalToMongo();
+        vscode6.window.showInformationMessage(`FlowFixer: MongoDB URI saved and connected. Synced ${synced} local record(s).`);
+      } else {
+        vscode6.window.showWarningMessage("FlowFixer: URI saved, but connection failed. Using local fallback storage.");
       }
     }),
     // --- Manual trigger: analyze the current file's errors or report a logic bug ---
