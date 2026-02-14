@@ -189,20 +189,35 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       }
     }),
     vscode.commands.registerCommand("flowfixer.setMongoUri", async () => {
-      const uri = await vscode.window.showInputBox({
-        prompt: "Enter your MongoDB Atlas connection URI",
+      const currentUri = await context.secrets.get("flowfixer.mongoUri");
+      const uriInput = await vscode.window.showInputBox({
+        prompt: "Enter your MongoDB Atlas connection URI (leave empty to disable)",
         password: true,
+        value: currentUri ?? "",
         ignoreFocusOut: true,
       });
-      if (uri) {
-        await context.secrets.store("flowfixer.mongoUri", uri);
-        storage.setMongoUri(uri);
-        const connected = await storage.testMongoConnection();
-        if (connected) {
-          vscode.window.showInformationMessage("FlowFixer: MongoDB URI saved and connected.");
-        } else {
-          vscode.window.showWarningMessage("FlowFixer: URI saved, but connection failed. Using local fallback storage.");
-        }
+
+      if (uriInput === undefined) {
+        return;
+      }
+
+      const uri = uriInput.trim();
+
+      if (!uri) {
+        await context.secrets.delete("flowfixer.mongoUri");
+        storage.setMongoUri(undefined);
+        vscode.window.showInformationMessage("FlowFixer: MongoDB disabled. Using local fallback storage.");
+        return;
+      }
+
+      await context.secrets.store("flowfixer.mongoUri", uri);
+      storage.setMongoUri(uri);
+      const connected = await storage.testMongoConnection();
+      if (connected) {
+        const synced = await storage.syncLocalToMongo();
+        vscode.window.showInformationMessage(`FlowFixer: MongoDB URI saved and connected. Synced ${synced} local record(s).`);
+      } else {
+        vscode.window.showWarningMessage("FlowFixer: URI saved, but connection failed. Using local fallback storage.");
       }
     }),
 
