@@ -31,6 +31,7 @@ function setStatus(message: string): void {
 window.addEventListener("message", (event) => {
   const msg = event.data;
   if (msg.type === "showDiff") {
+    stopAudio();
     document.getElementById("empty-state")!.style.display = "none";
     document.getElementById("diff-content")!.style.display = "block";
     const d = msg.data;
@@ -76,6 +77,7 @@ window.addEventListener("message", (event) => {
       window.speechSynthesis.speak(utterance);
     }
   } else if (msg.type === "clear") {
+    stopAudio();
     document.getElementById("empty-state")!.style.display = "block";
     document.getElementById("diff-content")!.style.display = "none";
   }

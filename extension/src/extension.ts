@@ -6,9 +6,10 @@ import { FlowFixerStorage } from "./storage";
 import { ErrorPanelProvider } from "./panels/ErrorPanel";
 import { DiffPanelProvider } from "./panels/DiffPanel";
 import { DashboardPanelProvider } from "./panels/DashboardPanel";
-import { fetchTtsAudio } from "./ttsClient";
 import { CapturedError, BugRecord, WebviewToExtMessage } from "./types";
+import { fetchTtsAudio } from "./ttsClient";
 import { getSeedBugRecords } from "./seedData";
+import { loadEnv } from "./envLoader";
 
 const LOG = "[FlowFixer]";
 const TTS_MIME_TYPE = "audio/mpeg";
@@ -28,16 +29,36 @@ interface MessageTarget {
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   console.log(`${LOG} activating...`);
 
+  // --- .env support (checked before context.secrets) ---
+  const envMap = loadEnv();
+  const ENV_KEY_MAP: Record<string, string> = {
+    "flowfixer.geminiKey": "GEMINI_API_KEY",
+    "flowfixer.elevenLabsKey": "ELEVENLABS_API_KEY",
+    "flowfixer.mongoUri": "MONGODB_URI",
+  };
+  const mergedSecrets = {
+    async get(key: string): Promise<string | undefined> {
+      const envKey = ENV_KEY_MAP[key];
+      if (envKey) {
+        const envVal = envMap.get(envKey);
+        if (envVal) { return envVal; }
+      }
+      return context.secrets.get(key);
+    },
+  };
+
+  // --- Core services ---
   const errorListener = new ErrorListener();
   const diffEngine = new DiffEngine();
 
   try {
-    await initLLM(context.secrets);
+    await initLLM(mergedSecrets);
   } catch {
-    console.warn(`${LOG} LLM not initialized - set API key with 'Visual Debugger: Set Gemini API Key'`);
+    console.warn(`${LOG} LLM not initialized — set API key with 'Visual Debugger: Set Gemini API Key' or add GEMINI_API_KEY to .env`);
   }
 
-  const mongoUri = await context.secrets.get("flowfixer.mongoUri");
+  // --- Storage ---
+  const mongoUri = await mergedSecrets.get("flowfixer.mongoUri");
   const storage = new FlowFixerStorage(context.globalState, mongoUri);
 
   const errorPanel = new ErrorPanelProvider(context.extensionUri);
@@ -123,6 +144,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     dashboardPanel.postMessage({ type: "showDashboard", data: { bugs } });
   }, 500);
 
+  // --- Track last error for Phase 2 correlation ---
   let lastError: CapturedError | undefined;
   let lastBugId: string | undefined;
 
@@ -194,7 +216,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         const text = message.text.trim();
         if (!text) return;
 
-        const elevenLabsKey = await context.secrets.get("flowfixer.elevenLabsKey");
+        const elevenLabsKey = await mergedSecrets.get("flowfixer.elevenLabsKey");
         if (!elevenLabsKey) {
           target.postMessage({
             type: "ttsError",
@@ -313,7 +335,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (key) {
         await context.secrets.store("flowfixer.geminiKey", key);
         try {
-          await initLLM(context.secrets);
+          await initLLM(mergedSecrets);
           updateStatus("ready");
           vscode.window.showInformationMessage("Visual Debugger: Gemini API key saved and connected.");
         } catch {
@@ -330,11 +352,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       });
       if (key) {
         await context.secrets.store("flowfixer.elevenLabsKey", key);
-        vscode.window.showInformationMessage("Visual Debugger: ElevenLabs API key saved.");
+        vscode.window.showInformationMessage("Visual Debugger: ElevenLabs API key saved. Read Aloud is ready.");
       }
     }),
     vscode.commands.registerCommand("flowfixer.setMongoUri", async () => {
-      const currentUri = await context.secrets.get("flowfixer.mongoUri");
+      const currentUri = await mergedSecrets.get("flowfixer.mongoUri");
       const uriInput = await vscode.window.showInputBox({
         prompt: "Enter your MongoDB Atlas connection URI (leave empty to disable)",
         password: true,
