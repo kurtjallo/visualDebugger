@@ -260,7 +260,7 @@ var require_common = __commonJS({
     var extend_1 = __importDefault(require_extend());
     var util_cjs_1 = __importDefault(require_util());
     var pkg = util_cjs_1.default.pkg;
-    exports2.GAXIOS_ERROR_SYMBOL = Symbol.for(`${pkg.name}-gaxios-error`);
+    exports2.GAXIOS_ERROR_SYMBOL = /* @__PURE__ */ Symbol.for(`${pkg.name}-gaxios-error`);
     var GaxiosError = class _GaxiosError extends Error {
       config;
       response;
@@ -1373,7 +1373,7 @@ var require_src = __commonJS({
 var require_helpers = __commonJS({
   "node_modules/agent-base/dist/helpers.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -1382,13 +1382,13 @@ var require_helpers = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports2 && exports2.__importStar || function(mod) {
@@ -1443,7 +1443,7 @@ var require_helpers = __commonJS({
 var require_dist = __commonJS({
   "node_modules/agent-base/dist/index.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -1452,13 +1452,13 @@ var require_dist = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports2 && exports2.__importStar || function(mod) {
@@ -1479,7 +1479,7 @@ var require_dist = __commonJS({
     var http3 = __importStar(require("http"));
     var https_1 = require("https");
     __exportStar(require_helpers(), exports2);
-    var INTERNAL = Symbol("AgentBaseInternalState");
+    var INTERNAL = /* @__PURE__ */ Symbol("AgentBaseInternalState");
     var Agent = class extends http3.Agent {
       constructor(opts) {
         super(opts);
@@ -1695,7 +1695,7 @@ var require_parse_proxy_response = __commonJS({
 var require_dist2 = __commonJS({
   "node_modules/https-proxy-agent/dist/index.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -1704,13 +1704,13 @@ var require_dist2 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports2 && exports2.__importStar || function(mod) {
@@ -1890,7 +1890,7 @@ var require_ponyfill_es2018 = __commonJS({
   "node_modules/web-streams-polyfill/dist/ponyfill.es2018.js"(exports2, module2) {
     (function(global2, factory) {
       typeof exports2 === "object" && typeof module2 !== "undefined" ? factory(exports2) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.WebStreamsPolyfill = {}));
-    })(exports2, function(exports3) {
+    })(exports2, (function(exports3) {
       "use strict";
       function noop3() {
         return void 0;
@@ -2050,11 +2050,11 @@ var require_ponyfill_es2018 = __commonJS({
           return front._elements[cursor];
         }
       }
-      const AbortSteps = Symbol("[[AbortSteps]]");
-      const ErrorSteps = Symbol("[[ErrorSteps]]");
-      const CancelSteps = Symbol("[[CancelSteps]]");
-      const PullSteps = Symbol("[[PullSteps]]");
-      const ReleaseSteps = Symbol("[[ReleaseSteps]]");
+      const AbortSteps = /* @__PURE__ */ Symbol("[[AbortSteps]]");
+      const ErrorSteps = /* @__PURE__ */ Symbol("[[ErrorSteps]]");
+      const CancelSteps = /* @__PURE__ */ Symbol("[[CancelSteps]]");
+      const PullSteps = /* @__PURE__ */ Symbol("[[PullSteps]]");
+      const ReleaseSteps = /* @__PURE__ */ Symbol("[[ReleaseSteps]]");
       function ReadableStreamReaderGenericInitialize(reader, stream) {
         reader._ownerReadableStream = stream;
         stream._reader = reader;
@@ -2495,9 +2495,9 @@ var require_ponyfill_es2018 = __commonJS({
         const syncIterable = {
           [Symbol.iterator]: () => syncIteratorRecord.iterator
         };
-        const asyncIterator = async function* () {
+        const asyncIterator = (async function* () {
           return yield* syncIterable;
-        }();
+        })();
         const nextMethod = asyncIterator.next;
         return { iterator: asyncIterator, nextMethod, done: false };
       }
@@ -6156,7 +6156,7 @@ var require_ponyfill_es2018 = __commonJS({
       exports3.WritableStream = WritableStream;
       exports3.WritableStreamDefaultController = WritableStreamDefaultController;
       exports3.WritableStreamDefaultWriter = WritableStreamDefaultWriter;
-    });
+    }));
   }
 });
 
@@ -7118,7 +7118,7 @@ var init_body = __esm({
     init_base();
     init_is();
     pipeline = (0, import_node_util.promisify)(import_node_stream.default.pipeline);
-    INTERNALS = Symbol("Body internals");
+    INTERNALS = /* @__PURE__ */ Symbol("Body internals");
     Body = class {
       constructor(body, {
         size = 0
@@ -7488,7 +7488,7 @@ var init_headers = __esm({
       /**
        * For better console.log(headers) and also to convert Headers into Node.js Request compatible format
        */
-      [Symbol.for("nodejs.util.inspect.custom")]() {
+      [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
         return [...this.keys()].reduce((result, key) => {
           const values = this.getAll(key);
           if (key === "host") {
@@ -7528,7 +7528,7 @@ var init_response = __esm({
     init_headers();
     init_body();
     init_is_redirect();
-    INTERNALS2 = Symbol("Response internals");
+    INTERNALS2 = /* @__PURE__ */ Symbol("Response internals");
     Response2 = class _Response extends Body {
       constructor(body = null, options = {}) {
         super(body, options);
@@ -7818,7 +7818,7 @@ var init_request = __esm({
     init_is();
     init_get_search();
     init_referrer();
-    INTERNALS3 = Symbol("Request internals");
+    INTERNALS3 = /* @__PURE__ */ Symbol("Request internals");
     isRequest = (object) => {
       return typeof object === "object" && typeof object[INTERNALS3] === "object";
     };
@@ -7999,7 +7999,7 @@ var init_request = __esm({
         path: parsedURL.pathname + search,
         // The following options are not expressed in the URL
         method: request.method,
-        headers: headers[Symbol.for("nodejs.util.inspect.custom")](),
+        headers: headers[/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")](),
         insecureHTTPParser: request.insecureHTTPParser,
         agent
       };
@@ -8806,7 +8806,7 @@ Content-Type: ${partContentType}\r
 var require_src2 = __commonJS({
   "node_modules/gaxios/build/cjs/src/index.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -8815,10 +8815,10 @@ var require_src2 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
+    }));
     var __exportStar = exports2 && exports2.__exportStar || function(m2, exports3) {
       for (var p in m2) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports3, p)) __createBinding(exports3, m2, p);
     };
@@ -9114,7 +9114,7 @@ var require_bignumber = __commonJS({
         BigNumber2.minimum = BigNumber2.min = function() {
           return maxOrMin(arguments, 1);
         };
-        BigNumber2.random = function() {
+        BigNumber2.random = (function() {
           var pow2_53 = 9007199254740992;
           var random53bitInt = Math.random() * pow2_53 & 2097151 ? function() {
             return mathfloor(Math.random() * pow2_53);
@@ -9182,13 +9182,13 @@ var require_bignumber = __commonJS({
             rand.c = c;
             return rand;
           };
-        }();
+        })();
         BigNumber2.sum = function() {
           var i2 = 1, args = arguments, sum = new BigNumber2(args[0]);
           for (; i2 < args.length; ) sum = sum.plus(args[i2++]);
           return sum;
         };
-        convertBase = /* @__PURE__ */ function() {
+        convertBase = /* @__PURE__ */ (function() {
           var decimal = "0123456789";
           function toBaseOut(str, baseIn, baseOut, alphabet) {
             var j, arr = [0], arrL, i2 = 0, len = str.length;
@@ -9261,8 +9261,8 @@ var require_bignumber = __commonJS({
             }
             return str;
           };
-        }();
-        div = /* @__PURE__ */ function() {
+        })();
+        div = /* @__PURE__ */ (function() {
           function multiply(x2, k, base) {
             var m2, temp, xlo, xhi, carry = 0, i2 = x2.length, klo = k % SQRT_BASE, khi = k / SQRT_BASE | 0;
             for (x2 = x2.slice(); i2--; ) {
@@ -9403,7 +9403,7 @@ var require_bignumber = __commonJS({
             }
             return q;
           };
-        }();
+        })();
         function format(n, i2, rm, id) {
           var c0, e2, ne, len, str;
           if (rm == null) rm = ROUNDING_MODE;
@@ -9462,7 +9462,7 @@ var require_bignumber = __commonJS({
           }
           return n;
         }
-        parseNumeric = /* @__PURE__ */ function() {
+        parseNumeric = /* @__PURE__ */ (function() {
           var basePrefix = /^(-?)0([xbo])(?=\w[\w.]*$)/i, dotAfter = /^([^.]+)\.$/, dotBefore = /^\.([^.]+)$/, isInfinityOrNaN = /^-?(Infinity|NaN)$/, whitespaceOrPlus = /^\s*\+(?=[\w.])|^\s+|\s+$/g;
           return function(x2, str, isNum, b) {
             var base, s2 = isNum ? str : str.replace(whitespaceOrPlus, "");
@@ -9487,7 +9487,7 @@ var require_bignumber = __commonJS({
             }
             x2.c = x2.e = null;
           };
-        }();
+        })();
         function round(x2, sd, rm, r2) {
           var d, i2, j, k, n, ni, rd, xc = x2.c, pows10 = POWS_TEN;
           if (xc) {
@@ -10565,7 +10565,7 @@ var require_parse = __commonJS({
         if (ch) {
           error("Syntax error");
         }
-        return typeof reviver === "function" ? function walk(holder, key) {
+        return typeof reviver === "function" ? (function walk(holder, key) {
           var k, v, value2 = holder[key];
           if (value2 && typeof value2 === "object") {
             Object.keys(value2).forEach(function(k2) {
@@ -10578,7 +10578,7 @@ var require_parse = __commonJS({
             });
           }
           return reviver.call(holder, key, value2);
-        }({ "": result }, "") : result;
+        })({ "": result }, "") : result;
       };
     };
     module2.exports = json_parse;
@@ -10721,7 +10721,7 @@ var require_colours = __commonJS({
 var require_logging_utils = __commonJS({
   "node_modules/google-logging-utils/build/src/logging-utils.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -10730,16 +10730,16 @@ var require_logging_utils = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports2 && exports2.__importStar || /* @__PURE__ */ function() {
+    var __importStar = exports2 && exports2.__importStar || /* @__PURE__ */ (function() {
       var ownKeys = function(o) {
         ownKeys = Object.getOwnPropertyNames || function(o2) {
           var ar = [];
@@ -10757,7 +10757,7 @@ var require_logging_utils = __commonJS({
         __setModuleDefault(result, mod);
         return result;
       };
-    }();
+    })();
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.env = exports2.DebugLogBackendBase = exports2.placeholder = exports2.AdhocDebugLogger = exports2.LogSeverity = void 0;
     exports2.getNodeBackend = getNodeBackend;
@@ -11010,7 +11010,7 @@ var require_logging_utils = __commonJS({
 var require_src3 = __commonJS({
   "node_modules/google-logging-utils/build/src/index.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -11019,10 +11019,10 @@ var require_src3 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
+    }));
     var __exportStar = exports2 && exports2.__exportStar || function(m2, exports3) {
       for (var p in m2) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports3, p)) __createBinding(exports3, m2, p);
     };
@@ -11035,7 +11035,7 @@ var require_src3 = __commonJS({
 var require_src4 = __commonJS({
   "node_modules/google-auth-library/node_modules/gcp-metadata/build/src/index.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -11044,16 +11044,16 @@ var require_src4 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports2 && exports2.__importStar || /* @__PURE__ */ function() {
+    var __importStar = exports2 && exports2.__importStar || /* @__PURE__ */ (function() {
       var ownKeys = function(o) {
         ownKeys = Object.getOwnPropertyNames || function(o2) {
           var ar = [];
@@ -11071,7 +11071,7 @@ var require_src4 = __commonJS({
         __setModuleDefault(result, mod);
         return result;
       };
-    }();
+    })();
     var __exportStar = exports2 && exports2.__exportStar || function(m2, exports3) {
       for (var p in m2) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports3, p)) __createBinding(exports3, m2, p);
     };
@@ -11567,7 +11567,7 @@ var require_crypto2 = __commonJS({
 var require_crypto3 = __commonJS({
   "node_modules/google-auth-library/build/src/crypto/crypto.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -11576,10 +11576,10 @@ var require_crypto3 = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
+    }));
     var __exportStar = exports2 && exports2.__exportStar || function(m2, exports3) {
       for (var p in m2) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports3, p)) __createBinding(exports3, m2, p);
     };
@@ -12081,8 +12081,8 @@ var require_authclient = __commonJS({
        * making an RPC call, for logging purposes, as well as a string ID that can be
        * used to correlate calls and responses.
        */
-      static RequestMethodNameSymbol = Symbol("request method name");
-      static RequestLogIdSymbol = Symbol("request log id");
+      static RequestMethodNameSymbol = /* @__PURE__ */ Symbol("request method name");
+      static RequestLogIdSymbol = /* @__PURE__ */ Symbol("request log id");
       constructor(opts = {}) {
         super();
         const options = (0, util_1.originalOrCamelOptions)(opts);
@@ -13925,7 +13925,7 @@ var require_src5 = __commonJS({
       var e2, t2, r2 = "function" == typeof Symbol ? Symbol : {}, n = r2.iterator || "@@iterator", o = r2.toStringTag || "@@toStringTag";
       function i2(r3, n2, o2, i3) {
         var c2 = n2 && n2.prototype instanceof Generator ? n2 : Generator, u2 = Object.create(c2.prototype);
-        return _regeneratorDefine2(u2, "_invoke", function(r4, n3, o3) {
+        return _regeneratorDefine2(u2, "_invoke", (function(r4, n3, o3) {
           var i4, c3, u3, f4 = 0, p = o3 || [], y = false, G = { p: 0, n: 0, v: e2, a: d, f: d.bind(e2, 4), d: function d2(t3, r5) {
             return i4 = t3, c3 = 0, u3 = e2, G.n = r5, a;
           } };
@@ -13958,7 +13958,7 @@ var require_src5 = __commonJS({
             }
             return { value: t2, done: y };
           };
-        }(r3, o2, i3), true), u2;
+        })(r3, o2, i3), true), u2;
       }
       var a = {};
       function Generator() {
@@ -14036,7 +14036,7 @@ var require_src5 = __commonJS({
     }));
     var GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
     var GOOGLE_REVOKE_TOKEN_URL = "https://oauth2.googleapis.com/revoke?token=";
-    var ErrorWithCode = /* @__PURE__ */ function(_Error) {
+    var ErrorWithCode = /* @__PURE__ */ (function(_Error) {
       function ErrorWithCode2(message, code) {
         var _this;
         _classCallCheck(this, ErrorWithCode2);
@@ -14047,10 +14047,10 @@ var require_src5 = __commonJS({
       }
       _inherits(ErrorWithCode2, _Error);
       return _createClass(ErrorWithCode2);
-    }(/* @__PURE__ */ _wrapNativeSuper(Error));
+    })(/* @__PURE__ */ _wrapNativeSuper(Error));
     var _inFlightRequest = /* @__PURE__ */ new WeakMap();
     var _GoogleToken_brand = /* @__PURE__ */ new WeakSet();
-    var GoogleToken = exports2.GoogleToken = /* @__PURE__ */ function() {
+    var GoogleToken = exports2.GoogleToken = /* @__PURE__ */ (function() {
       function GoogleToken2(_options) {
         _classCallCheck(this, GoogleToken2);
         _classPrivateMethodInitSpec(this, _GoogleToken_brand);
@@ -14152,7 +14152,7 @@ var require_src5 = __commonJS({
          */
       }, {
         key: "getCredentials",
-        value: function() {
+        value: (function() {
           var _getCredentials = _asyncToGenerator(/* @__PURE__ */ _regenerator().m(function _callee2(keyFile) {
             var ext, key, body, privateKey, clientEmail, _privateKey, _t;
             return _regenerator().w(function(_context2) {
@@ -14201,7 +14201,7 @@ var require_src5 = __commonJS({
             return _getCredentials.apply(this, arguments);
           }
           return getCredentials;
-        }()
+        })()
       }, {
         key: "revokeToken",
         value: function revokeToken(callback) {
@@ -14214,7 +14214,7 @@ var require_src5 = __commonJS({
           return _assertClassBrand(_GoogleToken_brand, this, _revokeTokenAsync).call(this);
         }
       }]);
-    }();
+    })();
     function _getTokenAsync(_x2) {
       return _getTokenAsync2.apply(this, arguments);
     }
@@ -18419,10 +18419,10 @@ var require_constants = __commonJS({
       EMPTY_BUFFER: Buffer.alloc(0),
       GUID: "258EAFA5-E914-47DA-95CA-C5AB0DC85B11",
       hasBlob,
-      kForOnEventAttribute: Symbol("kIsForOnEventAttribute"),
-      kListener: Symbol("kListener"),
-      kStatusCode: Symbol("status-code"),
-      kWebSocket: Symbol("websocket"),
+      kForOnEventAttribute: /* @__PURE__ */ Symbol("kIsForOnEventAttribute"),
+      kListener: /* @__PURE__ */ Symbol("kListener"),
+      kStatusCode: /* @__PURE__ */ Symbol("status-code"),
+      kWebSocket: /* @__PURE__ */ Symbol("websocket"),
       NOOP: () => {
       }
     };
@@ -18508,8 +18508,8 @@ var require_buffer_util = __commonJS({
 var require_limiter = __commonJS({
   "node_modules/ws/lib/limiter.js"(exports2, module2) {
     "use strict";
-    var kDone = Symbol("kDone");
-    var kRun = Symbol("kRun");
+    var kDone = /* @__PURE__ */ Symbol("kDone");
+    var kRun = /* @__PURE__ */ Symbol("kRun");
     var Limiter = class {
       /**
        * Creates a new `Limiter`.
@@ -18564,11 +18564,11 @@ var require_permessage_deflate = __commonJS({
     var { kStatusCode } = require_constants();
     var FastBuffer = Buffer[Symbol.species];
     var TRAILER = Buffer.from([0, 0, 255, 255]);
-    var kPerMessageDeflate = Symbol("permessage-deflate");
-    var kTotalLength = Symbol("total-length");
-    var kCallback = Symbol("callback");
-    var kBuffers = Symbol("buffers");
-    var kError = Symbol("error");
+    var kPerMessageDeflate = /* @__PURE__ */ Symbol("permessage-deflate");
+    var kTotalLength = /* @__PURE__ */ Symbol("total-length");
+    var kCallback = /* @__PURE__ */ Symbol("callback");
+    var kBuffers = /* @__PURE__ */ Symbol("buffers");
+    var kError = /* @__PURE__ */ Symbol("error");
     var zlibLimiter;
     var PerMessageDeflate = class {
       /**
@@ -19740,7 +19740,7 @@ var require_sender = __commonJS({
     var { EMPTY_BUFFER, kWebSocket, NOOP } = require_constants();
     var { isBlob: isBlob2, isValidStatusCode } = require_validation();
     var { mask: applyMask, toBuffer } = require_buffer_util();
-    var kByteLength = Symbol("kByteLength");
+    var kByteLength = /* @__PURE__ */ Symbol("kByteLength");
     var maskBuffer = Buffer.alloc(4);
     var RANDOM_POOL_SIZE = 8 * 1024;
     var randomPool;
@@ -20223,14 +20223,14 @@ var require_event_target = __commonJS({
   "node_modules/ws/lib/event-target.js"(exports2, module2) {
     "use strict";
     var { kForOnEventAttribute, kListener } = require_constants();
-    var kCode = Symbol("kCode");
-    var kData = Symbol("kData");
-    var kError = Symbol("kError");
-    var kMessage = Symbol("kMessage");
-    var kReason = Symbol("kReason");
-    var kTarget = Symbol("kTarget");
-    var kType = Symbol("kType");
-    var kWasClean = Symbol("kWasClean");
+    var kCode = /* @__PURE__ */ Symbol("kCode");
+    var kData = /* @__PURE__ */ Symbol("kData");
+    var kError = /* @__PURE__ */ Symbol("kError");
+    var kMessage = /* @__PURE__ */ Symbol("kMessage");
+    var kReason = /* @__PURE__ */ Symbol("kReason");
+    var kTarget = /* @__PURE__ */ Symbol("kTarget");
+    var kType = /* @__PURE__ */ Symbol("kType");
+    var kWasClean = /* @__PURE__ */ Symbol("kWasClean");
     var Event = class {
       /**
        * Create a new `Event`.
@@ -20632,7 +20632,7 @@ var require_websocket = __commonJS({
     } = require_event_target();
     var { format, parse } = require_extension();
     var { toBuffer } = require_buffer_util();
-    var kAborted = Symbol("kAborted");
+    var kAborted = /* @__PURE__ */ Symbol("kAborted");
     var protocolVersions = [8, 13];
     var readyStates = ["CONNECTING", "OPEN", "CLOSING", "CLOSED"];
     var subprotocolRegex = /^[!#$%&'*+\-.0-9A-Z^_`|a-z~]+$/;
@@ -22062,7 +22062,7 @@ var require_bson = __commonJS({
       }
     }
     var BSON_MAJOR_VERSION = 6;
-    var BSON_VERSION_SYMBOL = Symbol.for("@@mdb.bson.version");
+    var BSON_VERSION_SYMBOL = /* @__PURE__ */ Symbol.for("@@mdb.bson.version");
     var BSON_INT32_MAX = 2147483647;
     var BSON_INT32_MIN = -2147483648;
     var BSON_INT64_MAX = Math.pow(2, 63) - 1;
@@ -22431,7 +22431,7 @@ var require_bson = __commonJS({
       get [BSON_VERSION_SYMBOL]() {
         return BSON_MAJOR_VERSION;
       }
-      [Symbol.for("nodejs.util.inspect.custom")](depth, options, inspect) {
+      [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")](depth, options, inspect) {
         return this.inspect(depth, options, inspect);
       }
     };
@@ -27972,8 +27972,8 @@ var require_constants3 = __commonJS({
     ]);
     exports2.LEGACY_HELLO_COMMAND = "ismaster";
     exports2.LEGACY_HELLO_COMMAND_CAMEL_CASE = "isMaster";
-    exports2.kDecorateResult = Symbol.for("@@mdb.decorateDecryptionResult");
-    exports2.kDecoratedKeys = Symbol.for("@@mdb.decryptedKeys");
+    exports2.kDecorateResult = /* @__PURE__ */ Symbol.for("@@mdb.decorateDecryptionResult");
+    exports2.kDecoratedKeys = /* @__PURE__ */ Symbol.for("@@mdb.decryptedKeys");
   }
 });
 
@@ -29205,7 +29205,7 @@ var require_utils = __commonJS({
         }
         Object.freeze(this);
       }
-      [Symbol.for("nodejs.util.inspect.custom")]() {
+      [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
         return this.inspect();
       }
       inspect() {
@@ -29483,7 +29483,7 @@ var require_utils = __commonJS({
         decorateDecryptionResult(decrypted[k], originalValue, false);
       }
     }
-    exports2.kDispose = Symbol.dispose ?? Symbol("dispose");
+    exports2.kDispose = Symbol.dispose ?? /* @__PURE__ */ Symbol("dispose");
     function addAbortListener(signal, listener) {
       if (signal == null)
         return;
@@ -29837,15 +29837,15 @@ var require_operation = __commonJS({
     var bson_1 = require_bson2();
     var read_preference_1 = require_read_preference();
     exports2.Aspect = {
-      READ_OPERATION: Symbol("READ_OPERATION"),
-      WRITE_OPERATION: Symbol("WRITE_OPERATION"),
-      RETRYABLE: Symbol("RETRYABLE"),
-      EXPLAINABLE: Symbol("EXPLAINABLE"),
-      SKIP_COLLATION: Symbol("SKIP_COLLATION"),
-      CURSOR_CREATING: Symbol("CURSOR_CREATING"),
-      MUST_SELECT_SAME_SERVER: Symbol("MUST_SELECT_SAME_SERVER"),
-      COMMAND_BATCHING: Symbol("COMMAND_BATCHING"),
-      SUPPORTS_RAW_DATA: Symbol("SUPPORTS_RAW_DATA")
+      READ_OPERATION: /* @__PURE__ */ Symbol("READ_OPERATION"),
+      WRITE_OPERATION: /* @__PURE__ */ Symbol("WRITE_OPERATION"),
+      RETRYABLE: /* @__PURE__ */ Symbol("RETRYABLE"),
+      EXPLAINABLE: /* @__PURE__ */ Symbol("EXPLAINABLE"),
+      SKIP_COLLATION: /* @__PURE__ */ Symbol("SKIP_COLLATION"),
+      CURSOR_CREATING: /* @__PURE__ */ Symbol("CURSOR_CREATING"),
+      MUST_SELECT_SAME_SERVER: /* @__PURE__ */ Symbol("MUST_SELECT_SAME_SERVER"),
+      COMMAND_BATCHING: /* @__PURE__ */ Symbol("COMMAND_BATCHING"),
+      SUPPORTS_RAW_DATA: /* @__PURE__ */ Symbol("SUPPORTS_RAW_DATA")
     };
     var AbstractOperation = class {
       constructor(options = {}) {
@@ -30115,7 +30115,7 @@ var require_execute_operation = __commonJS({
       let session = operation.session;
       let owner;
       if (session == null) {
-        owner = Symbol();
+        owner = /* @__PURE__ */ Symbol();
         session = client.startSession({ owner, explicit: false });
       } else if (session.hasEnded) {
         throw new error_1.MongoExpiredSessionError("Use of expired sessions is not permitted");
@@ -33831,10 +33831,10 @@ var require_utils2 = __commonJS({
         Object.getOwnPropertyDescriptors(object)
       );
     }
-    var wrapperSymbol = Symbol("wrapper");
-    var implSymbol = Symbol("impl");
-    var sameObjectCaches = Symbol("SameObject caches");
-    var ctorRegistrySymbol = Symbol.for("[webidl2js] constructor registry");
+    var wrapperSymbol = /* @__PURE__ */ Symbol("wrapper");
+    var implSymbol = /* @__PURE__ */ Symbol("impl");
+    var sameObjectCaches = /* @__PURE__ */ Symbol("SameObject caches");
+    var ctorRegistrySymbol = /* @__PURE__ */ Symbol.for("[webidl2js] constructor registry");
     var AsyncIteratorPrototype = Object.getPrototypeOf(Object.getPrototypeOf(async function* () {
     }).prototype);
     function initCtorRegistry(globalObject) {
@@ -33882,7 +33882,7 @@ var require_utils2 = __commonJS({
       const impl = implForWrapper(wrapper);
       return impl ? impl : wrapper;
     }
-    var iterInternalSymbol = Symbol("internal");
+    var iterInternalSymbol = /* @__PURE__ */ Symbol("internal");
     function isArrayIndexPropName(P) {
       if (typeof P !== "string") {
         return false;
@@ -33921,21 +33921,21 @@ var require_utils2 = __commonJS({
       }
       return { value: result, done: false };
     }
-    var supportsPropertyIndex = Symbol("supports property index");
-    var supportedPropertyIndices = Symbol("supported property indices");
-    var supportsPropertyName = Symbol("supports property name");
-    var supportedPropertyNames = Symbol("supported property names");
-    var indexedGet = Symbol("indexed property get");
-    var indexedSetNew = Symbol("indexed property set new");
-    var indexedSetExisting = Symbol("indexed property set existing");
-    var namedGet = Symbol("named property get");
-    var namedSetNew = Symbol("named property set new");
-    var namedSetExisting = Symbol("named property set existing");
-    var namedDelete = Symbol("named property delete");
-    var asyncIteratorNext = Symbol("async iterator get the next iteration result");
-    var asyncIteratorReturn = Symbol("async iterator return steps");
-    var asyncIteratorInit = Symbol("async iterator initialization steps");
-    var asyncIteratorEOI = Symbol("async iterator end of iteration");
+    var supportsPropertyIndex = /* @__PURE__ */ Symbol("supports property index");
+    var supportedPropertyIndices = /* @__PURE__ */ Symbol("supported property indices");
+    var supportsPropertyName = /* @__PURE__ */ Symbol("supports property name");
+    var supportedPropertyNames = /* @__PURE__ */ Symbol("supported property names");
+    var indexedGet = /* @__PURE__ */ Symbol("indexed property get");
+    var indexedSetNew = /* @__PURE__ */ Symbol("indexed property set new");
+    var indexedSetExisting = /* @__PURE__ */ Symbol("indexed property set existing");
+    var namedGet = /* @__PURE__ */ Symbol("named property get");
+    var namedSetNew = /* @__PURE__ */ Symbol("named property set new");
+    var namedSetExisting = /* @__PURE__ */ Symbol("named property set existing");
+    var namedDelete = /* @__PURE__ */ Symbol("named property delete");
+    var asyncIteratorNext = /* @__PURE__ */ Symbol("async iterator get the next iteration result");
+    var asyncIteratorReturn = /* @__PURE__ */ Symbol("async iterator return steps");
+    var asyncIteratorInit = /* @__PURE__ */ Symbol("async iterator initialization steps");
+    var asyncIteratorEOI = /* @__PURE__ */ Symbol("async iterator end of iteration");
     module2.exports = exports2 = {
       isObject,
       hasOwn: hasOwn2,
@@ -34726,7 +34726,7 @@ var require_url_state_machine = __commonJS({
       ws: 80,
       wss: 443
     };
-    var failure = Symbol("failure");
+    var failure = /* @__PURE__ */ Symbol("failure");
     function countSymbols(str) {
       return [...str].length;
     }
@@ -37067,7 +37067,7 @@ var require_whatwg_url = __commonJS({
 var require_redact = __commonJS({
   "node_modules/mongodb-connection-string-url/lib/redact.js"(exports2) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -37076,13 +37076,13 @@ var require_redact = __commonJS({
         } };
       }
       Object.defineProperty(o, k2, desc);
-    } : function(o, m2, k, k2) {
+    }) : (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
-    });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    }));
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
-    } : function(o, v) {
+    }) : function(o, v) {
       o["default"] = v;
     });
     var __importStar = exports2 && exports2.__importStar || function(mod) {
@@ -37360,7 +37360,7 @@ var require_lib2 = __commonJS({
         const sametype = false;
         return this.searchParams;
       }
-      [Symbol.for("nodejs.util.inspect.custom")]() {
+      [/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")]() {
         const { href, origin, protocol, username, password, hosts, pathname, search, searchParams, hash } = this;
         return { href, origin, protocol, username, password, hosts, pathname, search, searchParams, hash };
       }
@@ -38784,7 +38784,7 @@ var require_state_machine = __commonJS({
         const cursor = client.db(db).listCollections(filter, {
           promoteLongs: false,
           promoteValues: false,
-          timeoutContext: options?.timeoutContext && new abstract_cursor_1.CursorTimeoutContext(options?.timeoutContext, Symbol()),
+          timeoutContext: options?.timeoutContext && new abstract_cursor_1.CursorTimeoutContext(options?.timeoutContext, /* @__PURE__ */ Symbol()),
           signal: options?.signal,
           nameOnly: false
         });
@@ -38833,7 +38833,7 @@ var require_state_machine = __commonJS({
           signal: void 0
         };
         if (options?.timeoutContext != null) {
-          commandOptions.timeoutContext = new abstract_cursor_1.CursorTimeoutContext(options.timeoutContext, Symbol());
+          commandOptions.timeoutContext = new abstract_cursor_1.CursorTimeoutContext(options.timeoutContext, /* @__PURE__ */ Symbol());
         }
         if (options?.signal != null) {
           commandOptions.signal = options.signal;
@@ -45550,7 +45550,7 @@ var require_drop = __commonJS({
         const listCollectionsResult = await db.listCollections({ name }, {
           nameOnly: false,
           session: options.session,
-          timeoutContext: new abstract_cursor_1.CursorTimeoutContext(timeoutContext, Symbol())
+          timeoutContext: new abstract_cursor_1.CursorTimeoutContext(timeoutContext, /* @__PURE__ */ Symbol())
         }).toArray();
         encryptedFields = listCollectionsResult?.[0]?.options?.encryptedFields;
       }
@@ -48207,7 +48207,7 @@ var require_executor = __commonJS({
         } else {
           const resultsMerger = new results_merger_1.ClientBulkWriteResultsMerger(this.options);
           while (commandBuilder.hasNextBatch()) {
-            const cursorContext = new abstract_cursor_1.CursorTimeoutContext(context, Symbol());
+            const cursorContext = new abstract_cursor_1.CursorTimeoutContext(context, /* @__PURE__ */ Symbol());
             const options = {
               ...this.options,
               timeoutContext: cursorContext,
@@ -49431,7 +49431,7 @@ var require_mongo_client = __commonJS({
       async withSession(optionsOrExecutor, executor) {
         const options = {
           // Always define an owner
-          owner: Symbol(),
+          owner: /* @__PURE__ */ Symbol(),
           // If it's an object inherit the options
           ...typeof optionsOrExecutor === "object" ? optionsOrExecutor : {}
         };
@@ -52388,9 +52388,9 @@ var require_change_stream = __commonJS({
       "showExpandedEvents"
     ];
     var CHANGE_DOMAIN_TYPES = {
-      COLLECTION: Symbol("Collection"),
-      DATABASE: Symbol("Database"),
-      CLUSTER: Symbol("Cluster")
+      COLLECTION: /* @__PURE__ */ Symbol("Collection"),
+      DATABASE: /* @__PURE__ */ Symbol("Database"),
+      CLUSTER: /* @__PURE__ */ Symbol("Cluster")
     };
     var CHANGE_STREAM_EVENTS = [constants_1.RESUME_TOKEN_CHANGED, constants_1.END, constants_1.CLOSE];
     var NO_RESUME_TOKEN_ERROR = "A change stream document has been received that lacks a resume token (_id).";
@@ -52424,7 +52424,7 @@ var require_change_stream = __commonJS({
         } else {
           throw new error_1.MongoChangeStreamError("Parent provided to ChangeStream constructor must be an instance of Collection, Db, or MongoClient");
         }
-        this.contextOwner = Symbol();
+        this.contextOwner = /* @__PURE__ */ Symbol();
         this.parent = parent;
         this.namespace = parent.s.namespace;
         if (!this.options.readPreference && parent.readPreference) {
@@ -66380,7 +66380,7 @@ var Models = class extends BaseModule {
     let wereFunctionsCalled = false;
     let remoteCallCount = 0;
     const afcToolsMap = await this.initAfcToolsMap(params);
-    return function(models, afcTools, params2) {
+    return (function(models, afcTools, params2) {
       return __asyncGenerator(this, arguments, function* () {
         var _a3, e_1, _b2, _c2;
         var _d, _e;
@@ -66450,7 +66450,7 @@ var Models = class extends BaseModule {
           }
         }
       });
-    }(this, afcToolsMap, params);
+    })(this, afcToolsMap, params);
   }
   async generateContentInternal(params) {
     var _a2, _b, _c, _d;
@@ -69021,7 +69021,7 @@ function encodeURIPath(str) {
   return str.replace(/[^A-Za-z0-9\-._~!$&'()*+,;=:@]+/g, encodeURIComponent);
 }
 var EMPTY = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.create(null));
-var createPathTagFunction = (pathEncoder = encodeURIPath) => function path2(statics, ...params) {
+var createPathTagFunction = (pathEncoder = encodeURIPath) => (function path2(statics, ...params) {
   if (statics.length === 1)
     return statics[0];
   let postPath = false;
@@ -69069,7 +69069,7 @@ ${path3}
 ${underline}`);
   }
   return path3;
-};
+});
 var path = /* @__PURE__ */ createPathTagFunction(encodeURIPath);
 var BaseInteractions = class extends APIResource {
   create(params, options) {
@@ -72916,33 +72916,9 @@ gtoken/build/cjs/src/index.cjs:
   (*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE *)
 
 @google/genai/dist/node/index.mjs:
-  (**
-   * @license
-   * Copyright 2025 Google LLC
-   * SPDX-License-Identifier: Apache-2.0
-   *)
-
 @google/genai/dist/node/index.mjs:
-  (**
-   * @license
-   * Copyright 2025 Google LLC
-   * SPDX-License-Identifier: Apache-2.0
-   *)
-
 @google/genai/dist/node/index.mjs:
-  (**
-   * @license
-   * Copyright 2025 Google LLC
-   * SPDX-License-Identifier: Apache-2.0
-   *)
-
 @google/genai/dist/node/index.mjs:
-  (**
-   * @license
-   * Copyright 2025 Google LLC
-   * SPDX-License-Identifier: Apache-2.0
-   *)
-
 @google/genai/dist/node/index.mjs:
   (**
    * @license

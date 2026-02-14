@@ -30,7 +30,7 @@
   var require_prism = __commonJS({
     "node_modules/prismjs/prism.js"(exports, module) {
       var _self = typeof window !== "undefined" ? window : typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope ? self : {};
-      var Prism3 = function(_self2) {
+      var Prism3 = (function(_self2) {
         var lang = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i;
         var uniqueId = 0;
         var plainTextGrammar = {};
@@ -915,7 +915,7 @@
           }
         }
         return _;
-      }(_self);
+      })(_self);
       if (typeof module !== "undefined" && module.exports) {
         module.exports = Prism3;
       }
