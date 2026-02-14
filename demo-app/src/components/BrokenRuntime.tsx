@@ -8,7 +8,7 @@ interface User {
 }
 
 export default function UserProfiles() {
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<User[]>()
 
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/users?_limit=5')
