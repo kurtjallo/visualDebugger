@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Phase1Response, Phase2Response } from "../types.js";
+import type { Phase1Response, Phase2Response, DiffAnalysisRequest } from "../types.js";
 
 // Mock @google/genai before importing llmClient
 const mockGenerateContent = vi.fn();
@@ -53,6 +53,46 @@ const MOCK_PHASE1: Phase1Response = {
   },
 };
 
+const MOCK_PHASE1_SYNTAX: Phase1Response = {
+  category: "Syntax Error",
+  location: "line 17, BrokenSyntax.tsx",
+  explanation: "The error says 'Unexpected token, expected \",\"'. The parser reached the end of your return statement and found '}' instead of ')'. The return() on line 12 was never closed.",
+  howToFix: "Add a closing ')' after </div> on line 16 so the return statement is properly closed.",
+  howToPrevent: "When you type an opening bracket, immediately type the closing one, then fill in the middle.",
+  bestPractices: "Use an editor with bracket matching. Most editors highlight unmatched brackets in red.",
+  quiz: {
+    question: "What is the root cause of this SyntaxError?",
+    options: [
+      "A) The <div> tag is not closed",
+      "B) The return statement is missing its closing parenthesis",
+      "C) The JSX expression {message} is invalid",
+      "D) The function is missing a return type",
+    ],
+    correct: "B",
+    explanation: "The return( on line 12 opens a parenthesis that is never closed. The parser expected ')' but found '}' instead.",
+  },
+};
+
+const MOCK_PHASE1_LOGIC: Phase1Response = {
+  category: "Logic Error",
+  location: "line 10, BrokenLogic.tsx",
+  explanation: "No crash, but the loop runs one time too many. 'i <= items.length' should be 'i < items.length'. Arrays are zero-indexed, so items[3] is undefined, rendering an extra empty item.",
+  howToFix: "On line 10, change '<=' to '<': for (let i = 0; i < items.length; i++).",
+  howToPrevent: "Array indices go from 0 to length - 1. Always use '< length' not '<= length'.",
+  bestPractices: "Prefer .map() or for...of loops over manual index loops to eliminate off-by-one bugs.",
+  quiz: {
+    question: "Why does the loop render an extra undefined item?",
+    options: [
+      "A) The array is empty",
+      "B) The loop starts at index 1 instead of 0",
+      "C) The condition '<=' runs one iteration past the last valid index",
+      "D) The push() method adds an extra element",
+    ],
+    correct: "C",
+    explanation: "'<=' means the loop runs when i equals items.length (3), but the last valid index is 2.",
+  },
+};
+
 const MOCK_PHASE2: Phase2Response = {
   whatChanged:
     "Added a null check on line 15 before calling .map() and initialized state with an empty array.",
@@ -60,6 +100,67 @@ const MOCK_PHASE2: Phase2Response = {
     "The original code assumed 'data' was always an array, but on first render it was undefined. Initializing with [] ensures .map() always has an array to work with.",
   keyTakeaway:
     "Always initialize state with a default value that matches how you use it.",
+};
+
+// --- Syntax fix test data ---
+const SYNTAX_FIX_REQUEST: DiffAnalysisRequest = {
+  language: "TypeScript",
+  filename: "BrokenSyntax.tsx",
+  originalError: 'SyntaxError: Unexpected token, expected ","',
+  diff: `  - <p>Hello, {name}</p>
+  + <p>Hello, {name}</p>)
+    </div>
+  -
+  +  );`,
+};
+
+const SYNTAX_FIX_RESPONSE: Phase2Response = {
+  whatChanged:
+    "Added a closing `)` after the JSX block to close the `return(` statement.",
+  whyItFixes:
+    "The `return(` had no matching `)`, so the parser could not determine where the expression ended. Adding `)` completes it.",
+  keyTakeaway:
+    "Every opening parenthesis needs a matching closing one, especially in multi-line JSX returns.",
+};
+
+// --- Logic fix test data ---
+const LOGIC_FIX_REQUEST: DiffAnalysisRequest = {
+  language: "TypeScript",
+  filename: "BrokenLogic.tsx",
+  originalError: "List renders an extra empty item at the end",
+  diff: `  - for (let i = 0; i <= items.length; i++) {
+  + for (let i = 0; i < items.length; i++) {`,
+};
+
+const LOGIC_FIX_RESPONSE: Phase2Response = {
+  whatChanged:
+    "Changed the loop condition from `<=` to `<` when iterating over the items array.",
+  whyItFixes:
+    "Using `<=` caused the loop to access one index past the end of the array, producing an undefined item. `<` stops at the last valid index.",
+  keyTakeaway:
+    "Use `i < array.length` not `i <= array.length` to avoid off-by-one errors.",
+};
+
+// --- Runtime fix test data ---
+const RUNTIME_FIX_REQUEST: DiffAnalysisRequest = {
+  language: "TypeScript",
+  filename: "BrokenRuntime.tsx",
+  originalError:
+    "TypeError: Cannot read properties of undefined (reading 'map')",
+  diff: `  - const [data, setData] = useState();
+  + const [data, setData] = useState<string[]>([]);
+  ...
+  - <ul>{data.map(item => <li>{item}</li>)}</ul>
+  + <ul>{data?.map(item => <li key={item}>{item}</li>)}</ul>`,
+};
+
+const RUNTIME_FIX_RESPONSE: Phase2Response = {
+  whatChanged:
+    "Initialized useState with an empty array and added optional chaining `?.` before `.map()`.",
+  whyItFixes:
+    "Without a default value, data was undefined on first render. Calling .map() on undefined crashes. An empty array default and `?.` prevent that.",
+  keyTakeaway:
+    "Initialize React state to match how you use it — call .map() only on arrays, not undefined.",
 };
 
 describe("llmClient", () => {
@@ -179,6 +280,118 @@ describe("llmClient", () => {
         }),
       ).rejects.toThrow();
     });
+
+    it("returns correctly typed Phase1Response for a Syntax Error", async () => {
+      await initialize(makeSecrets("test-api-key"));
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(MOCK_PHASE1_SYNTAX),
+      });
+
+      const result = await analyzeError({
+        language: "TypeScript",
+        filename: "BrokenSyntax.tsx",
+        errorMessage: "SyntaxError: Unexpected token, expected \",\"",
+        codeContext: `12 |   return (
+13 |     <div>
+14 |       <h1>Welcome</h1>
+15 |       <p>{message}</p>
+16 |     </div>
+17 |   // missing closing parenthesis
+18 |  }`,
+      });
+
+      expect(result).toEqual(MOCK_PHASE1_SYNTAX);
+      expect(result.category).toBe("Syntax Error");
+      expect(result.quiz.options).toHaveLength(4);
+      expect(["A", "B", "C", "D"]).toContain(result.quiz.correct);
+    });
+
+    it("returns correctly typed Phase1Response for a Logic Error", async () => {
+      await initialize(makeSecrets("test-api-key"));
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(MOCK_PHASE1_LOGIC),
+      });
+
+      const result = await analyzeError({
+        language: "TypeScript",
+        filename: "BrokenLogic.tsx",
+        errorMessage: "",
+        codeContext: `8  |  const items = ["Apple", "Banana", "Cherry"];
+9  |  const listItems = [];
+10 |  for (let i = 0; i <= items.length; i++) {
+11 |    listItems.push(<li key={i}>{items[i]}</li>);
+12 |  }`,
+      });
+
+      expect(result).toEqual(MOCK_PHASE1_LOGIC);
+      expect(result.category).toBe("Logic Error");
+      expect(result.quiz.options).toHaveLength(4);
+    });
+
+    it("uses fallback text when errorMessage is empty (logic error)", async () => {
+      await initialize(makeSecrets("test-api-key"));
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(MOCK_PHASE1_LOGIC),
+      });
+
+      await analyzeError({
+        language: "TypeScript",
+        filename: "BrokenLogic.tsx",
+        errorMessage: "",
+        codeContext: "for (let i = 0; i <= items.length; i++) {}",
+      });
+
+      const call = mockGenerateContent.mock.calls[0][0];
+      expect(call.contents).toContain("No error message");
+      expect(call.contents).not.toContain("Error message: \n");
+    });
+
+    it("prompt includes few-shot examples for all 3 bug categories", async () => {
+      await initialize(makeSecrets("test-api-key"));
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(MOCK_PHASE1),
+      });
+
+      await analyzeError({
+        language: "TypeScript",
+        filename: "App.tsx",
+        errorMessage: "TypeError: test",
+        codeContext: "code",
+      });
+
+      const call = mockGenerateContent.mock.calls[0][0];
+      const prompt = call.contents;
+
+      expect(prompt).toContain("Example 1: Syntax Error");
+      expect(prompt).toContain("Example 2: Logic Error");
+      expect(prompt).toContain("Example 3: Runtime Error");
+
+      expect(prompt).toContain("Syntax Error");
+      expect(prompt).toContain("Logic Error");
+      expect(prompt).toContain("Runtime Error");
+    });
+
+    it("quiz has exactly 4 options and a valid correct answer", async () => {
+      await initialize(makeSecrets("test-api-key"));
+
+      for (const mock of [MOCK_PHASE1_SYNTAX, MOCK_PHASE1_LOGIC, MOCK_PHASE1]) {
+        mockGenerateContent.mockResolvedValueOnce({
+          text: JSON.stringify(mock),
+        });
+
+        const result = await analyzeError({
+          language: "TypeScript",
+          filename: "test.tsx",
+          errorMessage: "test error",
+          codeContext: "test code",
+        });
+
+        expect(result.quiz.options).toHaveLength(4);
+        expect(["A", "B", "C", "D"]).toContain(result.quiz.correct);
+        expect(result.quiz.question.length).toBeGreaterThan(10);
+        expect(result.quiz.explanation.length).toBeGreaterThan(10);
+      }
+    });
   });
 
   describe("analyzeDiff", () => {
@@ -259,6 +472,121 @@ describe("llmClient", () => {
           diff: "diff",
         }),
       ).rejects.toThrow("Failed to analyze diff");
+    });
+
+    it("syntax fix returns correct Phase2Response", async () => {
+      const secrets = makeSecrets("test-api-key");
+      await initialize(secrets);
+
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(SYNTAX_FIX_RESPONSE),
+      });
+
+      const result = await analyzeDiff(SYNTAX_FIX_REQUEST);
+
+      expect(result).toEqual(SYNTAX_FIX_RESPONSE);
+      expect(result.whatChanged).toBeTruthy();
+      expect(result.whyItFixes).toBeTruthy();
+      expect(result.keyTakeaway).toBeTruthy();
+      expect(result.whatChanged).toMatch(/\)|parenthesis|closing/i);
+    });
+
+    it("logic fix returns correct Phase2Response", async () => {
+      const secrets = makeSecrets("test-api-key");
+      await initialize(secrets);
+
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(LOGIC_FIX_RESPONSE),
+      });
+
+      const result = await analyzeDiff(LOGIC_FIX_REQUEST);
+
+      expect(result).toEqual(LOGIC_FIX_RESPONSE);
+      expect(result.whatChanged).toBeTruthy();
+      expect(result.whyItFixes).toBeTruthy();
+      expect(result.keyTakeaway).toBeTruthy();
+      expect(result.whatChanged).toMatch(/<=|less-than/i);
+    });
+
+    it("runtime fix returns correct Phase2Response", async () => {
+      const secrets = makeSecrets("test-api-key");
+      await initialize(secrets);
+
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(RUNTIME_FIX_RESPONSE),
+      });
+
+      const result = await analyzeDiff(RUNTIME_FIX_REQUEST);
+
+      expect(result).toEqual(RUNTIME_FIX_RESPONSE);
+      expect(result.whatChanged).toBeTruthy();
+      expect(result.whyItFixes).toBeTruthy();
+      expect(result.keyTakeaway).toBeTruthy();
+      expect(result.whatChanged).toMatch(/useState|optional chaining|\?\./i);
+    });
+
+    it("multi-hunk diff prompt passes full diff content", async () => {
+      const secrets = makeSecrets("test-api-key");
+      await initialize(secrets);
+
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(RUNTIME_FIX_RESPONSE),
+      });
+
+      await analyzeDiff(RUNTIME_FIX_REQUEST);
+
+      const call = mockGenerateContent.mock.calls[0][0];
+      expect(call.contents).toContain("useState");
+      expect(call.contents).toContain(".map(");
+    });
+
+    it("prompt includes few-shot examples", async () => {
+      const secrets = makeSecrets("test-api-key");
+      await initialize(secrets);
+
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(MOCK_PHASE2),
+      });
+
+      await analyzeDiff({
+        language: "TypeScript",
+        filename: "App.tsx",
+        originalError: "Error",
+        diff: "- old\n+ new",
+      });
+
+      const call = mockGenerateContent.mock.calls[0][0];
+      expect(call.contents).toContain("## Examples");
+      expect(call.contents).toContain("Syntax Fix");
+      expect(call.contents).toContain("Logic Fix");
+      expect(call.contents).toContain("Runtime Fix");
+    });
+
+    it("minimal single-line diff returns valid Phase2Response", async () => {
+      const secrets = makeSecrets("test-api-key");
+      await initialize(secrets);
+
+      const minimalResponse: Phase2Response = {
+        whatChanged: "Changed x to y.",
+        whyItFixes: "The old value was incorrect.",
+        keyTakeaway: "Use the right variable name.",
+      };
+
+      mockGenerateContent.mockResolvedValueOnce({
+        text: JSON.stringify(minimalResponse),
+      });
+
+      const result = await analyzeDiff({
+        language: "TypeScript",
+        filename: "tiny.ts",
+        originalError: "ReferenceError: x is not defined",
+        diff: "- x\n+ y",
+      });
+
+      expect(result).toEqual(minimalResponse);
+      expect(result.whatChanged).toBeTruthy();
+      expect(result.whyItFixes).toBeTruthy();
+      expect(result.keyTakeaway).toBeTruthy();
     });
   });
 
