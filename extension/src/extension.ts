@@ -115,6 +115,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     statusItem.show();
   };
 
+  context.subscriptions.push({ dispose: clearResetTimer });
   updateStatus(isInitialized() ? "ready" : "needsKey");
 
   // --- Pre-populate dashboard on activation ---
