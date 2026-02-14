@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import GreetingCard from './components/BrokenSyntax'
 import StudentRoster from './components/BrokenLogic'
 import UserProfiles from './components/BrokenRuntime'
 
@@ -32,7 +31,16 @@ export default function App() {
         ))}
       </nav>
       <main>
-        {activeTab === 'syntax' && <GreetingCard />}
+        {activeTab === 'syntax' && (
+          <div className="component-container">
+            <h2>Greeting Card Generator</h2>
+            <p className="description">Open <code>BrokenSyntax.tsx</code> in the editor to see the syntax error demo.</p>
+            <p style={{ color: 'var(--text-subtle)', fontSize: '0.85rem', marginTop: '12px' }}>
+              This file has a missing closing parenthesis — VS Code will flag it with a red squiggly line.
+              FlowFixer will explain what the error means.
+            </p>
+          </div>
+        )}
         {activeTab === 'logic' && <StudentRoster />}
         {activeTab === 'runtime' && <UserProfiles />}
       </main>
