@@ -71871,96 +71871,82 @@ function getApiKeyFromEnv() {
 // src/llmClient.ts
 var LOG3 = "[FlowFixer:LLMClient]";
 var MODEL = "gemini-2.0-flash";
-var LLMClient = class {
-  constructor(secrets) {
-    this.secrets = secrets;
-  }
-  genai;
-  async initialize() {
-    const apiKey = await this.secrets.get("flowfixer.geminiKey");
-    if (!apiKey) {
-      console.warn(`${LOG3} no Gemini API key set. Use 'FlowFixer: Set Gemini API Key' command.`);
-      return;
+var FlowFixerError = class extends Error {
+  name = "FlowFixerError";
+  constructor(message, cause) {
+    super(message);
+    if (cause !== void 0) {
+      this.cause = cause;
     }
-    this.genai = new GoogleGenAI({ apiKey });
-  }
-  /** Phase 1: Explain an error for a student */
-  async explainError(error) {
-    const prompt = this.buildErrorPrompt(error);
-    if (!this.genai) {
-      console.warn(`${LOG3} no API key, returning mock explanation`);
-      return this.mockErrorExplanation(error);
-    }
-    try {
-      const response = await this.genai.models.generateContent({
-        model: MODEL,
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: PHASE1_SCHEMA
-        }
-      });
-      const text = response.text;
-      if (!text) {
-        throw new Error("Gemini returned an empty response");
-      }
-      return JSON.parse(text);
-    } catch (err) {
-      console.error(`${LOG3} Gemini error explanation failed:`, err);
-      return this.mockErrorExplanation(error);
-    }
-  }
-  /** Phase 2: Explain a diff (what the AI fix changed) */
-  async explainDiff(diff2, originalError) {
-    const prompt = this.buildDiffPrompt(diff2, originalError);
-    if (!this.genai) {
-      console.warn(`${LOG3} no API key, returning mock diff explanation`);
-      return this.mockDiffExplanation();
-    }
-    try {
-      const response = await this.genai.models.generateContent({
-        model: MODEL,
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: PHASE2_SCHEMA
-        }
-      });
-      const text = response.text;
-      if (!text) {
-        throw new Error("Gemini returned an empty response");
-      }
-      return JSON.parse(text);
-    } catch (err) {
-      console.error(`${LOG3} Gemini diff explanation failed:`, err);
-      return this.mockDiffExplanation();
-    }
-  }
-  buildErrorPrompt(error) {
-    const errorMsg = error.message.trim() || "No error message \u2014 the code runs but produces incorrect results";
-    return PHASE1_PROMPT.replace("{{language}}", error.language).replace("{{filename}}", error.file).replace("{{errorMessage}}", errorMsg).replace("{{codeContext}}", error.codeContext);
-  }
-  buildDiffPrompt(diff2, originalError) {
-    return PHASE2_PROMPT.replace("{{language}}", diff2.language).replace("{{filename}}", diff2.file).replace("{{originalError}}", originalError).replace("{{diff}}", diff2.unifiedDiff);
-  }
-  mockErrorExplanation(error) {
-    return {
-      category: error.message.toLowerCase().includes("syntax") ? "Syntax Error" : error.message.toLowerCase().includes("type") ? "Runtime Error" : "Logic Error",
-      location: `${error.file}, line ${error.line}`,
-      explanation: `The error "${error.message}" means your code has a problem that prevents it from running correctly. Check the indicated line for issues.`,
-      howToFix: "Review the error message and the code at the indicated line. Look for typos, missing brackets, or undefined variables.",
-      howToPrevent: "Always check your code for common mistakes before running. Use a linter to catch issues early.",
-      bestPractices: "Use TypeScript strict mode and enable ESLint to catch potential errors before they happen."
-    };
-  }
-  mockDiffExplanation() {
-    return {
-      whatChanged: "The AI modified the code to fix the reported error.",
-      whyItFixes: "The changes address the root cause of the error by correcting the problematic code pattern.",
-      keyTakeaway: "Always understand what changed in your code and why before accepting an AI fix."
-    };
   }
 };
+var genai;
+async function initialize(secrets) {
+  const apiKey = await secrets.get("flowfixer.geminiKey");
+  if (!apiKey) {
+    throw new FlowFixerError("API key not found. Use 'FlowFixer: Set Gemini API Key' command.");
+  }
+  genai = new GoogleGenAI({ apiKey });
+  console.log(`${LOG3} initialized with Gemini model ${MODEL}`);
+}
+function isInitialized() {
+  return genai !== void 0;
+}
+async function analyzeError(request) {
+  if (!genai) {
+    throw new FlowFixerError("LLM client not initialized. Call initialize() first.");
+  }
+  const prompt = buildErrorPrompt(request);
+  try {
+    const response = await genai.models.generateContent({
+      model: MODEL,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: PHASE1_SCHEMA
+      }
+    });
+    const text = response.text;
+    if (!text) {
+      throw new FlowFixerError("Gemini returned an empty response");
+    }
+    return JSON.parse(text);
+  } catch (err) {
+    if (err instanceof FlowFixerError) throw err;
+    throw new FlowFixerError("Failed to analyze error", err);
+  }
+}
+async function analyzeDiff(request) {
+  if (!genai) {
+    throw new FlowFixerError("LLM client not initialized. Call initialize() first.");
+  }
+  const prompt = buildDiffPrompt(request);
+  try {
+    const response = await genai.models.generateContent({
+      model: MODEL,
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: PHASE2_SCHEMA
+      }
+    });
+    const text = response.text;
+    if (!text) {
+      throw new FlowFixerError("Gemini returned an empty response");
+    }
+    return JSON.parse(text);
+  } catch (err) {
+    if (err instanceof FlowFixerError) throw err;
+    throw new FlowFixerError("Failed to analyze diff", err);
+  }
+}
+function buildErrorPrompt(req) {
+  const errorMsg = req.errorMessage.trim() || "No error message \u2014 the code runs but produces incorrect results";
+  return PHASE1_PROMPT.replace("{{language}}", req.language).replace("{{filename}}", req.filename).replace("{{errorMessage}}", errorMsg).replace("{{codeContext}}", req.codeContext);
+}
+function buildDiffPrompt(req) {
+  return PHASE2_PROMPT.replace("{{language}}", req.language).replace("{{filename}}", req.filename).replace("{{originalError}}", req.originalError).replace("{{diff}}", req.diff);
+}
 var PHASE1_SCHEMA = {
   type: Type.OBJECT,
   properties: {
@@ -72702,8 +72688,11 @@ async function activate(context) {
   console.log(`${LOG8} activating...`);
   const errorListener = new ErrorListener();
   const diffEngine = new DiffEngine();
-  const llmClient = new LLMClient(context.secrets);
-  await llmClient.initialize();
+  try {
+    await initialize(context.secrets);
+  } catch {
+    console.warn(`${LOG8} LLM not initialized \u2014 set API key with 'FlowFixer: Set Gemini API Key'`);
+  }
   const mongoUri = await context.secrets.get("flowfixer.mongoUri");
   const storage = new FlowFixerStorage(context.globalState, mongoUri);
   const errorPanel = new ErrorPanelProvider(context.extensionUri);
@@ -72715,7 +72704,7 @@ async function activate(context) {
     vscode6.window.registerWebviewViewProvider(DashboardPanelProvider.viewType, dashboardPanel)
   );
   let lastError;
-  errorListener.onErrorDetected(async (error) => {
+  async function handlePhase1(error) {
     console.log(`${LOG8} Phase 1: error detected \u2014 ${error.message}`);
     lastError = error;
     diffEngine.startTracking(error.file);
@@ -72723,7 +72712,15 @@ async function activate(context) {
     statusItem.text = "$(loading~spin) FlowFixer: Analyzing error...";
     statusItem.show();
     try {
-      const explanation = await llmClient.explainError(error);
+      if (!isInitialized()) {
+        throw new FlowFixerError("No API key set");
+      }
+      const explanation = await analyzeError({
+        language: error.language,
+        filename: error.file,
+        errorMessage: error.message,
+        codeContext: error.codeContext
+      });
       errorPanel.postMessage({
         type: "showError",
         data: { ...explanation, raw: error }
@@ -72748,16 +72745,28 @@ async function activate(context) {
       console.error(`${LOG8} Phase 1 failed:`, err);
       statusItem.text = "$(error) FlowFixer: Analysis failed";
       setTimeout(() => statusItem.dispose(), 5e3);
+      if (err instanceof FlowFixerError) {
+        vscode6.window.showWarningMessage(`FlowFixer: ${err.message}`);
+      }
     }
-  });
+  }
+  errorListener.onErrorDetected((error) => handlePhase1(error));
   diffEngine.onDiffDetected(async (diff2) => {
     console.log(`${LOG8} Phase 2: diff detected in ${diff2.file}`);
     const statusItem = vscode6.window.createStatusBarItem(vscode6.StatusBarAlignment.Left, 100);
     statusItem.text = "$(loading~spin) FlowFixer: Analyzing fix...";
     statusItem.show();
     try {
+      if (!isInitialized()) {
+        throw new FlowFixerError("No API key set");
+      }
       const originalError = lastError?.message ?? "unknown error";
-      const diffExplanation = await llmClient.explainDiff(diff2, originalError);
+      const diffExplanation = await analyzeDiff({
+        language: diff2.language,
+        filename: diff2.file,
+        originalError,
+        diff: diff2.unifiedDiff
+      });
       diffPanel.postMessage({
         type: "showDiff",
         data: { ...diffExplanation, diff: diff2 }
@@ -72793,8 +72802,12 @@ async function activate(context) {
       });
       if (key) {
         await context.secrets.store("flowfixer.geminiKey", key);
-        await llmClient.initialize();
-        vscode6.window.showInformationMessage("FlowFixer: Gemini API key saved.");
+        try {
+          await initialize(context.secrets);
+          vscode6.window.showInformationMessage("FlowFixer: Gemini API key saved and connected.");
+        } catch {
+          vscode6.window.showWarningMessage("FlowFixer: Key saved but initialization failed. Check the key.");
+        }
       }
     }),
     vscode6.commands.registerCommand("flowfixer.setMongoUri", async () => {
@@ -72806,6 +72819,61 @@ async function activate(context) {
       if (uri) {
         await context.secrets.store("flowfixer.mongoUri", uri);
         vscode6.window.showInformationMessage("FlowFixer: MongoDB URI saved. Restart extension to connect.");
+      }
+    }),
+    // --- Manual trigger: analyze the current file's errors or report a logic bug ---
+    vscode6.commands.registerCommand("flowfixer.analyzeCurrentFile", async () => {
+      const editor = vscode6.window.activeTextEditor;
+      if (!editor) {
+        vscode6.window.showWarningMessage("FlowFixer: No active editor.");
+        return;
+      }
+      const doc = editor.document;
+      const diagnostics = vscode6.languages.getDiagnostics(doc.uri);
+      const errors = diagnostics.filter(
+        (d) => d.severity === vscode6.DiagnosticSeverity.Error
+      );
+      if (errors.length > 0) {
+        const diag = errors[0];
+        const line = diag.range.start.line + 1;
+        const lines = doc.getText().split("\n");
+        const start = Math.max(0, line - 11);
+        const end = Math.min(lines.length, line + 10);
+        const codeContext = lines.slice(start, end).map((l, i2) => `${start + i2 + 1} | ${l}`).join("\n");
+        const captured = {
+          message: diag.message,
+          file: doc.uri.fsPath,
+          line,
+          language: doc.languageId,
+          codeContext,
+          severity: "error",
+          source: "diagnostics",
+          timestamp: Date.now()
+        };
+        await handlePhase1(captured);
+      } else {
+        const errorMsg = await vscode6.window.showInputBox({
+          prompt: "No compiler errors found. Describe the bug (e.g., 'renders an extra item', 'TypeError: Cannot read properties of undefined')",
+          placeHolder: "What went wrong?",
+          ignoreFocusOut: true
+        });
+        if (!errorMsg) return;
+        const line = editor.selection.active.line + 1;
+        const lines = doc.getText().split("\n");
+        const start = Math.max(0, line - 11);
+        const end = Math.min(lines.length, line + 10);
+        const codeContext = lines.slice(start, end).map((l, i2) => `${start + i2 + 1} | ${l}`).join("\n");
+        const captured = {
+          message: errorMsg,
+          file: doc.uri.fsPath,
+          line,
+          language: doc.languageId,
+          codeContext,
+          severity: "error",
+          source: "terminal",
+          timestamp: Date.now()
+        };
+        await handlePhase1(captured);
       }
     })
   );
