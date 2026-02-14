@@ -73,18 +73,14 @@ export class DiffEngine implements vscode.Disposable {
 
         if (errors.length === 0) {
           // Errors cleared — a fix was applied. Debounce briefly so content settles.
+          // Capture the URI NOW so a later startTracking() call can't overwrite it.
+          const clearedUri = this.trackedUri;
           if (this.diagDebounceTimer) {
             clearTimeout(this.diagDebounceTimer);
           }
           this.diagDebounceTimer = setTimeout(() => {
             this.diagDebounceTimer = undefined;
-            const doc = vscode.workspace.textDocuments.find(
-              (d) => d.uri.fsPath === this.trackedUri
-            );
-            if (doc) {
-              console.log(`${LOG} errors cleared on ${doc.fileName} — computing diff`);
-              this.computeDiff(doc);
-            }
+            void this.computeDiffForTrackedFile(clearedUri);
           }, 500);
         }
       })
@@ -97,6 +93,12 @@ export class DiffEngine implements vscode.Disposable {
    *  Captures a snapshot of the file NOW so we have the true "before" state,
    *  even if an AI tool edits the document before the next save. */
   startTracking(fileUri: string): void {
+    // If a debounce timer is pending (fix about to be detected), don't overwrite
+    if (this.diagDebounceTimer && this.trackedUri !== fileUri) {
+      console.log(`${LOG} ignoring startTracking(${fileUri}) — pending detection for ${this.trackedUri}`);
+      return;
+    }
+
     this.tracking = true;
     this.trackedUri = fileUri;
 
@@ -107,6 +109,24 @@ export class DiffEngine implements vscode.Disposable {
     if (doc) {
       this.beforeSaveContent.set(doc.uri.toString(), doc.getText());
       console.log(`${LOG} captured initial snapshot for ${doc.fileName}`);
+    } else {
+      // If the file isn't currently in textDocuments, load it so we still have
+      // a reliable baseline when diagnostics clear.
+      const trackedAtStart = this.trackedUri;
+      void vscode.workspace
+        .openTextDocument(vscode.Uri.file(fileUri))
+        .then((opened) => {
+          if (!this.tracking || this.trackedUri !== trackedAtStart) {
+            return;
+          }
+          const key = opened.uri.toString();
+          if (!this.beforeSaveContent.has(key)) {
+            this.beforeSaveContent.set(key, opened.getText());
+            console.log(`${LOG} captured initial snapshot for ${opened.fileName}`);
+          }
+        }, (err: unknown) => {
+          console.warn(`${LOG} failed to open ${fileUri} for snapshot`, err);
+        });
     }
 
     console.log(`${LOG} now tracking changes to: ${fileUri}`);
@@ -171,6 +191,21 @@ export class DiffEngine implements vscode.Disposable {
 
     // Stop tracking after first diff capture
     this.stopTracking();
+  }
+
+  private async computeDiffForTrackedFile(filePath: string): Promise<void> {
+    let doc = vscode.workspace.textDocuments.find((d) => d.uri.fsPath === filePath);
+    if (!doc) {
+      try {
+        doc = await vscode.workspace.openTextDocument(vscode.Uri.file(filePath));
+      } catch (err) {
+        console.warn(`${LOG} failed to open ${filePath} to compute diff`, err);
+        return;
+      }
+    }
+
+    console.log(`${LOG} errors cleared on ${doc.fileName} — computing diff`);
+    this.computeDiff(doc);
   }
 
   dispose(): void {
