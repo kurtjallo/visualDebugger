@@ -229,111 +229,125 @@ SO THAT I know which type of bugs I struggle with most.
 
 ## 8. Team Roles & Responsibilities
 
-### Engineer 1: "Extension Lead" — owns the VS Code extension infrastructure
+### Engineer 1: "Extension Core" — owns extension infrastructure, error detection, diff detection, wiring
 
-**Focus:** Extension scaffold, error listening, file watching, diff engine, webview hosting, inter-panel communication.
+**Owns:** `extension.ts`, `errorListener.ts`, `diffEngine.ts`, `storage.ts`, `esbuild.js`, `package.json`, `tsconfig.json`, `panels/ErrorPanel.ts`, `panels/DiffPanel.ts`, `panels/DashboardPanel.ts`
 
-| Task | Priority | Hours | Dependencies |
-|------|----------|-------|-------------|
-| T1: Scaffold extension with `yo code` (TypeScript) + esbuild | P0 | 1h | None |
-| T2: Implement error listener (Diagnostics API + terminal output parsing) | P0 | 2h | T1 |
-| T3: Implement file watcher (onWillSave/onDidSave) for diff detection | P0 | 1.5h | T1 |
-| T4: Create webview panel host infrastructure (register panels: error, diff, dashboard) | P0 | 2h | T1 |
-| T5: Build message passing between extension host ↔ webviews (postMessage protocol) | P0 | 1.5h | T4 |
-| T6: Wire Phase 1 flow: error detected → Gemini → populate error panel | P0 | 2h | T2, T5, T17 |
-| T7: Wire Phase 2 flow: file change → diff → Gemini → populate diff panel | P0 | 2h | T3, T5, T17 |
-| T8: MongoDB Atlas integration for storing bug history | P1 | 1.5h | T6 |
-| T9: Polish extension activation, commands, status bar indicator | P2 | 1h | T7 |
-| **Total** | | **~14.5h** | |
+| Hour | Task | Priority | Files |
+|------|------|----------|-------|
+| 0–1 | T1: Scaffold extension with `yo code` (TypeScript) + esbuild | P0 | `extension.ts`, `esbuild.js`, `package.json`, `tsconfig.json` |
+| 1–3 | T2: Implement error listener (Diagnostics API + terminal output parsing) | P0 | `errorListener.ts` |
+| 3–4.5 | T3: Implement file watcher (onWillSave/onDidSave) for diff detection | P0 | `diffEngine.ts` |
+| 4.5–6 | T4: Create webview panel host + T5: postMessage protocol | P0 | `panels/ErrorPanel.ts`, `panels/DiffPanel.ts`, `panels/DashboardPanel.ts` |
+| 6–8 | T6: Wire Phase 1 flow: error detected → Gemini → populate error panel | P0 | `extension.ts` |
+| 8–10 | T7: Wire Phase 2 flow: file change → diff → Gemini → populate diff panel | P0 | `extension.ts` |
+| 10–11.5 | T8: MongoDB Atlas integration for storing bug history | P1 | `storage.ts` |
+| 11.5–14 | Bug fixes, help with integration | — | All extension files |
+| 14–16 | T9: Polish extension activation, commands, status bar indicator | P2 | `extension.ts` |
+| 16+ | End-to-end testing, bug fixes | — | — |
+| **Total** | | | **~16h active** |
 
-### Engineer 2: "UI/Webview Lead" — owns all webview panels and visual polish
+### Engineer 2: "UI / Webview" — owns all webview HTML/CSS/JS, visual design, TTS
 
-**Focus:** Error explanation panel, diff view, dashboard view, all HTML/CSS/JS inside webviews, animations.
+**Owns:** `webview/error.html`, `webview/diff.html`, `webview/dashboard.html`, `webview/styles.css`, `ttsClient.ts`, `seedData.ts`
 
-| Task | Priority | Hours | Dependencies |
-|------|----------|-------|-------------|
-| T10: Design and build Error Explanation Panel (location, explanation, fix, prevention, best practices) | P0 | 3h | T5 (message protocol ready) |
-| T11: Design and build Diff Panel (diff2html side-by-side + AI explanation card) | P0 | 3h | T5 |
-| T12: Build Bug Dashboard webview (bar chart of 3 categories, trend line, focus recommendation) | P1 | 2.5h | T5 |
-| T13: Build Quiz component inside Error Explanation Panel | P1 | 2h | T10 |
-| T14: ElevenLabs TTS integration — "read aloud" button on explanation cards | P1 | 1.5h | T10 |
-| T15: Create seed data module (15–20 realistic bug entries for dashboard demo) | P1 | 1h | T12 |
-| T16: CSS polish — consistent color scheme, dark theme compatible, smooth transitions | P2 | 2h | T10, T11, T12 |
-| **Total** | | **~15h** | |
+| Hour | Task | Priority | Files |
+|------|------|----------|-------|
+| 0–1 | T10a: Set up shared webview styles, install @vscode-elements | P0 | `webview/styles.css` |
+| 1–4 | T10: Design and build Error Explanation Panel (location, category badge, explanation, fix, prevention, best practices) | P0 | `webview/error.html` |
+| 4–7 | T11: Design and build Diff Panel (diff2html side-by-side + AI explanation card) | P0 | `webview/diff.html` |
+| 7–9.5 | T12: Build Bug Dashboard (Chart.js — bar chart of 3 categories, trend line, focus area) | P1 | `webview/dashboard.html` |
+| 9.5–10.5 | T15: Create seed data module (15–20 realistic bug entries) | P1 | `seedData.ts` |
+| 10.5–12 | T14: ElevenLabs TTS integration — "read aloud" button on explanation cards | P1 | `ttsClient.ts`, `webview/error.html` |
+| 12–14 | T13: Build Quiz component inside Error Explanation Panel | P1 | `webview/error.html` |
+| 14–16 | T16: CSS polish — dark theme, transitions, animations | P2 | `webview/styles.css` |
+| 16+ | Visual bug fixes, demo polish | — | — |
+| **Total** | | | **~16h active** |
 
-### Engineer 3: "LLM + Demo Lead" — owns prompt engineering, demo app, and presentation
+### Engineer 3: "LLM + Demo" — owns Gemini/Claude integration, prompts, demo app, presentation
 
-**Focus:** LLM prompt crafting, error explanation quality, demo React app with planted bugs, demo script, backup recording.
+**Owns:** `llmClient.ts`, `types.ts`, `demo-app/`, `docs/`
 
-| Task | Priority | Hours | Dependencies |
-|------|----------|-------|-------------|
-| T17: Set up Gemini API integration module (SDK, request/response types, error handling, Claude fallback) | P0 | 2h | None |
-| T18: Write and test Phase 1 prompt — error explanation (few-shot, structured JSON output) | P0 | 2.5h | T17 |
-| T19: Write and test Phase 2 prompt — diff explanation (few-shot, structured JSON output) | P0 | 2h | T17 |
-| T20: Build demo React app (simple UI — counter, data loader, form) | P0 | 2h | None |
-| T21: Plant 3 bugs in demo app (1 syntax, 1 logic, 1 runtime) that produce clear errors | P0 | 1.5h | T20 |
-| T22: Test full end-to-end flow: error → explanation → AI fix → diff review | P0 | 2h | T6, T7, T10, T11, T18, T19, T21 |
-| T23: Deploy demo app to DigitalOcean App Platform | P1 | 1h | T20 |
-| T24: Write demo script (minute-by-minute walkthrough for judges) | P0 | 1h | T22 |
-| T25: Record backup demo video | P1 | 1h | T22 |
-| T26: Prepare pitch deck / talking points (problem, solution, demo, impact) | P0 | 1.5h | T24 |
-| T27: Rehearse demo 3+ times with full team | P0 | 1h | T26 |
-| **Total** | | **~17.5h** | |
+| Hour | Task | Priority | Files |
+|------|------|----------|-------|
+| 0–2 | T17: Set up Gemini SDK + Claude fallback + request/response types | P0 | `llmClient.ts`, `types.ts` |
+| 2–4.5 | T18: Write and test Phase 1 prompt — error → explanation JSON (few-shot) | P0 | `llmClient.ts` |
+| 4.5–6.5 | T19: Write and test Phase 2 prompt — diff → explanation JSON (few-shot) | P0 | `llmClient.ts` |
+| 6.5–8.5 | T20: Build demo React app (simple UI — counter, data loader, form) | P0 | `demo-app/src/App.tsx`, `demo-app/src/styles.css` |
+| 8.5–10 | T21: Plant 3 bugs (1 syntax, 1 logic, 1 runtime) that produce clear errors | P0 | `BrokenSyntax.tsx`, `BrokenLogic.tsx`, `BrokenRuntime.tsx` |
+| 10–11 | T23: Deploy demo app to DigitalOcean App Platform | P1 | `demo-app/` |
+| 11–13 | T22: Test full end-to-end flow: error → explain → AI fix → diff review | P0 | — |
+| 13–14 | T24: Write demo script (minute-by-minute walkthrough) | P0 | `docs/demo-script.md` |
+| 14–15 | T25: Record backup demo video | P1 | — |
+| 15–16.5 | T26: Prepare pitch deck / talking points | P0 | `docs/pitch-notes.md` |
+| 16.5+ | T27: Rehearse demo 3+ times with full team | P0 | — |
+| **Total** | | | **~17.5h active** |
 
 ---
 
-## 9. Task Dependency Graph
+## 9. Handoff Points & Sync Schedule
+
+All 3 engineers must sync at these checkpoints:
+
+| Hour | Sync | What Must Be True | Action If Not |
+|------|------|-------------------|---------------|
+| **0** | **Kick-off** | Repo cloned, API keys distributed, roles confirmed | — |
+| **6** | **Standup** | Eng 1: panels can receive messages. Eng 2: error panel renders mock data. Eng 3: Gemini returns valid JSON. | Pair to unblock. |
+| **10** | **Integration** | Eng 3's LLM wired into Eng 1's flow, populating Eng 2's panels. Phase 1 works end-to-end. | All hands on integration. Drop P1 features if needed. |
+| **14** | **Demo dry-run #1** | Full Phase 1 + Phase 2 flow works with all 3 planted bugs | Fix blockers, simplify scope |
+| **18** | **Demo dry-run #2** | Timed 2-minute demo, polished transitions, dashboard with seed data | Cut P2 features, focus on reliability |
+| **21** | **Final rehearsal** | Full pitch + demo, no stops, backup video ready | Lock code. No more changes. |
+
+## 10. Task Dependency Graph
 
 ```
-Hour 0─2: SETUP (all together)
-├── T1:  Scaffold extension + esbuild ─────────────┐
-├── T17: Set up Gemini API module                   │
-├── T20: Build demo React app                       │
-│                                                    │
-Hour 2─6: PARALLEL TRACKS                           │
-│                                                    │
-│  Track A (Eng 1):                                  │
-│  T2 (error listener) ────────────┐               │
-│  T3 (file watcher) ──────────────┤               │
-│                                   │               │
-│  Track B (Eng 1 + Eng 2):       │               │
-│  T4 → T5 (panels + messaging) ──┤               │
-│                                   │               │
-│  Track C (Eng 2):               │               │
-│  T10 (error explanation panel) ──┤               │
-│  T11 (diff panel) ──────────────┤               │
-│                                   │               │
-│  Track D (Eng 3):               │               │
-│  T18 (Phase 1 prompt) ──────────┤               │
-│  T19 (Phase 2 prompt) ──────────┤               │
-│  T21 (plant bugs) ──────────────┤               │
-│                                   │               │
-Hour 6─10: INTEGRATION                             │
-│  T6:  Wire Phase 1 flow (Eng 1) ◄──┘             │
-│  T7:  Wire Phase 2 flow (Eng 1)                   │
-│  T12: Dashboard (Eng 2)                           │
-│  T13: Quiz component (Eng 2)                      │
-│                                                    │
-Hour 10─14: FEATURES + TESTING                      │
-│  T8:  MongoDB integration (Eng 1)                 │
-│  T14: ElevenLabs TTS (Eng 2)                      │
-│  T15: Seed data (Eng 2)                            │
-│  T22: End-to-end testing (Eng 3)                  │
-│  T23: DigitalOcean deploy (Eng 3)                 │
-│                                                    │
-Hour 14─18: POLISH + DEMO PREP                      │
-│  T9:  Extension polish (Eng 1)                    │
-│  T16: CSS polish (Eng 2)                           │
-│  T24: Demo script (Eng 3)                          │
-│  T25: Backup video (Eng 3)                         │
-│                                                    │
-Hour 18─21: FINAL POLISH                             │
-│  Bug fixes, edge cases (All)                       │
-│  T26: Pitch prep (Eng 3)                           │
-│                                                    │
-Hour 21─24: REHEARSE + SUBMIT                        │
-│  T27: Rehearse 3x (All)                            │
-│  Final testing, submit                             │
+Hour 0─2: SETUP (all 3 engineers)
+│
+│  Eng 1: T1 (scaffold extension + esbuild)
+│  Eng 2: T10a (shared styles + @vscode-elements)
+│  Eng 3: T17 (Gemini SDK + types)
+│
+Hour 2─6: PARALLEL TRACKS
+│
+│  Eng 1: T2 (error listener) → T3 (file watcher) → T4+T5 (panels + messaging)
+│  Eng 2: T10 (error explanation panel) ────────────────────────────────────────┐
+│  Eng 3: T18 (Phase 1 prompt) → T19 (Phase 2 prompt) ─────────────────────────┤
+│                                                                                │
+│  ┌─── Hour 6: STANDUP ── can panels receive messages? does LLM return JSON? ──┤
+│                                                                                │
+Hour 6─10: INTEGRATION                                                          │
+│                                                                                │
+│  Eng 1: T6 (wire Phase 1) → T7 (wire Phase 2) ◄──────────────────────────────┘
+│  Eng 2: T11 (diff panel) → T12 (dashboard)
+│  Eng 3: T20 (demo app) → T21 (plant bugs)
+│
+│  ┌─── Hour 10: INTEGRATION SYNC ── Phase 1 must work end-to-end ──┐
+│                                                                     │
+Hour 10─14: FEATURES + TESTING                                       │
+│                                                                     │
+│  Eng 1: T8 (MongoDB Atlas)                                         │
+│  Eng 2: T15 (seed data) → T14 (ElevenLabs TTS) → T13 (quiz)      │
+│  Eng 3: T23 (DigitalOcean deploy) → T22 (end-to-end testing) ◄────┘
+│
+│  ┌─── Hour 14: DEMO DRY-RUN #1 ── full flow with all 3 bugs ──┐
+│                                                                  │
+Hour 14─18: POLISH + DEMO PREP                                    │
+│                                                                  │
+│  Eng 1: T9 (extension polish) + bug fixes                       │
+│  Eng 2: T16 (CSS polish, animations)                             │
+│  Eng 3: T24 (demo script) → T25 (backup video)                  │
+│
+│  ┌─── Hour 18: DEMO DRY-RUN #2 ── timed, polished ──┐
+│                                                        │
+Hour 18─21: FINAL POLISH                                 │
+│  All: Bug fixes, edge cases                            │
+│  Eng 3: T26 (pitch prep)                               │
+│                                                        │
+│  ┌─── Hour 21: FINAL REHEARSAL ── no stops ──┐        │
+│                                                │        │
+Hour 21─24: REHEARSE + SUBMIT                    │        │
+│  All: T27 (rehearse 3x)                        │        │
+│  Final testing, submit, CODE FREEZE            │        │
 ```
 
 ---
