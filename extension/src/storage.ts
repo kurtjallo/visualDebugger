@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import type { Collection, MongoClient } from "mongodb";
 import { BugRecord } from "./types";
 
 const LOG = "[FlowFixer:Storage]";
@@ -38,8 +39,8 @@ class GlobalStateStorage implements StorageProvider {
  * Requires mongodb URI stored in context.secrets.
  */
 class MongoStorage implements StorageProvider {
-  private client: any;
-  private collection: any;
+  private client: MongoClient | null = null;
+  private collection: Collection<BugRecord> | null = null;
   private connected = false;
 
   constructor(private readonly uri: string) {}
@@ -48,10 +49,14 @@ class MongoStorage implements StorageProvider {
     if (this.connected) return true;
     try {
       const { MongoClient } = await import("mongodb");
-      this.client = new MongoClient(this.uri);
+      this.client = new MongoClient(this.uri, {
+        serverSelectionTimeoutMS: 4000,
+      });
       await this.client.connect();
       const db = this.client.db("flowfixer");
-      this.collection = db.collection("bugs");
+      this.collection = db.collection<BugRecord>("bugs");
+      await db.command({ ping: 1 });
+      await this.collection.createIndex({ id: 1 }, { unique: true });
       this.connected = true;
       console.log(`${LOG} [MongoDB] connected`);
       return true;
@@ -62,23 +67,34 @@ class MongoStorage implements StorageProvider {
   }
 
   async save(record: BugRecord): Promise<void> {
-    if (!(await this.connect())) {
+    if (!(await this.connect()) || !this.collection) {
       throw new Error("MongoDB not connected");
     }
-    await this.collection.insertOne(record);
+    await this.collection.updateOne(
+      { id: record.id },
+      { $set: record },
+      { upsert: true }
+    );
     console.log(`${LOG} [MongoDB] saved bug record: ${record.id}`);
   }
 
   async getAll(): Promise<BugRecord[]> {
-    if (!(await this.connect())) {
+    if (!(await this.connect()) || !this.collection) {
       throw new Error("MongoDB not connected");
     }
     return this.collection.find({}).sort({ timestamp: 1 }).toArray();
   }
 
+  async ping(): Promise<boolean> {
+    return this.connect();
+  }
+
   dispose(): void {
     if (this.client) {
-      this.client.close().catch(() => {});
+      void this.client.close().catch(() => {});
+      this.client = null;
+      this.collection = null;
+      this.connected = false;
     }
   }
 }
@@ -100,6 +116,34 @@ export class FlowFixerStorage implements StorageProvider {
     }
   }
 
+  setMongoUri(mongoUri?: string): void {
+    this.mongo?.dispose();
+    this.mongo = mongoUri ? new MongoStorage(mongoUri) : null;
+  }
+
+  async testMongoConnection(): Promise<boolean> {
+    if (!this.mongo) return false;
+    return this.mongo.ping();
+  }
+
+  async syncLocalToMongo(): Promise<number> {
+    if (!this.mongo) return 0;
+
+    const local = await this.globalStateStorage.getAll();
+    let synced = 0;
+
+    for (const record of local) {
+      try {
+        await this.mongo.save(record);
+        synced++;
+      } catch (err) {
+        console.warn(`${LOG} sync to MongoDB failed for ${record.id}:`, err);
+      }
+    }
+
+    return synced;
+  }
+
   async save(record: BugRecord): Promise<void> {
     // Always save to globalState
     await this.globalStateStorage.save(record);
@@ -115,15 +159,26 @@ export class FlowFixerStorage implements StorageProvider {
   }
 
   async getAll(): Promise<BugRecord[]> {
-    // Try MongoDB first for richer data
+    const local = await this.globalStateStorage.getAll();
+
+    // Try MongoDB first for richer/cross-device data
     if (this.mongo) {
       try {
-        return await this.mongo.getAll();
+        const remote = await this.mongo.getAll();
+        const merged = [...remote];
+        const seen = new Set(remote.map((bug) => bug.id));
+        for (const bug of local) {
+          if (!seen.has(bug.id)) {
+            merged.push(bug);
+          }
+        }
+        merged.sort((a, b) => a.timestamp - b.timestamp);
+        return merged;
       } catch {
         console.warn(`${LOG} MongoDB read failed, falling back to globalState`);
       }
     }
-    return this.globalStateStorage.getAll();
+    return local;
   }
 
   dispose(): void {
