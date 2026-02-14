@@ -66,7 +66,7 @@ export class DiffPanelProvider implements vscode.WebviewViewProvider {
     </div>
     <div id="diff-content" style="display:none;">
       <h3>What the AI changed</h3>
-      <pre id="diff-view" class="diff-view"></pre>
+      <div id="diff-view" class="diff-view"></div>
       <section>
         <h3>What changed</h3>
         <p id="what-changed"></p>
@@ -79,6 +79,10 @@ export class DiffPanelProvider implements vscode.WebviewViewProvider {
         <h3>Key takeaway</h3>
         <p id="key-takeaway" class="takeaway"></p>
       </section>
+      <button id="read-aloud-btn" class="btn btn--secondary" aria-label="Read diff explanation aloud">
+        Read Aloud
+      </button>
+      <p id="status-live" class="muted" aria-live="polite"></p>
     </div>
   </div>
   <script nonce="${nonce}" src="${scriptUri}"></script>

@@ -6,10 +6,12 @@ import { FlowFixerStorage } from "./storage";
 import { ErrorPanelProvider } from "./panels/ErrorPanel";
 import { DiffPanelProvider } from "./panels/DiffPanel";
 import { DashboardPanelProvider } from "./panels/DashboardPanel";
-import { CapturedError, BugRecord } from "./types";
+import { fetchTtsAudio } from "./ttsClient";
+import { CapturedError, BugRecord, WebviewToExtMessage } from "./types";
 import { getSeedBugRecords } from "./seedData";
 
 const LOG = "[FlowFixer]";
+const TTS_MIME_TYPE = "audio/mpeg";
 type StatusState =
   | "ready"
   | "needsKey"
@@ -19,25 +21,25 @@ type StatusState =
   | "diffReviewed"
   | "analysisFailed";
 
+interface MessageTarget {
+  postMessage(message: unknown): void;
+}
+
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   console.log(`${LOG} activating...`);
 
-  // --- Core services ---
   const errorListener = new ErrorListener();
   const diffEngine = new DiffEngine();
 
-  // Initialize LLM (non-fatal if no key yet)
   try {
     await initLLM(context.secrets);
   } catch {
-    console.warn(`${LOG} LLM not initialized — set API key with 'Visual Debugger: Set Gemini API Key'`);
+    console.warn(`${LOG} LLM not initialized - set API key with 'Visual Debugger: Set Gemini API Key'`);
   }
 
-  // --- Storage ---
   const mongoUri = await context.secrets.get("flowfixer.mongoUri");
   const storage = new FlowFixerStorage(context.globalState, mongoUri);
 
-  // --- Panel providers ---
   const errorPanel = new ErrorPanelProvider(context.extensionUri);
   const diffPanel = new DiffPanelProvider(context.extensionUri);
   const dashboardPanel = new DashboardPanelProvider(context.extensionUri);
@@ -48,13 +50,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.window.registerWebviewViewProvider(DashboardPanelProvider.viewType, dashboardPanel)
   );
 
-  // --- Helper: get bugs with seed data fallback ---
   async function getBugsWithFallback(): Promise<BugRecord[]> {
     const stored = await storage.getAll();
     return stored.length > 0 ? stored : getSeedBugRecords();
   }
 
-  // --- P2 polish: persistent status bar indicator ---
   const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
   statusItem.name = "Visual Debugger";
   statusItem.command = "flowfixer.showDashboard";
@@ -118,24 +118,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push({ dispose: clearResetTimer });
   updateStatus(isInitialized() ? "ready" : "needsKey");
 
-  // --- Pre-populate dashboard on activation ---
-  // Use setImmediate-style delay so the webview has time to resolve
   setTimeout(async () => {
     const bugs = await getBugsWithFallback();
     dashboardPanel.postMessage({ type: "showDashboard", data: { bugs } });
   }, 500);
 
-  // --- Track last error for Phase 2 correlation ---
   let lastError: CapturedError | undefined;
+  let lastBugId: string | undefined;
 
-  // --- Shared Phase 1 handler (used by both auto-detection and manual trigger) ---
   async function handlePhase1(error: CapturedError): Promise<void> {
-    console.log(`${LOG} Phase 1: error detected — ${error.message}`);
+    console.log(`${LOG} Phase 1: error detected - ${error.message}`);
     lastError = error;
 
-    // Start tracking file changes for Phase 2
     diffEngine.startTracking(error.file);
-
     updateStatus("analyzingError");
 
     try {
@@ -150,13 +145,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         codeContext: error.codeContext,
       });
 
-      // Send to Error Panel
       errorPanel.postMessage({
         type: "showError",
         data: { ...explanation, raw: error },
       });
 
-      // Save to storage
       const record: BugRecord = {
         id: `bug_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
         category: explanation.category,
@@ -166,8 +159,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         timestamp: Date.now(),
       };
       await storage.save(record);
+      lastBugId = record.id;
 
-      // Update dashboard
       const allBugs = await getBugsWithFallback();
       dashboardPanel.postMessage({
         type: "showDashboard",
@@ -185,10 +178,63 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   }
 
-  // ===== PHASE 1: Error detected → LLM → Error Panel =====
+  async function handleWebviewMessage(
+    source: "error" | "diff" | "dashboard",
+    target: MessageTarget,
+    message: WebviewToExtMessage
+  ): Promise<void> {
+    switch (message.type) {
+      case "ready":
+        console.log(`${LOG} ${source} panel ready`);
+        return;
+      case "quizAnswer":
+        console.log(`${LOG} quiz answered from ${source} panel: ${message.answer}`);
+        return;
+      case "requestTts": {
+        const text = message.text.trim();
+        if (!text) return;
+
+        const elevenLabsKey = await context.secrets.get("flowfixer.elevenLabsKey");
+        if (!elevenLabsKey) {
+          target.postMessage({
+            type: "ttsError",
+            data: { message: "ElevenLabs key not set. Using browser voice fallback." },
+          });
+          return;
+        }
+
+        try {
+          const base64Audio = await fetchTtsAudio(text, elevenLabsKey);
+          target.postMessage({
+            type: "playAudio",
+            data: { base64Audio, mimeType: TTS_MIME_TYPE },
+          });
+        } catch (err) {
+          console.error(`${LOG} TTS request failed:`, err);
+          target.postMessage({
+            type: "ttsError",
+            data: { message: "TTS request failed. Using browser voice fallback." },
+          });
+        }
+        return;
+      }
+    }
+  }
+
+  context.subscriptions.push(
+    errorPanel.onMessage((msg) => {
+      void handleWebviewMessage("error", errorPanel, msg);
+    }),
+    diffPanel.onMessage((msg) => {
+      void handleWebviewMessage("diff", diffPanel, msg);
+    }),
+    dashboardPanel.onMessage((msg) => {
+      void handleWebviewMessage("dashboard", dashboardPanel, msg);
+    })
+  );
+
   errorListener.onErrorDetected((error) => handlePhase1(error));
 
-  // ===== PHASE 2: Diff detected → LLM → Diff Panel =====
   diffEngine.onDiffDetected(async (diff) => {
     console.log(`${LOG} Phase 2: diff detected in ${diff.file}`);
 
@@ -207,10 +253,33 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         diff: diff.unifiedDiff,
       });
 
-      // Send to Diff Panel
       diffPanel.postMessage({
         type: "showDiff",
         data: { ...diffExplanation, diff },
+      });
+
+      const bugs = await storage.getAll();
+      const byLastId = lastBugId
+        ? bugs.find((bug) => bug.id === lastBugId)
+        : undefined;
+      const targetBug =
+        byLastId ??
+        [...bugs]
+          .reverse()
+          .find((bug) => bug.file === diff.file && bug.diffExplanation === undefined);
+
+      if (targetBug) {
+        const updated: BugRecord = {
+          ...targetBug,
+          diffExplanation,
+        };
+        await storage.update(updated);
+      }
+
+      const allBugs = await getBugsWithFallback();
+      dashboardPanel.postMessage({
+        type: "showDashboard",
+        data: { bugs: allBugs },
       });
 
       updateStatus("diffReviewed");
@@ -220,7 +289,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   });
 
-  // --- Commands ---
   context.subscriptions.push(
     vscode.commands.registerCommand("flowfixer.showErrorPanel", async () => {
       await vscode.commands.executeCommand("flowfixer.errorPanel.focus");
@@ -252,6 +320,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           updateStatus("needsKey");
           vscode.window.showWarningMessage("Visual Debugger: Key saved but initialization failed. Check the key.");
         }
+      }
+    }),
+    vscode.commands.registerCommand("flowfixer.setElevenLabsKey", async () => {
+      const key = await vscode.window.showInputBox({
+        prompt: "Enter your ElevenLabs API key",
+        password: true,
+        ignoreFocusOut: true,
+      });
+      if (key) {
+        await context.secrets.store("flowfixer.elevenLabsKey", key);
+        vscode.window.showInformationMessage("Visual Debugger: ElevenLabs API key saved.");
       }
     }),
     vscode.commands.registerCommand("flowfixer.setMongoUri", async () => {
@@ -286,8 +365,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         vscode.window.showWarningMessage("Visual Debugger: URI saved, but connection failed. Using local fallback storage.");
       }
     }),
-
-    // --- Manual trigger: analyze the current file's errors or report a logic bug ---
     vscode.commands.registerCommand("flowfixer.analyzeCurrentFile", async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
@@ -302,7 +379,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       );
 
       if (errors.length > 0) {
-        // Use the first error from diagnostics
         const diag = errors[0];
         const line = diag.range.start.line + 1;
         const lines = doc.getText().split("\n");
@@ -326,7 +402,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
         await handlePhase1(captured);
       } else {
-        // No diagnostics — prompt user for error message (logic/runtime errors)
         const errorMsg = await vscode.window.showInputBox({
           prompt: "No compiler errors found. Describe the bug (e.g., 'renders an extra item', 'TypeError: Cannot read properties of undefined')",
           placeHolder: "What went wrong?",
@@ -360,7 +435,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     })
   );
 
-  // --- Disposables ---
   context.subscriptions.push(errorListener, diffEngine, storage);
 
   console.log(`${LOG} activated successfully`);
