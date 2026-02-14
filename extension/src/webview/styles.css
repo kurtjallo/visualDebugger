@@ -480,3 +480,105 @@ code {
     color: var(--vscode-descriptionForeground);
     font-weight: 500;
 }
+
+/* ── Responsive Design (Phase 12) ──────────────────────────── */
+
+/* Ensure images and canvas are responsive */
+img,
+canvas,
+video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Chart Container Fixes */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    /* Default height */
+    overflow: hidden;
+}
+
+/* Diff Container Overflow */
+#diff-output {
+    overflow-x: auto;
+    /* Horizontal scroll for diffs */
+    max-width: 100%;
+}
+
+/* Media Query: Narrow Viewports (e.g., Side Panel or Mobile) */
+@media (max-width: 600px) {
+
+    /* Stack Dashboard Grid */
+    .dashboard-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* Stack Header Elements */
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    /* Adjust Toggle Group for narrow header */
+    .toggle-group {
+        width: 100%;
+        display: flex;
+    }
+
+    .btn-toggle {
+        flex: 1;
+        text-align: center;
+        padding: 6px 4px;
+        font-size: 0.8em;
+    }
+
+    /* Adjust Stats Grid */
+    .stats-container {
+        gap: 8px;
+    }
+
+    .stat-item {
+        /* On very small screens, 2 per row */
+        flex: 1 1 40%;
+        min-width: 80px;
+    }
+
+    .stat-value {
+        font-size: 1.5em;
+    }
+
+    /* Adjust Buttons and Controls */
+    #tts-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .voice-toggle-group {
+        width: 100%;
+        display: flex;
+    }
+
+    .voice-toggle {
+        flex: 1;
+        text-align: center;
+    }
+
+    #tts-btn {
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    /* Reduce Padding */
+    body {
+        padding: 12px;
+    }
+
+    .card {
+        padding: 12px;
+    }
+}
