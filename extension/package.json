@@ -1,9 +1,10 @@
 {
   "name": "flowfixer",
   "displayName": "Visual Debugger",
-  "description": "Visual Debugger — explains errors before the fix, reviews AI changes after",
+  "description": "Visual Debugger - explains errors before the fix, reviews AI changes after",
   "version": "0.1.0",
   "publisher": "flowfixer-team",
+  "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -132,3 +133,4 @@
     "prismjs": "^1.30.0"
   }
 }
+
