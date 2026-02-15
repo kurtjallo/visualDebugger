@@ -113,38 +113,44 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 12px;
-            margin-bottom: 16px;
-            font-size: 0.8em;
-            font-weight: 600;
+            padding: 4px 0;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            font-weight: 500;
             font-family: inherit;
             color: var(--vscode-descriptionForeground);
-            background: var(--ff-surface, rgba(255,255,255,0.03));
-            border: 1px solid var(--ff-border, rgba(255,255,255,0.08));
+            background: transparent;
+            border: none;
             cursor: pointer;
-            border-radius: var(--radius-sm, 6px);
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 0;
+            transition: color 0.15s ease;
         }
 
         .ff-back-btn::before {
             content: '\2190';
             font-size: 1.1em;
+            transition: transform 0.15s ease;
         }
 
         .ff-back-btn:hover {
-            color: var(--ff-accent, #60A5FA);
-            background: var(--ff-accent-dim, rgba(96,165,250,0.15));
-            border-color: rgba(96, 165, 250, 0.2);
-            transform: translateX(-2px);
+            color: var(--vscode-foreground);
+            background: transparent;
+            border: none;
+            transform: none;
+        }
+
+        .ff-back-btn:hover::before {
+            transform: translateX(-3px);
         }
 
         .ff-back-btn:active {
-            transform: translateX(0) scale(0.97);
+            opacity: 0.8;
+            transform: none;
         }
 
         .ff-back-btn:focus-visible {
-            outline: 2px solid var(--ff-accent, #60A5FA);
-            outline-offset: 2px;
+            outline: 1px solid var(--vscode-focusBorder);
+            outline-offset: 4px;
         }
 
         /* ── Section visibility (transitions handled by styles.css) ── */
@@ -580,6 +586,10 @@
 
         // ── Actions: update errors state ──
         function updateActionsState(data) {
+            // Don't show empty state while the loader animation is active
+            var isLoading = $('loading-skeleton').style.display !== 'none';
+            if (isLoading) return;
+
             if (data.count > 0 && data.firstError) {
                 $('errors-state').style.display = '';
                 $('empty-state').style.display = 'none';
@@ -891,9 +901,10 @@
 
         // ── Explain button ──
         $('explain-btn').addEventListener('click', function () {
-            // Show loading skeleton
+            // Show loading skeleton, hide both errors and empty states
             $('loading-skeleton').style.display = '';
             $('errors-state').style.display = 'none';
+            $('empty-state').style.display = 'none';
             if (vscode) {
                 vscode.postMessage({ type: 'explainError' });
             }
