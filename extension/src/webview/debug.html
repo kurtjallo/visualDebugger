@@ -162,6 +162,29 @@
             margin: 8px 0;
         }
 
+        /* ── Header TTS Button ── */
+        .ff-header-btn {
+            background: transparent;
+            border: none;
+            color: var(--vscode-descriptionForeground);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            margin-left: auto;
+        }
+        .ff-header-btn:hover {
+            color: var(--vscode-foreground);
+            background: var(--vscode-toolbar-hoverBackground);
+        }
+        .ff-header-btn.playing {
+            color: var(--ff-accent);
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
         /* ── Utility ── */
         .mt-8 { margin-top: 8px; }
         .mb-8 { margin-bottom: 8px; }
@@ -235,9 +258,18 @@
 
             <!-- 1. Error Location -->
             <section class="ff-section ff-section--error" id="error-section-error" aria-labelledby="error-heading-error">
-                <h2 id="error-heading-error" class="ff-heading">
-                    <span id="category-badge" class="badge"></span>
-                    <span class="text-muted text-sm" id="error-location"></span>
+                <h2 id="error-heading-error" class="ff-heading" style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="category-badge" class="badge"></span>
+                        <span class="text-muted text-sm" id="error-location"></span>
+                    </div>
+                    <button id="tts-btn" class="ff-header-btn" title="Read Aloud" aria-label="Read Aloud">
+                        <svg class="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <svg class="icon-stop" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><rect x="6" y="6" width="12" height="12"></rect></svg>
+                        <svg class="icon-loading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none; animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                    </button>
+                    <!-- Hidden status element specific to TTS -->
+                    <span id="tts-status" style="display: none;"></span>
                 </h2>
                 <p id="error-message" class="ff-body" style="font-family: var(--vscode-editor-font-family, monospace); background-color: var(--vscode-textCodeBlock-background); padding: 8px; border-radius: 3px; word-break: break-word;"></p>
                 <p class="ff-body text-muted text-sm" id="tldr-text" style="margin-top: 8px; font-weight: 600;"></p>
@@ -383,22 +415,6 @@
         </div>
     </div>
 
-    <!-- ================================================================
-         SHARED: TTS Controls (shown when error or diff content is visible)
-         ================================================================ -->
-    <div id="section-tts" class="panel-section" role="region" aria-label="Read aloud controls">
-        <div class="ff-panel">
-            <div class="ff-tts-bar" id="tts-controls" role="region" aria-label="Read aloud controls">
-                <div class="ff-voice-group" role="radiogroup" aria-label="Voice">
-                    <button class="ff-voice-btn active" id="voice-female" role="radio" aria-checked="true">Elise voice</button>
-                    <button class="ff-voice-btn" id="voice-male" role="radio" aria-checked="false" style="display:none;" disabled>Hidden</button>
-                </div>
-                <button class="ff-btn--tts" id="tts-btn" aria-label="Read explanation aloud">Read Aloud</button>
-                <span class="ff-tts-status" id="tts-status" aria-live="polite"></span>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast container -->
     <div class="ff-toast-container" id="toast-container" role="status" aria-live="polite"></div>
 
@@ -409,7 +425,6 @@
         var currentDiffData = null;
         var ttsAudio = null;
         var isSpeaking = false;
-        var selectedVoice = 'female';
         var activeView = 'actions'; // 'actions' | 'error' | 'diff'
 
         // ── VS Code API ──
@@ -424,6 +439,30 @@
         // ── Helpers ──
         function $(id) { return document.getElementById(id); }
 
+        function setTtsState(state) {
+            // state: 'idle' | 'loading' | 'playing'
+            var btn = $('tts-btn');
+            if (!btn) return;
+            var iconPlay = btn.querySelector('.icon-play');
+            var iconStop = btn.querySelector('.icon-stop');
+            var iconLoad = btn.querySelector('.icon-loading');
+            
+            if (iconPlay) iconPlay.style.display = 'none';
+            if (iconStop) iconStop.style.display = 'none';
+            if (iconLoad) iconLoad.style.display = 'none';
+
+            if (state === 'loading') {
+                if (iconLoad) iconLoad.style.display = '';
+                btn.setAttribute('aria-label', 'Loading audio...');
+            } else if (state === 'playing') {
+                if (iconStop) iconStop.style.display = '';
+                btn.setAttribute('aria-label', 'Stop reading');
+            } else {
+                if (iconPlay) iconPlay.style.display = '';
+                btn.setAttribute('aria-label', 'Read explanation aloud');
+            }
+        }
+
         function announce(msg) {
             var el = $('status-live');
             if (el) el.textContent = msg;
@@ -432,10 +471,6 @@
         function showSection(id, hasData) {
             var el = $(id);
             if (el) el.style.display = hasData ? '' : 'none';
-        }
-
-        function updateTtsStatus(text) {
-            $('tts-status').textContent = text;
         }
 
         function quizCorrectIndex(val) {
@@ -539,9 +574,8 @@
         function showPanelSection(name) {
             var prevView = activeView;
             activeView = name;
-            var ids = ['section-actions', 'section-error-explanation', 'section-diff-review', 'section-tts'];
-            var map = { actions: 'section-actions', error: 'section-error-explanation', diff: 'section-diff-review', tts: 'section-tts' };
-
+            var ids = ['section-actions', 'section-error-explanation', 'section-diff-review'];
+            
             // Slide out current panels
             ids.forEach(function (id) {
                 var el = $(id);
@@ -562,12 +596,10 @@
                 var showActions = (name === 'actions');
                 var showError = (name === 'error');
                 var showDiff = (name === 'diff');
-                var showTts = (showError || showDiff);
 
-                if (showActions) $('section-actions').classList.add('visible');
-                if (showError) $('section-error-explanation').classList.add('visible');
-                if (showDiff) $('section-diff-review').classList.add('visible');
-                if (showTts) $('section-tts').classList.add('visible');
+                if (showActions && $('section-actions')) $('section-actions').classList.add('visible');
+                if (showError && $('section-error-explanation')) $('section-error-explanation').classList.add('visible');
+                if (showDiff && $('section-diff-review')) $('section-diff-review').classList.add('visible');
             }, 50);
         }
 
@@ -754,7 +786,6 @@
             }
 
             showPanelSection('error');
-            updateTtsStatus('');
             announce('Error explanation updated.');
         }
 
@@ -821,7 +852,6 @@
             if (hasQuestion) $('check-question').textContent = data.checkQuestion;
 
             showPanelSection('diff');
-            updateTtsStatus('');
             announce('Fix explanation updated.');
         }
 
@@ -861,28 +891,23 @@
             if (ttsAudio) { ttsAudio.pause(); ttsAudio = null; }
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             isSpeaking = false;
-            updateTtsStatus('');
+            setTtsState('idle');
         }
 
         function speakWithWebSpeech(text) {
             if (!('speechSynthesis' in window) || !text) {
                 announce('Text-to-speech is not available.');
-                updateTtsStatus('');
                 return;
             }
             var u = new SpeechSynthesisUtterance(text);
-            u.rate = 0.9;      // slightly slower — calm, unhurried audiobook pace
-            u.pitch = 1.0;     // natural pitch, no distortion
-            u.volume = 0.85;   // slightly softer — gentle, not blaring
+            u.rate = 0.9;
+            u.pitch = 1.0;
+            u.volume = 0.85;
             isSpeaking = true;
-            $('tts-btn').textContent = 'Stop';
-            $('tts-btn').classList.add('ff-btn--playing');
-            updateTtsStatus('Playing...');
+            setTtsState('playing');
             u.onend = function () {
                 isSpeaking = false;
-                $('tts-btn').textContent = 'Read Aloud';
-                $('tts-btn').classList.remove('ff-btn--playing');
-                updateTtsStatus('');
+                setTtsState('idle');
             };
             window.speechSynthesis.cancel();
             window.speechSynthesis.speak(u);
@@ -910,38 +935,20 @@
             }
         });
 
-        // ── Voice toggle ──
-        $('voice-female')?.addEventListener('click', function () {
-            selectedVoice = 'female';
-            $('voice-female').classList.add('active');
-            $('voice-female').setAttribute('aria-checked', 'true');
-            if ($('voice-male')) {
-                $('voice-male').classList.remove('active');
-                $('voice-male').setAttribute('aria-checked', 'false');
-            }
-        });
-
-        $('voice-male')?.addEventListener('click', function () {
-            // Voice is intentionally locked to Elise for now.
-            selectedVoice = 'female';
-        });
-
         // ── TTS button ──
         $('tts-btn').addEventListener('click', function () {
             if (isSpeaking) {
                 stopAudio();
-                $('tts-btn').textContent = 'Read Aloud';
-                $('tts-btn').classList.remove('ff-btn--playing');
-                updateTtsStatus('');
+                setTtsState('idle');
                 return;
             }
             var text = getReadableText();
             if (!text) { announce('No explanation to read yet.'); return; }
 
             if (vscode) {
-                vscode.postMessage({ type: 'requestTts', text: text, voice: selectedVoice });
-                $('tts-btn').textContent = 'Loading...';
-                updateTtsStatus('Loading...');
+                // Hardcoded to 'female' (Elise) as requested
+                vscode.postMessage({ type: 'requestTts', text: text, voice: 'female' });
+                setTtsState('loading');
             } else {
                 speakWithWebSpeech(text);
             }
@@ -1003,36 +1010,29 @@
                 var audio = new Audio(blobUrl);
                 ttsAudio = audio;
                 isSpeaking = true;
-                $('tts-btn').textContent = 'Stop';
-                $('tts-btn').classList.add('ff-btn--playing');
-                updateTtsStatus('Playing...');
+                setTtsState('playing');
                 audio.onended = function () {
                     URL.revokeObjectURL(blobUrl);
                     ttsAudio = null; isSpeaking = false;
-                    $('tts-btn').textContent = 'Read Aloud';
-                    $('tts-btn').classList.remove('ff-btn--playing');
-                    updateTtsStatus('');
+                    setTtsState('idle');
                     announce('Audio finished.');
                 };
                 audio.onerror = function () {
                     URL.revokeObjectURL(blobUrl);
                     ttsAudio = null; isSpeaking = false;
-                    $('tts-btn').textContent = 'Read Aloud';
-                    $('tts-btn').classList.remove('ff-btn--playing');
-                    updateTtsStatus('');
+                    setTtsState('idle');
                     announce('Audio playback failed.');
                 };
                 audio.play().catch(function () {
                     URL.revokeObjectURL(blobUrl);
                     ttsAudio = null; isSpeaking = false;
-                    $('tts-btn').textContent = 'Read Aloud';
-                    updateTtsStatus('');
+                    setTtsState('idle');
                     announce('Could not play audio.');
                 });
 
             } else if (msg.type === 'ttsError') {
                 announce(msg.data.message);
-                updateTtsStatus('Using browser voice...');
+                // Fallback to browser voice
                 speakWithWebSpeech(getReadableText());
 
             } else if (msg.type === 'clear') {
