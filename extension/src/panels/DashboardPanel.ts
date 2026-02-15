@@ -5,7 +5,7 @@ import { ExtToWebviewMessage, WebviewToExtMessage } from "../types";
 const LOG = "[FlowFixer:DashboardPanel]";
 
 export class DashboardPanelProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = "flowfixer.dashboardPanel";
+  public static readonly viewType = "visualdebugger.dashboardPanel";
   private view?: vscode.WebviewView;
   private onMessageEmitter = new vscode.EventEmitter<WebviewToExtMessage>();
   readonly onMessage = this.onMessageEmitter.event;
