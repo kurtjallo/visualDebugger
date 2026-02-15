@@ -11,6 +11,7 @@ import { CapturedError, BugRecord, WebviewToExtMessage } from "./types";
 import { getSeedBugRecords } from "./seedData";
 import { loadEnv } from "./envLoader";
 import { fetchTtsAudio } from "./ttsClient";
+import { FlowFixerCodeLensProvider, SUPPORTED_LANGUAGES } from "./codeLensProvider";
 
 const LOG = "[FlowFixer]";
 const TTS_MIME_TYPE = "audio/mpeg";
@@ -70,6 +71,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.window.registerWebviewViewProvider(ErrorPanelProvider.viewType, errorPanel),
     vscode.window.registerWebviewViewProvider(DiffPanelProvider.viewType, diffPanel),
     vscode.window.registerWebviewViewProvider(DashboardPanelProvider.viewType, dashboardPanel)
+  );
+
+  // --- CodeLens provider ---
+  const codeLensProvider = new FlowFixerCodeLensProvider();
+  const codeLensSelector = SUPPORTED_LANGUAGES.map((lang) => ({ language: lang }));
+  context.subscriptions.push(
+    vscode.languages.registerCodeLensProvider(codeLensSelector, codeLensProvider),
+    codeLensProvider
   );
 
   async function getBugsWithFallback(): Promise<BugRecord[]> {
@@ -465,7 +474,44 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
         await handlePhase1(captured);
       }
-    })
+    }),
+    vscode.commands.registerCommand("flowfixer.explainCodeLensError", async (file: string, line: number, message: string) => {
+      const doc = vscode.workspace.textDocuments.find((d) => d.uri.fsPath === file);
+      const text = doc?.getText() ?? "";
+      const lines = text.split("\n");
+      const start = Math.max(0, line - 11);
+      const end = Math.min(lines.length, line + 10);
+      const codeContext = lines
+        .slice(start, end)
+        .map((l, i) => `${start + i + 1} | ${l}`)
+        .join("\n");
+
+      const captured: CapturedError = {
+        message,
+        file,
+        line,
+        language: doc?.languageId ?? "typescript",
+        codeContext,
+        severity: "error",
+        source: "diagnostics",
+        timestamp: Date.now(),
+      };
+
+      await handlePhase1(captured);
+    }),
+    vscode.commands.registerCommand("flowfixer.fixCodeLensError", async (file: string, line: number, message: string) => {
+      const action = await vscode.window.showInformationMessage(
+        "Try fixing it yourself first! Use the error explanation to understand what went wrong, then apply the suggested fix.",
+        "Show Explanation",
+        "Open File"
+      );
+      if (action === "Show Explanation") {
+        await vscode.commands.executeCommand("flowfixer.explainCodeLensError", file, line, message);
+      } else if (action === "Open File") {
+        const doc = await vscode.workspace.openTextDocument(file);
+        await vscode.window.showTextDocument(doc, { selection: new vscode.Range(line - 1, 0, line - 1, 0) });
+      }
+    }),
   );
 
   context.subscriptions.push(errorListener, diffEngine, storage);
