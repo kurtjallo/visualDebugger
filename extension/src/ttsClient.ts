@@ -1,12 +1,9 @@
 
-// ElevenLabs voice IDs — warm, natural audiobook-style voices
-const VOICES: Record<string, string> = {
-  female: "EST9Ui6982FZPSi7gCHi",
-  male:   "kg2exBr4EdzouUxINhb6",
-};
+// Locked voice for now: Elise (EST9Ui6982FZPSi7gCHi)
+const ELISE_VOICE_ID = "EST9Ui6982FZPSi7gCHi";
 
-const TTS_MODEL_ID = "eleven_turbo_v2_5";
-const TTS_OUTPUT_FORMAT = "mp3_22050_32";
+const TTS_MODEL_ID = "eleven_multilingual_v2";
+const TTS_OUTPUT_FORMAT = "mp3_44100_128";
 const TTS_REQUEST_TIMEOUT_MS = 12000;
 const MAX_TTS_RETRIES = 2;
 
@@ -21,9 +18,9 @@ function delay(ms: number): Promise<void> {
 export async function fetchTtsAudio(
   text: string,
   apiKey: string,
-  voice: "female" | "male" = "female"
+  _voice: "female" | "male" = "female"
 ): Promise<string> {
-  const voiceId = VOICES[voice] ?? VOICES.female;
+  const voiceId = ELISE_VOICE_ID;
 
   let lastError = "Unknown TTS error";
 
@@ -44,12 +41,8 @@ export async function fetchTtsAudio(
           body: JSON.stringify({
             text,
             model_id: TTS_MODEL_ID,
-            voice_settings: {
-              stability: 0.58,
-              similarity_boost: 0.78,
-              style: 0.18,
-              use_speaker_boost: true,
-            },
+            // Keep payload minimal for now so ElevenLabs uses stable defaults
+            // for Elise and avoids voice-setting mismatch/failures.
           }),
         }
       );

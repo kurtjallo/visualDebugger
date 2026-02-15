@@ -1,622 +1,516 @@
 /* ============================================================
-   FlowFixer — Shared Webview Styles (Phase 8: Polish)
-   Strictly Native: No emojis, DM Sans font.
-   Matches VS Code "Toolkit Gallery" aesthetic.
+   FlowFixer Design System
+   A warm, distinctive visual language for beginner developers.
+   Inspired by Linear, Raycast, and Notion — but uniquely ours.
    ============================================================ */
 
-/* Import DM Sans */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+/* Import Plus Jakarta Sans — geometric, warm, modern */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
-/* ── Reset & Base ──────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Design Tokens ──────────────────────────────────────────── */
 :root {
-    /* Semantic Colors for Categories (Accessible, Flat) */
-    --ff-syntax: #eebb00;
-    /* Muted Gold */
-    --ff-logic: #3794ff;
-    /* VS Code Blue */
-    --ff-runtime: #f14c4c;
-    /* VS Code Red */
-    --ff-success: #89d185;
-    /* VS Code Green */
+    /* Brand — Warm violet-to-coral gradient signature */
+    --ff-accent: #A78BFA;
+    --ff-accent-dim: rgba(167, 139, 250, 0.15);
+    --ff-accent-glow: rgba(167, 139, 250, 0.25);
+    --ff-gradient: linear-gradient(135deg, #A78BFA, #FB7185);
+    --ff-gradient-subtle: linear-gradient(135deg, rgba(167,139,250,0.12), rgba(251,113,133,0.12));
 
-    /* Spacing & Transitions */
-    --ff-gap: 16px;
-    --ff-radius: 4px;
-    /* Standard VS Code radius */
-    --ff-transition: 0.1s ease-in-out;
-    /* Snappy native feel */
+    /* Semantic — Error categories */
+    --ff-syntax: #FBBF24;
+    --ff-syntax-dim: rgba(251, 191, 36, 0.12);
+    --ff-logic: #818CF8;
+    --ff-logic-dim: rgba(129, 140, 248, 0.12);
+    --ff-runtime: #FB7185;
+    --ff-runtime-dim: rgba(251, 113, 133, 0.12);
+    --ff-success: #34D399;
+    --ff-success-dim: rgba(52, 211, 153, 0.10);
+
+    /* Surface layers */
+    --ff-surface: rgba(255, 255, 255, 0.03);
+    --ff-surface-raised: rgba(255, 255, 255, 0.05);
+    --ff-surface-overlay: rgba(255, 255, 255, 0.07);
+    --ff-border-subtle: rgba(255, 255, 255, 0.06);
+    --ff-border: rgba(255, 255, 255, 0.08);
+
+    /* Spacing scale (4px base) */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+    --sp-10: 40px;
+    --sp-12: 48px;
+
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 100px;
+
+    /* Motion — Spring-inspired cubic-bezier */
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-fast: 0.15s;
+    --duration-normal: 0.25s;
+    --duration-slow: 0.4s;
+
+    /* Type scale (Perfect Fourth — 1.333) */
+    --text-xs: 0.75rem;
+    --text-sm: 0.85rem;
+    --text-base: 0.95rem;
+    --text-md: 1.05rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 1.875rem;
 }
 
+/* ── Base ───────────────────────────────────────────────────── */
 body {
-    font-family: 'DM Sans', var(--vscode-font-family, 'Segoe UI', system-ui, sans-serif);
+    font-family: 'Plus Jakarta Sans', var(--vscode-font-family, system-ui, sans-serif);
     font-size: var(--vscode-font-size, 13px);
     color: var(--vscode-foreground);
     background-color: var(--vscode-editor-background);
-    line-height: 1.5;
-    padding: 20px;
+    line-height: 1.6;
+    padding: var(--sp-5);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle noise texture overlay */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    background-repeat: repeat;
 }
 
 a {
-    color: var(--vscode-textLink-foreground);
+    color: var(--ff-accent);
     text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-smooth);
 }
-
 a:hover {
-    color: var(--vscode-textLink-activeForeground);
+    color: #C4B5FD;
     text-decoration: underline;
+    text-decoration-color: rgba(167, 139, 250, 0.3);
+    text-underline-offset: 3px;
 }
 
-/* ── Typography ────────────────────────────────────────────── */
-h1,
-h2,
-h3,
-h4 {
+/* ── Typography ─────────────────────────────────────────────── */
+h1, h2, h3, h4 {
     color: var(--vscode-foreground);
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--sp-2);
 }
 
-h1 {
-    font-size: 1.5em;
-    letter-spacing: -0.01em;
-}
+h1 { font-size: var(--text-xl); }
+h2 { font-size: var(--text-lg); margin-bottom: var(--sp-3); }
+h3 { font-size: var(--text-md); font-weight: 650; }
+p { margin-bottom: var(--sp-3); color: var(--vscode-foreground); }
 
-h2 {
-    font-size: 1.25em;
-    margin-bottom: 12px;
-}
-
-h3 {
-    font-size: 1.1em;
-    font-weight: 600;
-}
-
-p {
-    margin-bottom: 10px;
-    color: var(--vscode-foreground);
-}
-
-.text-sm {
-    font-size: 0.9em;
-}
-
-.text-muted {
-    color: var(--vscode-descriptionForeground);
-}
+.text-sm { font-size: var(--text-sm); }
+.text-muted { color: var(--vscode-descriptionForeground); }
 
 code {
-    font-family: var(--vscode-editor-font-family, 'Consolas', monospace);
-    font-size: 0.92em;
-    background-color: var(--vscode-textCodeBlock-background);
-    padding: 2px 5px;
-    border-radius: 3px;
+    font-family: var(--vscode-editor-font-family, 'JetBrains Mono', 'Fira Code', monospace);
+    font-size: 0.9em;
+    background: var(--ff-surface-raised);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--ff-border-subtle);
 }
 
-/* ── Layout & Cards (The Toolkit Look) ────────────────────── */
+/* ── Cards ──────────────────────────────────────────────────── */
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-    border-bottom: none;
-    padding-bottom: 12px;
+    margin-bottom: var(--sp-5);
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--ff-border-subtle);
 }
 
-/* Flat, native cards */
 .card {
-    background-color: var(--vscode-editor-background);
-    /* Transparent/match editor */
-    border: 1px solid var(--vscode-widget-border);
-    border-radius: var(--ff-radius);
-    padding: 16px;
-    margin-bottom: 16px;
-    /* Optional: subtle shadow for depth, but keep it minimal */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-5);
+    margin-bottom: var(--sp-4);
+    transition: border-color var(--duration-normal) var(--ease-smooth),
+                box-shadow var(--duration-normal) var(--ease-smooth),
+                transform var(--duration-fast) var(--ease-spring);
+}
+
+/* Top highlight line — signature detail */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--sp-5);
+    right: var(--sp-5);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .card:hover {
-    border-color: var(--vscode-focusBorder);
-    /* Highlight on hover like VS Code inputs */
+    border-color: rgba(167, 139, 250, 0.2);
+    box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(167, 139, 250, 0.08);
+    transform: translateY(-1px);
 }
 
-.section {
-    margin-bottom: 16px;
-}
-
-.section:last-child {
-    margin-bottom: 0;
-}
+.section { margin-bottom: var(--sp-4); }
+.section:last-child { margin-bottom: 0; }
 
 .section-title {
-    font-size: 0.8em;
+    font-size: var(--text-xs);
     font-weight: 700;
     text-transform: uppercase;
     color: var(--vscode-descriptionForeground);
-    margin-bottom: 6px;
-    letter-spacing: 0.05em;
+    margin-bottom: var(--sp-2);
+    letter-spacing: 0.08em;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--sp-2);
 }
 
-.section-content {
-    color: var(--vscode-foreground);
-}
+.section-content { color: var(--vscode-foreground); }
 
-/* ── Badges (Flat labels) ──────────────────────────────────── */
+/* ── Badges ─────────────────────────────────────────────────── */
 .badge {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 10px;
-    /* Pill shape */
-    font-size: 0.85em;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 650;
     text-transform: capitalize;
     border: 1px solid transparent;
-    /* Reserve space for border */
+    letter-spacing: 0.02em;
 }
 
-.badge--syntax {
-    background-color: var(--vscode-badge-background);
-    color: var(--vscode-badge-foreground);
-    border-color: var(--ff-syntax);
-    /* Subtle tint */
-}
-
-/* Optional: semantic overrides if VS Code theme allows */
-/* These fallback to solid colors if variables fail */
 #category-badge[data-type="Syntax"] {
     color: var(--ff-syntax);
-    border: 1px solid var(--ff-syntax);
-    background: transparent;
+    background: var(--ff-syntax-dim);
+    border-color: rgba(251, 191, 36, 0.25);
 }
-
 #category-badge[data-type="Logic"] {
     color: var(--ff-logic);
-    border: 1px solid var(--ff-logic);
-    background: transparent;
+    background: var(--ff-logic-dim);
+    border-color: rgba(129, 140, 248, 0.25);
 }
-
 #category-badge[data-type="Runtime"] {
     color: var(--ff-runtime);
-    border: 1px solid var(--ff-runtime);
-    background: transparent;
+    background: var(--ff-runtime-dim);
+    border-color: rgba(251, 113, 133, 0.25);
 }
 
-/* ── Buttons (Standard VS Code) ────────────────────────────── */
+/* ── Buttons ────────────────────────────────────────────────── */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 6px 14px;
-    font-size: 13px;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4);
+    font-size: var(--text-sm);
     font-family: inherit;
+    font-weight: 600;
     border: 1px solid transparent;
-    border-radius: 2px;
-    /* VS Code uses sharp/small radius */
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background-color var(--ff-transition);
+    transition: all var(--duration-fast) var(--ease-spring);
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0) scale(0.98); }
+.btn:focus-visible {
+    outline: 2px solid var(--ff-accent);
+    outline-offset: 2px;
 }
 
-.btn:focus {
-    outline: 1px solid var(--vscode-focusBorder);
-    outline-offset: 1px;
-}
-
-/* Primary Action */
 .btn--primary {
-    background-color: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
+    background: var(--ff-gradient);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(167, 139, 250, 0.25);
 }
-
 .btn--primary:hover {
-    background-color: var(--vscode-button-hoverBackground);
+    box-shadow: 0 4px 16px rgba(167, 139, 250, 0.35);
 }
 
-/* Secondary Action */
 .btn--secondary {
-    background-color: var(--vscode-button-secondaryBackground);
-    color: var(--vscode-button-secondaryForeground);
+    background: var(--ff-surface-raised);
+    color: var(--vscode-foreground);
+    border-color: var(--ff-border);
 }
-
 .btn--secondary:hover {
-    background-color: var(--vscode-button-secondaryHoverBackground);
+    background: var(--ff-surface-overlay);
+    border-color: rgba(167, 139, 250, 0.2);
 }
 
-/* Voice Toggle (Segmented Control style) */
+.btn--success {
+    background: var(--ff-success) !important;
+    color: #fff !important;
+    border-color: var(--ff-success) !important;
+}
+
+/* ── Toggle Groups ──────────────────────────────────────────── */
+.toggle-group {
+    display: inline-flex;
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    padding: 2px;
+    gap: 2px;
+}
+
+.btn-toggle {
+    background: transparent;
+    color: var(--vscode-descriptionForeground);
+    border: none;
+    padding: var(--sp-1) var(--sp-3);
+    cursor: pointer;
+    font-size: var(--text-xs);
+    font-family: inherit;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: all var(--duration-fast) var(--ease-spring);
+}
+.btn-toggle:hover {
+    color: var(--vscode-foreground);
+    background: var(--ff-surface-raised);
+}
+.btn-toggle.active {
+    background: var(--ff-accent-dim);
+    color: var(--ff-accent);
+}
+
+/* Voice toggle (segmented control) */
 .voice-toggle-group {
     display: inline-flex;
-    border: 1px solid var(--vscode-widget-border);
-    border-radius: 3px;
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-sm);
     overflow: hidden;
+    padding: 2px;
 }
-
 .voice-toggle {
     background: transparent;
-    color: var(--vscode-foreground);
+    color: var(--vscode-descriptionForeground);
     border: none;
-    border-right: 1px solid var(--vscode-widget-border);
-    padding: 5px 12px;
+    padding: var(--sp-1) var(--sp-3);
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: 4px;
+    transition: all var(--duration-fast) var(--ease-smooth);
 }
-
-.voice-toggle:last-child {
-    border-right: none;
-}
-
-.voice-toggle:hover {
-    background-color: var(--vscode-list-hoverBackground);
-}
-
+.voice-toggle:hover { background: var(--ff-surface-raised); }
 .voice-toggle.active {
-    background-color: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
+    background: var(--ff-accent-dim);
+    color: var(--ff-accent);
 }
 
-/* ── Quiz (Native Form Controls) ───────────────────────────── */
+/* ── Quiz ───────────────────────────────────────────────────── */
 .quiz-options {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-top: 10px;
+    gap: var(--sp-2);
+    margin-top: var(--sp-3);
 }
 
 .quiz-option {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
-    border: 1px solid var(--vscode-widget-border);
-    background-color: var(--vscode-input-background);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
     color: var(--vscode-foreground);
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all var(--ff-transition);
+    min-height: 40px;
+    font-size: var(--text-sm);
+    transition: all var(--duration-fast) var(--ease-spring);
 }
-
 .quiz-option:hover {
-    border-color: var(--vscode-focusBorder);
+    border-color: var(--ff-accent);
+    background: var(--ff-accent-dim);
+    transform: translateX(4px);
 }
-
 .quiz-option.selected {
-    background-color: var(--vscode-list-activeSelectionBackground);
-    color: var(--vscode-list-activeSelectionForeground);
-    border-color: var(--vscode-focusBorder);
+    background: var(--ff-accent-dim);
+    border-color: var(--ff-accent);
 }
-
 .quiz-option.correct {
+    background: var(--ff-success-dim);
     border-color: var(--ff-success);
-    border-left-width: 4px;
+    border-left: 3px solid var(--ff-success);
 }
-
 .quiz-option.incorrect {
+    background: var(--ff-runtime-dim);
     border-color: var(--ff-runtime);
-    border-left-width: 4px;
+    border-left: 3px solid var(--ff-runtime);
 }
 
 .quiz-feedback {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 3px;
-    background-color: var(--vscode-textBlockQuote-background);
-    border-left: 3px solid var(--vscode-textBlockQuote-border);
-    font-size: 0.95em;
+    margin-top: var(--sp-3);
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--radius-sm);
+    background: var(--ff-surface-raised);
+    border-left: 3px solid var(--ff-accent);
+    font-size: var(--text-sm);
+    line-height: 1.7;
 }
 
-/* ── Suggested Prompt Block ─────────────────────────────────── */
+/* ── Prompt Block ───────────────────────────────────────────── */
 .prompt-block {
     font-family: var(--vscode-editor-font-family, monospace);
-    font-size: 0.85em;
-    line-height: 1.5;
-    background-color: var(--vscode-textCodeBlock-background);
-    border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
-    border-left: 3px solid rgba(6, 182, 212, 0.3);
-    border-radius: 4px;
-    padding: 12px;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
+    border-left: 3px solid var(--ff-accent);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-4);
     white-space: pre-wrap;
     word-break: break-word;
     max-height: 300px;
     overflow-y: auto;
 }
 
-.btn--success {
-    background-color: var(--ff-success, #22c55e) !important;
-    color: #fff !important;
-    border-color: var(--ff-success, #22c55e) !important;
-}
-
-/* ── Diff View (Native Editor Look) ────────────────────────── */
+/* ── Diff View ──────────────────────────────────────────────── */
 .diff-view {
     font-family: var(--vscode-editor-font-family);
     font-size: var(--vscode-editor-font-size);
-    background-color: var(--vscode-editor-background);
-    border: 1px solid var(--vscode-widget-border);
-    border-radius: 3px;
-    padding: 8px;
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-3);
     overflow-x: auto;
     white-space: pre;
 }
+.diff-add { color: var(--ff-success); }
+.diff-del { color: var(--ff-runtime); }
+.diff-meta { color: var(--vscode-descriptionForeground); }
 
-.diff-add {
-    color: var(--vscode-gitDecoration-addedResourceForeground);
-}
-
-.diff-del {
-    color: var(--vscode-gitDecoration-deletedResourceForeground);
-}
-
-.diff-meta {
-    color: var(--vscode-descriptionForeground);
-}
-
-/* Prism Token Overrides for High Contrast */
-.token.comment {
-    color: #6a9955;
-}
-
-.token.keyword {
-    color: #569cd6;
-}
-
-.token.string {
-    color: #ce9178;
-}
-
-/* ── Dashboard Stats (Flat) ────────────────────────────────── */
+/* ── Dashboard ──────────────────────────────────────────────── */
 .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 20px;
-}
-
-.stat-card {
-    background-color: var(--vscode-editor-background);
-    border: 1px solid var(--vscode-widget-border);
-    border-radius: 4px;
-    padding: 16px;
-    text-align: center;
-}
-
-.stat-value {
-    font-size: 2em;
-    font-weight: 300;
-    color: var(--vscode-foreground);
-    margin-bottom: 4px;
-    display: block;
-}
-
-.stat-label {
-    font-size: 0.85em;
-    color: var(--vscode-descriptionForeground);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-/* Chart Container */
-.chart-container {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    margin-top: 10px;
-}
-
-/* Focus Area Highlight */
-.focus-area {
-    background-color: var(--vscode-list-hoverBackground);
-    border: 1px solid var(--vscode-focusBorder);
-    border-radius: 4px;
-    padding: 12px;
-}
-
-.focus-area h3 {
-    margin: 0 0 4px 0;
-    font-size: 0.9em;
-    color: var(--vscode-textLink-foreground);
-}
-
-/* Animation Utilities (Subtle) */
-.slide-in {
-    animation: fadeIn 0.15s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(2px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ── Generic Toggles ───────────────────────────────────────── */
-.toggle-group {
-    display: inline-flex;
-    border: 1px solid var(--vscode-widget-border);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.btn-toggle {
-    background: transparent;
-    color: var(--vscode-foreground);
-    border: none;
-    border-right: 1px solid var(--vscode-widget-border);
-    padding: 4px 10px;
-    cursor: pointer;
-    font-size: 0.85em;
-    font-family: inherit;
-    transition: background-color var(--ff-transition);
-}
-
-.btn-toggle:last-child {
-    border-right: none;
-}
-
-.btn-toggle:hover {
-    background-color: var(--vscode-list-hoverBackground);
-}
-
-.btn-toggle.active {
-    background-color: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
-}
-
-/* ── Stats Grid (Responsive) ───────────────────────────────── */
-.stats-container {
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 12px;
+    flex-direction: column;
+    gap: var(--sp-4);
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--sp-3);
     text-align: center;
 }
 
 .stat-item {
-    flex: 1;
-    min-width: 80px;
-    /* Force wrap if too small */
+    padding: var(--sp-3) var(--sp-2);
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--duration-fast) var(--ease-smooth);
 }
+.stat-item:hover { border-color: rgba(167, 139, 250, 0.2); }
 
 .stat-value {
-    font-size: 1.8em;
-    font-weight: 700;
-    margin-bottom: 4px;
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 2px;
     color: var(--vscode-foreground);
+    display: block;
 }
 
 .stat-label {
-    font-size: 0.85em;
+    font-size: var(--text-xs);
     color: var(--vscode-descriptionForeground);
-    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
 }
 
-/* ── Responsive Design (Phase 12) ──────────────────────────── */
-
-/* Ensure images and canvas are responsive */
-img,
-canvas,
-video {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Chart Container Fixes */
 .chart-container {
     position: relative;
     width: 100%;
     height: 200px;
-    /* Default height */
     overflow: hidden;
 }
 
-/* Diff Container Overflow */
-#diff-output {
-    overflow-x: auto;
-    /* Horizontal scroll for diffs */
-    max-width: 100%;
-}
+/* ── Responsive ─────────────────────────────────────────────── */
+img, canvas, video { max-width: 100%; height: auto; }
 
-/* Media Query: Narrow Viewports (e.g., Side Panel or Mobile) */
+#diff-output { overflow-x: auto; max-width: 100%; }
+
 @media (max-width: 600px) {
-
-    /* Stack Dashboard Grid */
-    .dashboard-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    /* Stack Header Elements */
-    .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    /* Adjust Toggle Group for narrow header */
-    .toggle-group {
-        width: 100%;
-        display: flex;
-    }
-
-    .btn-toggle {
-        flex: 1;
-        text-align: center;
-        padding: 6px 4px;
-        font-size: 0.8em;
-    }
-
-    /* Adjust Stats Grid */
-    .stats-container {
-        gap: 8px;
-    }
-
-    .stat-item {
-        /* On very small screens, 2 per row */
-        flex: 1 1 40%;
-        min-width: 80px;
-    }
-
-    .stat-value {
-        font-size: 1.5em;
-    }
-
-    /* Adjust Buttons and Controls */
-    #tts-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .voice-toggle-group {
-        width: 100%;
-        display: flex;
-    }
-
-    .voice-toggle {
-        flex: 1;
-        text-align: center;
-    }
-
-    #tts-btn {
-        width: 100%;
-        margin-top: 8px;
-    }
-
-    /* Reduce Padding */
-    body {
-        padding: 12px;
-    }
-
-    .card {
-        padding: 12px;
-    }
+    .dashboard-grid { gap: var(--sp-3); }
+    .card-header { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
+    .toggle-group { width: 100%; display: flex; }
+    .btn-toggle { flex: 1; text-align: center; }
+    .stats-container { grid-template-columns: repeat(2, 1fr); gap: var(--sp-2); }
+    .stat-value { font-size: var(--text-xl); }
+    #tts-controls { flex-direction: column; align-items: stretch; }
+    .voice-toggle-group { width: 100%; display: flex; }
+    .voice-toggle { flex: 1; text-align: center; }
+    #tts-btn { width: 100%; margin-top: var(--sp-2); }
+    body { padding: var(--sp-3); }
+    .card { padding: var(--sp-3); }
 }
+
+/* ── Animations ─────────────────────────────────────────────── */
+.slide-in {
+    animation: ffSlideUp 0.35s var(--ease-out) both;
+}
+
+@keyframes ffSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Focus area highlight */
+.focus-area {
+    background: var(--ff-accent-dim);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+    border-radius: var(--radius-sm);
+    padding: var(--sp-3);
+}
+.focus-area h3 {
+    margin: 0 0 var(--sp-1) 0;
+    font-size: var(--text-sm);
+    color: var(--ff-accent);
+}
+
+/* Prism Token Overrides */
+.token.comment { color: #6a9955; }
+.token.keyword { color: #c084fc; }
+.token.string { color: #FB7185; }
 
 /* ================================================================
-   Diff Panel v2 — Accessibility-First Explanation UI
-   Designed for learners with ADHD and learning disabilities.
-   Color-blind safe, keyboard navigable, reduced-motion aware.
+   Debug Panel — Explanation & Diff Review UI
+   Designed for learners. Accessible, animated, distinctive.
    ================================================================ */
 
-/* ── Accessibility: Reduced Motion ────────────────────────── */
+/* ── Accessibility ──────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
@@ -624,200 +518,233 @@ video {
     }
 }
 
-/* ── Accessibility: Focus Visible ─────────────────────────── */
 *:focus-visible {
-    outline: 2px solid var(--vscode-focusBorder, #007acc);
+    outline: 2px solid var(--ff-accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
-/* ── Screen reader only ───────────────────────────────────── */
 .sr-only {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+    clip: rect(0,0,0,0);
     border: 0;
 }
 
-/* ── Layout ─────────────────────────────────────────────── */
-.ff-panel {
-    max-width: 580px;
-    margin: 0 auto;
-    padding: 12px 8px;
+.sr-only--focusable:focus {
+    position: static;
+    width: auto; height: auto;
+    padding: var(--sp-2) var(--sp-4);
+    margin: 0; overflow: visible;
+    clip: auto;
+    display: inline-block;
+    background: var(--ff-accent);
+    color: #fff;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    z-index: 100;
 }
 
-/* ── Empty State ────────────────────────────────────────── */
+/* ── Panel Layout ───────────────────────────────────────────── */
+.ff-panel {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: var(--sp-3) var(--sp-2);
+}
+
+/* ── Empty State ────────────────────────────────────────────── */
 .ff-empty {
     text-align: center;
-    padding: 48px 20px;
+    padding: var(--sp-12) var(--sp-5);
 }
 
-.ff-empty-icon {
-    font-size: 2.8em;
-    margin-bottom: 16px;
-    line-height: 1;
-}
+.ff-empty-svg { margin-bottom: var(--sp-5); }
 
 .ff-empty-heading {
-    font-size: 1.3em;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--vscode-foreground);
-    margin-bottom: 10px;
+    margin-bottom: var(--sp-3);
+    letter-spacing: -0.02em;
 }
 
 .ff-empty-body {
-    font-size: 0.95em;
-    line-height: 1.7;
+    font-size: var(--text-sm);
+    line-height: 1.8;
     color: var(--vscode-descriptionForeground);
-    max-width: 320px;
+    max-width: 280px;
     margin: 0 auto;
 }
 
-/* ── Success Banner (No more errors) ────────────────────── */
+/* ── Success Banner ─────────────────────────────────────────── */
 .ff-success-banner {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    margin-bottom: 16px;
-    border-radius: 4px;
-    background: rgba(137, 209, 133, 0.08);
-    border: 1px solid rgba(137, 209, 133, 0.25);
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-4);
+    margin-bottom: var(--sp-5);
+    border-radius: var(--radius-sm);
+    background: var(--ff-success-dim);
+    border: 1px solid rgba(52, 211, 153, 0.2);
 }
 
 .ff-success-dot {
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     border-radius: 50%;
-    background: var(--ff-success, #89d185);
+    background: var(--ff-success);
     flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+    animation: ffSuccessPulse 2s ease-in-out infinite;
+}
+
+@keyframes ffSuccessPulse {
+    0%, 100% { box-shadow: 0 0 4px rgba(52, 211, 153, 0.3); }
+    50% { box-shadow: 0 0 12px rgba(52, 211, 153, 0.5); }
 }
 
 .ff-success-text {
-    font-size: 0.85em;
-    font-weight: 600;
-    color: var(--ff-success, #89d185);
-    letter-spacing: 0.2px;
+    font-size: var(--text-sm);
+    font-weight: 650;
+    color: var(--ff-success);
+    letter-spacing: 0.02em;
 }
 
-/* ── File Context Bar ───────────────────────────────────── */
+/* ── File Context Bar ───────────────────────────────────────── */
 .ff-file-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    background: var(--vscode-textCodeBlock-background, rgba(127, 127, 127, 0.1));
-    border: 1px solid var(--vscode-widget-border);
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+    margin-bottom: var(--sp-5);
+    border-radius: var(--radius-sm);
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border-subtle);
 }
 
 .ff-file-name {
-    font-family: var(--vscode-editor-font-family, 'Consolas', monospace);
-    font-size: 0.85em;
+    font-family: var(--vscode-editor-font-family, monospace);
+    font-size: var(--text-xs);
     color: var(--vscode-descriptionForeground);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* ── Section Base ───────────────────────────────────────── */
+/* ── Sections — Dot + accent line indicator ─────────────────── */
 .ff-section {
-    margin-bottom: 20px;
-    padding: 14px;
-    padding-left: 16px;
-    border-left: 3px solid transparent;
-    border-radius: 0;
+    position: relative;
+    margin-bottom: var(--sp-5);
+    padding: var(--sp-4) var(--sp-4) var(--sp-4) var(--sp-6);
+    border-radius: var(--radius-sm);
     background: transparent;
-    border-top: none;
-    border-right: none;
-    border-bottom: 1px solid var(--vscode-widget-border);
-    transition: border-color var(--ff-transition);
+    border: none;
+    transition: background var(--duration-normal) var(--ease-smooth);
 }
 
-.ff-section:last-child {
-    border-bottom: none;
+/* Accent dot — our signature section marker */
+.ff-section::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: var(--sp-5);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ff-accent);
+    opacity: 0.5;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
 }
 
-.ff-section:focus-within {
-    /* intentionally no box-shadow for lighter feel */
+/* Vertical connector line */
+.ff-section::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: calc(var(--sp-5) + 10px);
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--ff-accent-dim), transparent);
+    border-radius: 1px;
 }
 
-/* Staggered entrance */
+.ff-section:last-child::after { display: none; }
+
+.ff-section:hover::before { opacity: 0.9; }
+
+/* Staggered entrance — spring-based */
 .ff-section {
-    animation: ffSlideIn 0.15s ease-out backwards;
+    animation: ffSectionIn 0.4s var(--ease-out) both;
+}
+.ff-section:nth-child(2) { animation-delay: 0.05s; }
+.ff-section:nth-child(3) { animation-delay: 0.1s; }
+.ff-section:nth-child(4) { animation-delay: 0.15s; }
+.ff-section:nth-child(5) { animation-delay: 0.2s; }
+.ff-section:nth-child(6) { animation-delay: 0.25s; }
+.ff-section:nth-child(7) { animation-delay: 0.3s; }
+
+@keyframes ffSectionIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.ff-section:nth-child(2) { animation-delay: 0.03s; }
-.ff-section:nth-child(3) { animation-delay: 0.06s; }
-.ff-section:nth-child(4) { animation-delay: 0.09s; }
-.ff-section:nth-child(5) { animation-delay: 0.12s; }
-.ff-section:nth-child(6) { animation-delay: 0.15s; }
+/* Section accent colors via dot */
+.ff-section--error::before { background: var(--ff-runtime); }
+.ff-section--explanation::before { background: var(--ff-accent); }
+.ff-section--fix::before { background: var(--ff-success); }
+.ff-section--prevent::before,
+.ff-section--practices::before { background: var(--ff-logic); }
+.ff-section--prompt::before { background: var(--ff-accent); }
+.ff-section--quiz::before { background: var(--ff-syntax); }
+.ff-section--summary::before { background: var(--ff-accent); }
+.ff-section--why::before { background: var(--ff-logic); }
+.ff-section--takeaway::before { background: var(--ff-success); }
+.ff-section--question::before { background: var(--ff-syntax); }
 
-@keyframes ffSlideIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+.ff-section--todo::before {
+    background: transparent;
+    border: 2px solid var(--ff-accent);
+    width: 8px; height: 8px;
+    left: 5px;
 }
 
-/* ── Section Accent Colors (unified cyan) ────────────────── */
-.ff-section--summary,
-.ff-section--why,
-.ff-section--takeaway,
-.ff-section--question,
-.ff-section--error,
-.ff-section--explanation,
-.ff-section--fix,
-.ff-section--prevent,
-.ff-section--practices,
-.ff-section--prompt,
-.ff-section--quiz { border-left-color: rgba(6, 182, 212, 0.3); }
-
-.ff-section--todo { border-left-color: rgba(6, 182, 212, 0.3); border-left-style: dashed; }
-
-/* ── TL;DR (error panel) ─────────────────────────────────── */
-.ff-tldr {
-    font-weight: 600;
-    font-size: 1em;
-    margin-top: 8px;
-    color: var(--vscode-foreground);
-}
-
-/* ── Quiz touch targets ──────────────────────────────────── */
-.quiz-option {
-    min-height: 36px;
-}
-
-/* ── Headings ───────────────────────────────────────────── */
+/* ── Headings ───────────────────────────────────────────────── */
 .ff-heading {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 1em;
+    gap: var(--sp-2);
+    font-size: var(--text-base);
     font-weight: 700;
     color: var(--vscode-foreground);
-    margin-bottom: 10px;
-    letter-spacing: 0.2px;
-    min-height: 36px;
+    margin-bottom: var(--sp-3);
+    letter-spacing: -0.01em;
+    min-height: 32px;
 }
 
-.ff-icon {
-    font-size: 1.15em;
-    flex-shrink: 0;
-}
+.ff-icon { font-size: 1.1em; flex-shrink: 0; }
 
-/* ── Body Text ──────────────────────────────────────────── */
+/* ── Body Text ──────────────────────────────────────────────── */
 .ff-body {
-    font-size: 0.95em;
-    line-height: 1.75;
+    font-size: var(--text-sm);
+    line-height: 1.8;
     color: var(--vscode-foreground);
-    max-width: 65ch;
+    max-width: 58ch;
 }
 
-/* ── Checklist ──────────────────────────────────────────── */
+/* ── TL;DR ──────────────────────────────────────────────────── */
+.ff-tldr {
+    font-weight: 700;
+    font-size: var(--text-base);
+    margin-top: var(--sp-2);
+    background: var(--ff-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.6;
+}
+
+/* ── Checklist ──────────────────────────────────────────────── */
 .ff-checklist {
     list-style: none;
     padding: 0;
@@ -827,400 +754,239 @@ video {
 .ff-check-item {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 10px 6px;
-    border-radius: 4px;
-    transition: background var(--ff-transition);
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-2);
+    border-radius: var(--radius-sm);
+    transition: background var(--duration-fast) var(--ease-smooth);
     min-height: 40px;
 }
-
 .ff-check-item:hover {
-    background: var(--vscode-list-hoverBackground);
+    background: var(--ff-surface);
 }
 
+/* Custom checkbox */
 .ff-checkbox {
-    width: 20px;
-    height: 20px;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
     margin-top: 2px;
     flex-shrink: 0;
     cursor: pointer;
-    accent-color: #06b6d4;
+    border: 2px solid var(--ff-border);
+    border-radius: var(--radius-sm);
+    background: var(--ff-surface);
+    transition: all var(--duration-fast) var(--ease-spring);
+    position: relative;
+}
+.ff-checkbox:hover {
+    border-color: var(--ff-accent);
+    background: var(--ff-accent-dim);
+}
+.ff-checkbox:checked {
+    background: var(--ff-accent);
+    border-color: var(--ff-accent);
+}
+.ff-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 6px;
+    width: 5px; height: 9px;
+    border: 2px solid #fff;
+    border-top: none; border-left: none;
+    transform: rotate(45deg);
+    animation: ffCheckPop 0.2s var(--ease-spring);
+}
+
+@keyframes ffCheckPop {
+    from { transform: rotate(45deg) scale(0); }
+    to { transform: rotate(45deg) scale(1); }
 }
 
 .ff-check-label {
-    font-size: 0.93em;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--vscode-foreground);
     cursor: pointer;
-    transition: opacity var(--ff-transition);
+    transition: all var(--duration-fast) var(--ease-smooth);
 }
 
-.ff-checkbox:checked+.ff-check-label {
+.ff-checkbox:checked + .ff-check-label {
     text-decoration: line-through;
-    opacity: 0.55;
+    opacity: 0.45;
+    color: var(--vscode-descriptionForeground);
 }
 
 .ff-check-done {
-    font-size: 0.88em;
-    font-weight: 600;
-    color: #06b6d4;
-    padding: 6px 0 0;
+    font-size: var(--text-sm);
+    font-weight: 650;
+    color: var(--ff-accent);
+    padding: var(--sp-2) 0 0;
 }
 
-/* ── Callout (Key Takeaway) ─────────────────────────────── */
+/* ── Callout (Key Takeaway) ─────────────────────────────────── */
 .ff-callout {
-    font-size: 1em;
-    font-style: italic;
+    font-size: var(--text-base);
+    font-style: normal;
     font-weight: 500;
-    line-height: 1.7;
+    line-height: 1.8;
     color: var(--vscode-foreground);
-    padding: 12px 14px;
-    border-radius: 4px;
-    background: rgba(6, 182, 212, 0.06);
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    padding: var(--sp-4);
+    border-radius: var(--radius-sm);
+    background: var(--ff-gradient-subtle);
+    border: 1px solid rgba(167, 139, 250, 0.15);
+    position: relative;
 }
 
-/* ── Question ───────────────────────────────────────────── */
+/* Callout accent line on left */
+.ff-callout::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: var(--sp-3);
+    bottom: var(--sp-3);
+    width: 3px;
+    border-radius: 2px;
+    background: var(--ff-gradient);
+}
+
+/* ── Question ───────────────────────────────────────────────── */
 .ff-question {
-    font-size: 1em;
+    font-size: var(--text-base);
     font-weight: 500;
-    line-height: 1.7;
+    line-height: 1.8;
     color: var(--vscode-foreground);
 }
 
-/* ── TTS Controls ───────────────────────────────────────── */
+/* ── TTS Controls ───────────────────────────────────────────── */
 .ff-tts-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--sp-3);
     flex-wrap: wrap;
-    padding-top: 8px;
-    margin-top: 4px;
-    border-top: 1px solid var(--vscode-widget-border);
+    padding-top: var(--sp-3);
+    margin-top: var(--sp-2);
+    border-top: 1px solid var(--ff-border-subtle);
 }
 
 .ff-voice-group {
     display: inline-flex;
-    border: 1px solid var(--vscode-widget-border);
-    border-radius: 3px;
+    background: var(--ff-surface);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-sm);
     overflow: hidden;
+    padding: 2px;
 }
 
 .ff-voice-btn {
-    padding: 6px 14px;
-    font-size: 0.85em;
+    padding: var(--sp-2) var(--sp-3);
+    font-size: var(--text-xs);
     font-family: inherit;
+    font-weight: 600;
     border: none;
     background: transparent;
-    color: var(--vscode-foreground);
+    color: var(--vscode-descriptionForeground);
     cursor: pointer;
-    transition: background var(--ff-transition);
-    min-height: 36px;
+    border-radius: 4px;
+    transition: all var(--duration-fast) var(--ease-smooth);
+    min-height: 32px;
 }
-
-.ff-voice-btn:not(:first-child) {
-    border-left: 1px solid var(--vscode-widget-border);
-}
-
-.ff-voice-btn:hover {
-    background: var(--vscode-list-hoverBackground);
-}
-
+.ff-voice-btn:hover { background: var(--ff-surface-raised); color: var(--vscode-foreground); }
 .ff-voice-btn.active {
-    background: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
+    background: var(--ff-accent-dim);
+    color: var(--ff-accent);
 }
 
 .ff-btn--tts {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 14px;
-    border: 1px solid transparent;
-    border-radius: 2px;
-    font-size: 13px;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
     font-family: inherit;
+    font-weight: 600;
     cursor: pointer;
-    background: var(--vscode-button-secondaryBackground);
-    color: var(--vscode-button-secondaryForeground);
-    transition: background var(--ff-transition);
-    min-height: 36px;
+    background: var(--ff-surface);
+    color: var(--vscode-foreground);
+    transition: all var(--duration-fast) var(--ease-spring);
+    min-height: 32px;
 }
-
 .ff-btn--tts:hover {
-    background: var(--vscode-button-secondaryHoverBackground);
+    border-color: var(--ff-accent);
+    background: var(--ff-accent-dim);
+    transform: translateY(-1px);
 }
+.ff-btn--tts:active { transform: translateY(0) scale(0.98); }
 
 .ff-btn--playing {
-    animation: ffTtsGlow 1.5s ease-in-out infinite;
+    background: var(--ff-accent-dim);
+    border-color: var(--ff-accent);
+    animation: ffPlayingPulse 2s ease-in-out infinite;
 }
 
-@keyframes ffTtsGlow {
-    0%, 100% { box-shadow: 0 0 4px rgba(0, 120, 212, 0.3); }
-    50% { box-shadow: 0 0 12px rgba(0, 120, 212, 0.6); }
+@keyframes ffPlayingPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.2); }
+    50% { box-shadow: 0 0 0 6px rgba(167, 139, 250, 0); }
 }
 
-/* ── Skip Link (Focusable SR-Only) ─────────────────────── */
-.sr-only--focusable:focus {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: 8px 16px;
-    margin: 0;
-    overflow: visible;
-    clip: auto;
-    display: inline-block;
-    background: var(--vscode-button-background);
-    color: var(--vscode-button-foreground);
-    border-radius: 2px;
-    font-size: 13px;
-    z-index: 100;
-}
-
-/* ── Disclosure (native <details>) ─────────────────────── */
-.ff-disclosure {
-    border: none;
-    background: none;
-}
-
-.ff-disclosure-trigger {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1em;
-    font-weight: 700;
-    color: var(--vscode-foreground);
-    cursor: pointer;
-    padding: 4px 0;
-    list-style: none;
-    letter-spacing: 0.2px;
-    min-height: 36px;
-}
-
-.ff-disclosure-trigger::-webkit-details-marker {
-    display: none;
-}
-
-.ff-disclosure-trigger::marker {
-    display: none;
-    content: '';
-}
-
-.ff-disclosure-trigger:focus-visible {
-    outline: 2px solid var(--vscode-focusBorder, #007acc);
-    outline-offset: 2px;
-    border-radius: 2px;
-}
-
-.ff-disclosure-title {
-    flex: 1;
-}
-
-.ff-disclosure-hint {
-    font-size: 0.8em;
-    font-weight: 400;
-    color: var(--vscode-descriptionForeground);
-    margin-left: auto;
-    white-space: nowrap;
-}
-
-details[open] > .ff-disclosure-trigger .ff-disclosure-hint {
-    /* hint text changes via JS, but ensure it's styled consistently */
-}
-
-.ff-disclosure-body {
-    padding: 10px 0 4px 0;
-    animation: ffDisclosureOpen 0.15s ease-out;
-}
-
-@keyframes ffDisclosureOpen {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Sticky Card (What To Do Next) ─────────────────────── */
-.ff-sticky-card {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--vscode-editor-background);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--vscode-focusBorder);
-    border-left: 3px dashed rgba(6, 182, 212, 0.3);
-    border-radius: 0 4px 4px 0;
-    margin-bottom: 22px;
-    padding: 16px;
-    padding-left: 18px;
-}
-
-/* ── File Icon ─────────────────────────────────────────── */
-.ff-file-icon {
-    font-size: 1em;
-    flex-shrink: 0;
-}
-
-/* ── TTS Status ────────────────────────────────────────── */
 .ff-tts-status {
-    font-size: 0.85em;
+    font-size: var(--text-xs);
     color: var(--vscode-descriptionForeground);
     font-style: italic;
     min-height: 1.2em;
 }
 
-/* ── Responsive: Medium widths (ff-specific) ───────────── */
-@media (max-width: 600px) {
-    .ff-tts-bar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .ff-voice-group {
-        width: 100%;
-        display: flex;
-    }
-    .ff-voice-btn {
-        flex: 1;
-        text-align: center;
-    }
-    .ff-btn--tts {
-        width: 100%;
-    }
-}
+/* ── Disclosure ─────────────────────────────────────────────── */
+.ff-disclosure { border: none; background: none; }
 
-/* ── Responsive: Narrow widths ──────────────────────────── */
-@media (max-width: 360px) {
-    .ff-panel { padding: 4px 0; }
-    .ff-section { padding: 12px; padding-left: 14px; margin-bottom: 16px; }
-    .ff-tts-bar { flex-direction: column; align-items: stretch; }
-    .ff-sticky-card {
-        position: relative;
-        box-shadow: none;
-    }
-    .ff-disclosure-hint {
-        display: none;
-    }
-}
-
-/* ================================================================
-   UI/UX Polish — Animations, Micro-interactions, Gamification
-   ================================================================ */
-
-/* ── Step 1: Animated Gradient Border on Error Card ─────────── */
-@property --ff-gradient-angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-}
-
-.ff-section--error {
-    position: relative;
-    border-left: none;
-    border-bottom: none;
-    border: 2px solid transparent;
-    border-radius: 6px;
-    background:
-        linear-gradient(var(--vscode-editor-background), var(--vscode-editor-background)) padding-box,
-        conic-gradient(from var(--ff-gradient-angle), var(--ff-syntax), var(--ff-logic), var(--ff-runtime), var(--ff-syntax)) border-box;
-    animation: ffGradientSpin 4s linear infinite;
-}
-
-@keyframes ffGradientSpin {
-    to { --ff-gradient-angle: 360deg; }
-}
-
-/* Fallback for browsers without @property support */
-@supports not (background: conic-gradient(red, blue)) {
-    .ff-section--error {
-        border: 2px solid var(--ff-runtime);
-        background: transparent;
-        animation: none;
-    }
-}
-
-/* Step 14: Gradient top bar accent */
-.ff-section--error::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    border-radius: 6px 6px 0 0;
-    background: linear-gradient(90deg, var(--ff-syntax), var(--ff-logic), var(--ff-runtime));
-    opacity: 0.7;
-}
-
-/* ── Step 2: Skeleton Loading State ────────────────────────── */
-.ff-skeleton {
+.ff-disclosure-trigger {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 20px 8px;
-}
-
-.ff-skeleton-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ff-skeleton-line {
-    height: 14px;
-    border-radius: 4px;
-    background: linear-gradient(
-        90deg,
-        var(--vscode-textCodeBlock-background, rgba(127,127,127,0.1)) 25%,
-        rgba(127,127,127,0.2) 50%,
-        var(--vscode-textCodeBlock-background, rgba(127,127,127,0.1)) 75%
-    );
-    background-size: 200% 100%;
-    animation: ffShimmer 1.5s ease-in-out infinite;
-}
-
-.ff-skeleton-line--heading {
-    height: 20px;
-    width: 50%;
-    margin-bottom: 4px;
-}
-
-.ff-skeleton-line--short { width: 65%; }
-.ff-skeleton-line--medium { width: 85%; }
-.ff-skeleton-line--full { width: 100%; }
-
-@keyframes ffShimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* ── Step 3: Typewriter Cursor ─────────────────────────────── */
-.ff-typing::after {
-    content: '\2588';
-    display: inline;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--text-base);
+    font-weight: 700;
     color: var(--vscode-foreground);
-    animation: ffBlink 0.7s step-end infinite;
-    margin-left: 1px;
-    font-weight: 400;
+    cursor: pointer;
+    padding: var(--sp-1) 0;
+    list-style: none;
+    letter-spacing: -0.01em;
+    min-height: 32px;
+    transition: color var(--duration-fast) var(--ease-smooth);
+}
+.ff-disclosure-trigger:hover { color: var(--ff-accent); }
+.ff-disclosure-trigger::-webkit-details-marker { display: none; }
+.ff-disclosure-trigger::marker { display: none; content: ''; }
+
+.ff-disclosure-title { flex: 1; }
+
+.ff-disclosure-hint {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--ff-accent);
+    opacity: 0.7;
+    margin-left: auto;
+    white-space: nowrap;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+.ff-disclosure-trigger:hover .ff-disclosure-hint { opacity: 1; }
+
+.ff-disclosure-body {
+    padding: var(--sp-3) 0 var(--sp-1) 0;
+    animation: ffReveal 0.3s var(--ease-out);
 }
 
-@keyframes ffBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+@keyframes ffReveal {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Step 4: Pulsing Error Count Badge ─────────────────────── */
-@keyframes ffPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(241, 76, 76, 0.4); }
-    50% { transform: scale(1.3); box-shadow: 0 0 8px 2px rgba(241, 76, 76, 0.6); }
-}
-
-.count-badge.ff-pulse {
-    animation: ffPulse 0.4s ease-in-out 3;
-}
-
-/* ── Step 5: Smooth Panel Transitions ──────────────────────── */
+/* ── Panel Transitions ──────────────────────────────────────── */
 .panel-section {
     opacity: 0;
-    transform: translateX(20px);
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateY(8px);
+    transition: opacity var(--duration-normal) var(--ease-out),
+                transform var(--duration-normal) var(--ease-out);
     pointer-events: none;
     position: absolute;
     width: 100%;
@@ -1229,7 +995,7 @@ details[open] > .ff-disclosure-trigger .ff-disclosure-hint {
 
 .panel-section.visible {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
     pointer-events: auto;
     position: relative;
     visibility: visible;
@@ -1237,17 +1003,106 @@ details[open] > .ff-disclosure-trigger .ff-disclosure-hint {
 
 .panel-section.slide-out-left {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateY(-8px);
     pointer-events: none;
 }
 
-/* ── Step 6: Confetti ──────────────────────────────────────── */
-.ff-confetti-container {
-    position: fixed;
+/* ── Error Card — Clean severity strip (not spinning gradient) ── */
+.ff-section--error {
+    position: relative;
+    padding: var(--sp-5);
+    padding-top: calc(var(--sp-5) + 3px);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--ff-border);
+    background: var(--ff-surface);
+    animation: none;
+    overflow: hidden;
+}
+
+/* Top severity strip — clean, branded, not AI-looking */
+.ff-section--error::before {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    height: 3px;
+    background: var(--ff-gradient);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+/* No dot/line for error card */
+.ff-section--error::after { display: none; }
+
+/* ── Skeleton Loading ───────────────────────────────────────── */
+.ff-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+    padding: var(--sp-5) var(--sp-2);
+}
+
+.ff-skeleton-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+}
+
+.ff-skeleton-line {
+    height: 12px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(
+        90deg,
+        var(--ff-surface) 25%,
+        var(--ff-surface-overlay) 50%,
+        var(--ff-surface) 75%
+    );
+    background-size: 200% 100%;
+    animation: ffShimmer 2s var(--ease-smooth) infinite;
+}
+
+.ff-skeleton-line--heading { height: 18px; width: 45%; margin-bottom: var(--sp-1); }
+.ff-skeleton-line--short { width: 60%; }
+.ff-skeleton-line--medium { width: 80%; }
+.ff-skeleton-line--full { width: 100%; }
+
+@keyframes ffShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ── Typewriter Cursor ──────────────────────────────────────── */
+.ff-typing::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--ff-accent);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: ffCursorBlink 0.8s step-end infinite;
+    border-radius: 1px;
+}
+
+@keyframes ffCursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* ── Pulsing Error Count Badge ──────────────────────────────── */
+@keyframes ffPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 113, 133, 0.4); }
+    50% { transform: scale(1.15); box-shadow: 0 0 12px 2px rgba(251, 113, 133, 0.3); }
+}
+
+.count-badge.ff-pulse {
+    animation: ffPulse 0.5s var(--ease-spring) 2;
+}
+
+/* ── Confetti ───────────────────────────────────────────────── */
+.ff-confetti-container {
+    position: fixed;
+    inset: 0;
     pointer-events: none;
     z-index: 9999;
     overflow: hidden;
@@ -1255,170 +1110,319 @@ details[open] > .ff-disclosure-trigger .ff-disclosure-hint {
 
 .ff-confetti-piece {
     position: absolute;
-    width: 8px;
-    height: 8px;
     top: -10px;
-    animation: ffConfettiFall 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: ffConfettiFall 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
 }
 
 @keyframes ffConfettiFall {
     0% {
-        transform: translateY(0) rotateZ(0deg) rotateX(0deg);
+        transform: translateY(0) rotateZ(0deg) rotateX(0deg) scale(1);
         opacity: 1;
     }
+    80% { opacity: 1; }
     100% {
-        transform: translateY(calc(100vh + 20px)) rotateZ(720deg) rotateX(360deg);
+        transform: translateY(calc(100vh + 20px)) rotateZ(900deg) rotateX(540deg) scale(0.5);
         opacity: 0;
     }
 }
 
-/* ── Step 7: Toast Notification System ─────────────────────── */
+/* ── Toast System ───────────────────────────────────────────── */
 .ff-toast-container {
     position: fixed;
-    bottom: 16px;
-    right: 16px;
+    bottom: var(--sp-4);
+    right: var(--sp-4);
     z-index: 10000;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--sp-2);
     pointer-events: none;
 }
 
 .ff-toast {
-    padding: 10px 16px;
-    border-radius: 4px;
-    background: var(--vscode-editorWidget-background, #252526);
-    border: 1px solid var(--vscode-widget-border);
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--radius-sm);
+    background: var(--vscode-editorWidget-background, #1e1e2e);
+    border: 1px solid var(--ff-border);
     color: var(--vscode-foreground);
-    font-size: 0.9em;
-    font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.4);
     pointer-events: auto;
-    animation: ffToastIn 0.3s ease-out forwards;
-    max-width: 280px;
+    animation: ffToastIn 0.35s var(--ease-out) forwards;
+    max-width: 260px;
+    backdrop-filter: blur(8px);
 }
 
-.ff-toast--success {
-    border-left: 3px solid var(--ff-success, #89d185);
-}
-
-.ff-toast--info {
-    border-left: 3px solid var(--ff-logic, #3794ff);
-}
+.ff-toast--success { border-left: 3px solid var(--ff-success); }
+.ff-toast--info { border-left: 3px solid var(--ff-accent); }
 
 .ff-toast.ff-toast--out {
-    animation: ffToastOut 0.25s ease-in forwards;
+    animation: ffToastOut 0.25s var(--ease-smooth) forwards;
 }
 
 @keyframes ffToastIn {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
+    from { opacity: 0; transform: translateY(12px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes ffToastOut {
-    from { opacity: 1; transform: translateX(0); }
-    to { opacity: 0; transform: translateX(40px); }
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(8px) scale(0.95); }
 }
 
-/* ── Step 10: Progress Ring ────────────────────────────────── */
+/* ── Progress Ring ──────────────────────────────────────────── */
 .ff-progress-ring-card {
     text-align: center;
-    padding: 20px 16px;
+    padding: var(--sp-5) var(--sp-4);
 }
-
-.ff-progress-ring-card h3 {
-    margin-bottom: 12px;
-}
+.ff-progress-ring-card h3 { margin-bottom: var(--sp-4); }
 
 .ff-progress-ring {
     display: inline-block;
     position: relative;
 }
-
-.ff-progress-ring svg {
-    transform: rotate(-90deg);
-}
+.ff-progress-ring svg { transform: rotate(-90deg); }
 
 .ff-progress-ring-bg {
     fill: none;
-    stroke: var(--vscode-widget-border, rgba(127,127,127,0.2));
-    stroke-width: 8;
+    stroke: var(--ff-border);
+    stroke-width: 6;
 }
 
 .ff-progress-ring-fill {
     fill: none;
-    stroke: var(--ff-success, #89d185);
-    stroke-width: 8;
+    stroke: url(#ff-ring-gradient);
+    stroke-width: 6;
     stroke-linecap: round;
-    transition: stroke-dashoffset 1.5s ease-out;
+    transition: stroke-dashoffset 1.5s var(--ease-out);
+    filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.3));
 }
 
 .ff-progress-ring-text {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.4em;
-    font-weight: 700;
+    font-size: var(--text-lg);
+    font-weight: 800;
     color: var(--vscode-foreground);
+    letter-spacing: -0.02em;
 }
 
 .ff-progress-ring-label {
     display: block;
-    font-size: 0.85em;
+    font-size: var(--text-xs);
     color: var(--vscode-descriptionForeground);
-    margin-top: 8px;
+    margin-top: var(--sp-2);
 }
 
-/* ── Step 11: Activity Heatmap ─────────────────────────────── */
+/* ── Bug Activity Heatmap (GitHub-style) ────────────────────── */
 .ff-heatmap-card {
-    padding: 16px;
+    padding: var(--sp-4);
+    position: relative;
+    overflow: visible;
 }
 
-.ff-heatmap-card h3 {
-    margin-bottom: 12px;
+.ff-heatmap-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--sp-3);
+}
+.ff-heatmap-header h3 {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
-.ff-heatmap {
+.ff-heatmap-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ff-border) transparent;
+}
+.ff-heatmap-scroll::-webkit-scrollbar { height: 4px; }
+.ff-heatmap-scroll::-webkit-scrollbar-thumb {
+    background: var(--ff-border);
+    border-radius: 2px;
+}
+
+.ff-heatmap-months {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
     gap: 3px;
-    margin-bottom: 8px;
+    margin-left: 37px;
+    margin-bottom: 2px;
+    min-width: max-content;
+    padding-left: 0;
+}
+
+.ff-heatmap-month-label {
+    font-size: 0.65rem;
+    color: var(--vscode-descriptionForeground);
+    text-align: left;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.ff-heatmap-body {
+    display: flex;
+    gap: 4px;
+    min-width: max-content;
+}
+
+.ff-heatmap-days {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 3px;
+    width: 32px;
+    flex-shrink: 0;
+}
+
+.ff-heatmap-days span {
+    font-size: 0.62rem;
+    color: var(--vscode-descriptionForeground);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 4px;
+    line-height: 1;
+}
+
+.ff-heatmap-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-flow: column;
+    gap: 3px;
+    flex: 1;
 }
 
 .ff-heatmap-cell {
-    aspect-ratio: 1;
-    border-radius: 2px;
-    background: rgba(6, 182, 212, 0.05);
-    min-width: 12px;
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    background: var(--ff-surface);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: transform var(--duration-fast) var(--ease-spring),
+                box-shadow var(--duration-fast) var(--ease-smooth),
+                border-color var(--duration-fast) var(--ease-smooth);
+    cursor: default;
 }
 
-.ff-heatmap-cell[data-level="1"] { background: rgba(6, 182, 212, 0.2); }
-.ff-heatmap-cell[data-level="2"] { background: rgba(6, 182, 212, 0.4); }
-.ff-heatmap-cell[data-level="3"] { background: rgba(6, 182, 212, 0.6); }
-.ff-heatmap-cell[data-level="4"] { background: rgba(6, 182, 212, 0.85); }
+.ff-heatmap-cell[data-level="-1"] {
+    background: transparent;
+    border-color: transparent;
+    cursor: default;
+}
+
+.ff-heatmap-cell[data-level="0"] {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+.ff-heatmap-cell[data-level="1"] {
+    background: rgba(167, 139, 250, 0.18);
+    border-color: rgba(167, 139, 250, 0.12);
+}
+.ff-heatmap-cell[data-level="2"] {
+    background: rgba(167, 139, 250, 0.35);
+    border-color: rgba(167, 139, 250, 0.2);
+}
+.ff-heatmap-cell[data-level="3"] {
+    background: rgba(167, 139, 250, 0.55);
+    border-color: rgba(167, 139, 250, 0.3);
+}
+.ff-heatmap-cell[data-level="4"] {
+    background: rgba(167, 139, 250, 0.8);
+    border-color: rgba(167, 139, 250, 0.5);
+}
+
+.ff-heatmap-cell:not([data-level="-1"]):hover {
+    transform: scale(1.35);
+    box-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
+    border-color: var(--ff-accent);
+    z-index: 2;
+    position: relative;
+}
+
+/* Tooltip */
+.ff-heatmap-tooltip {
+    position: absolute;
+    z-index: 100;
+    pointer-events: none;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(20, 20, 30, 0.95);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    border-radius: 6px;
+    white-space: nowrap;
+    transform: translate(-50%, -100%);
+    opacity: 0;
+    transition: opacity 0.15s var(--ease-smooth),
+                transform 0.15s var(--ease-out);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    letter-spacing: 0.01em;
+}
+
+.ff-heatmap-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(20, 20, 30, 0.95);
+}
+
+.ff-heatmap-tooltip.visible {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 2px));
+}
+
+.ff-heatmap-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--sp-3);
+    padding-top: var(--sp-2);
+}
+
+.ff-heatmap-summary {
+    font-size: var(--text-xs);
+    color: var(--vscode-descriptionForeground);
+    font-weight: 500;
+}
 
 .ff-heatmap-legend {
     display: flex;
     align-items: center;
-    gap: 4px;
-    justify-content: flex-end;
-    font-size: 0.75em;
+    gap: 3px;
+    font-size: 0.62rem;
     color: var(--vscode-descriptionForeground);
 }
 
 .ff-heatmap-legend-cell {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
 }
+.ff-heatmap-legend-cell[data-level="0"] {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+.ff-heatmap-legend-cell[data-level="1"] { background: rgba(167, 139, 250, 0.18); }
+.ff-heatmap-legend-cell[data-level="2"] { background: rgba(167, 139, 250, 0.35); }
+.ff-heatmap-legend-cell[data-level="3"] { background: rgba(167, 139, 250, 0.55); }
+.ff-heatmap-legend-cell[data-level="4"] { background: rgba(167, 139, 250, 0.8); }
 
-/* ── Step 12: Achievement Badges ───────────────────────────── */
+/* ── Achievement Badges ─────────────────────────────────────── */
 .ff-achievements {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 8px 0;
+    gap: var(--sp-3);
+    padding: var(--sp-2) 0;
 }
 
 .ff-achievement {
@@ -1426,70 +1430,171 @@ details[open] > .ff-disclosure-trigger .ff-disclosure-hint {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 12px 8px;
-    border-radius: 6px;
-    border: 1px solid var(--vscode-widget-border);
-    background: var(--vscode-editor-background);
-    transition: transform 0.15s ease, border-color 0.15s ease;
+    padding: var(--sp-4) var(--sp-2);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--ff-border);
+    background: var(--ff-surface);
+    transition: all var(--duration-normal) var(--ease-spring);
+    cursor: default;
 }
-
 .ff-achievement:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.2);
 }
 
 .ff-achievement.unlocked {
-    border-color: var(--ff-success, #89d185);
+    border-color: rgba(167, 139, 250, 0.3);
+    background: var(--ff-accent-dim);
+}
+.ff-achievement.unlocked:hover {
+    border-color: var(--ff-accent);
 }
 
 .ff-achievement.locked {
-    opacity: 0.45;
-    filter: grayscale(0.8);
+    opacity: 0.35;
+    filter: grayscale(0.9);
+}
+.ff-achievement.locked:hover {
+    transform: none;
+    box-shadow: none;
 }
 
 .ff-achievement-icon {
     font-size: 1.5em;
-    margin-bottom: 4px;
+    margin-bottom: var(--sp-2);
     line-height: 1;
 }
 
 .ff-achievement-name {
-    font-size: 0.75em;
-    font-weight: 600;
+    font-size: var(--text-xs);
+    font-weight: 700;
     color: var(--vscode-foreground);
     margin-bottom: 2px;
 }
 
 .ff-achievement-desc {
-    font-size: 0.65em;
+    font-size: 0.65rem;
     color: var(--vscode-descriptionForeground);
-    line-height: 1.3;
+    line-height: 1.4;
 }
 
-/* ── Step 14: Enhanced TL;DR ───────────────────────────────── */
-.ff-tldr {
-    font-weight: 700;
-    font-size: 1.1em;
-    margin-top: 8px;
-    background: linear-gradient(135deg, var(--ff-syntax), var(--ff-logic), var(--ff-runtime));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.5;
+/* ── Responsive (narrow/mobile) ─────────────────────────────── */
+@media (max-width: 600px) {
+    .ff-tts-bar { flex-direction: column; align-items: stretch; }
+    .ff-voice-group { width: 100%; display: flex; }
+    .ff-voice-btn { flex: 1; text-align: center; }
+    .ff-btn--tts { width: 100%; }
+    .ff-achievements { grid-template-columns: repeat(2, 1fr); }
+    .ff-heatmap-footer { flex-direction: column; gap: var(--sp-2); align-items: flex-start; }
+    .ff-heatmap-cell { width: 11px; height: 11px; }
 }
 
-/* ── Step 14: Refined Empty State ──────────────────────────── */
-.ff-empty-heading {
-    font-size: 1.4em;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+@media (max-width: 360px) {
+    .ff-panel { padding: var(--sp-1) 0; }
+    .ff-section { padding: var(--sp-3); padding-left: var(--sp-6); }
+    .ff-tts-bar { flex-direction: column; align-items: stretch; }
+    .ff-disclosure-hint { display: none; }
 }
 
-.ff-empty-body {
-    font-size: 0.95em;
-    line-height: 1.8;
+/* ── Sticky Card ────────────────────────────────────────────── */
+.ff-sticky-card {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--vscode-editor-background);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--ff-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--sp-6);
+    padding: var(--sp-4);
 }
 
-/* ── Step 8: SVG Empty State Pulse ─────────────────────────── */
-.ff-empty-svg {
-    margin-bottom: 16px;
+.ff-file-icon { font-size: 1em; flex-shrink: 0; }
+
+/* ── Logo Loader (branded loading state) ────────────────────── */
+.ff-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px 28px;
+    gap: 18px;
+}
+
+.ff-loader-icon-wrap {
+    position: relative;
+    width: 68px;
+    height: 68px;
+}
+
+.ff-loader-icon {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    animation: ffLoaderFloat 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 14px rgba(167, 139, 250, 0.3));
+    border-radius: 12px;
+}
+
+.ff-loader-ring {
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--ff-accent, #A78BFA);
+    border-right-color: var(--ff-accent, #A78BFA);
+    animation: ffLoaderSpin 1.2s linear infinite;
+    opacity: 0.55;
+}
+
+.ff-loader-ring--outer {
+    inset: -13px;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: #FB7185;
+    border-left-color: #FB7185;
+    animation: ffLoaderSpin 2.2s linear infinite reverse;
+    opacity: 0.3;
+}
+
+.ff-loader-text {
+    font-size: var(--text-sm, 0.85rem);
+    font-weight: 650;
+    color: var(--vscode-foreground, #cccccc);
+    letter-spacing: 0.02em;
+}
+
+.ff-loader-dots::after {
+    content: '';
+    animation: ffLoaderDots 1.5s steps(4, end) infinite;
+}
+
+.ff-loader-subtext {
+    font-size: var(--text-xs, 0.75rem);
+    color: var(--vscode-descriptionForeground, #888888);
+    margin-top: -10px;
+}
+
+@keyframes ffLoaderFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(1.04); }
+}
+
+@keyframes ffLoaderSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes ffLoaderDots {
+    0%  { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+}
+
+/* Reduced motion: stop spinning/floating, keep dots for status */
+@media (prefers-reduced-motion: reduce) {
+    .ff-loader-icon { animation: none; }
+    .ff-loader-ring { animation: none; opacity: 0.3; }
+    .ff-heatmap-cell:not([data-level="-1"]):hover { transform: none; }
 }

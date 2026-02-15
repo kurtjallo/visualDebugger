@@ -48,14 +48,21 @@ export class DebugPanelProvider implements vscode.WebviewViewProvider {
 
   private getHtml(webview: vscode.Webview): string {
     try {
-      return getWebviewHtml(webview, this.extensionUri, "debug.html", {
+      const iconUri = webview.asWebviewUri(
+        vscode.Uri.joinPath(this.extensionUri, "images", "icon.png"),
+      );
+      let html = getWebviewHtml(webview, this.extensionUri, "debug.html", {
         'href="styles.css"': "styles.css",
         'src="config.js"': "config.js",
       }, {
         extraConnectSrc: ["https://api.elevenlabs.io", "blob:"],
         extraMediaSrc: ["blob:", "data:"],
         extraFontSrc: ["https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+        extraImgSrc: [`${webview.cspSource}`],
       });
+      // Inject the icon URI into the loader
+      html = html.replace(/\$\{iconUri\}/g, iconUri.toString());
+      return html;
     } catch (e) {
       console.error(`${LOG} Failed to read debug.html`, e);
       return `<div>Error loading resource: ${e}</div>`;

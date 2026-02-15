@@ -151,7 +151,7 @@ function launchConfetti(): void {
   const container = document.createElement("div");
   container.className = "ff-confetti-container";
   document.body.appendChild(container);
-  const colors = ["#eebb00", "#3794ff", "#f14c4c", "#89d185", "#06b6d4", "#c084fc"];
+  const colors = ["#A78BFA", "#FB7185", "#FBBF24", "#34D399", "#818CF8", "#C4B5FD"];
   for (let c = 0; c < 30; c++) {
     const piece = document.createElement("div");
     piece.className = "ff-confetti-piece";
@@ -711,8 +711,10 @@ function initDebugPanelListeners(): void {
     } else if (msg.type === "ttsError") {
       const ttsErr = msg.data as TtsErrorData;
       announce(ttsErr.message);
-      updateTtsStatus("Using browser voice...");
-      speakWithWebSpeech(getReadableText());
+      updateTtsStatus("ElevenLabs unavailable");
+      isSpeaking = false;
+      $("tts-btn")!.textContent = "Read Aloud";
+      $("tts-btn")!.classList.remove("ff-btn--playing");
     } else if (msg.type === "clear") {
       stopAudio();
       currentErrorData = null;

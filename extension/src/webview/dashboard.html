@@ -71,6 +71,12 @@
                 <h3>Learning Progress</h3>
                 <div class="ff-progress-ring">
                     <svg width="100" height="100" viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="ff-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#A78BFA"/>
+                                <stop offset="100%" stop-color="#FB7185"/>
+                            </linearGradient>
+                        </defs>
                         <circle class="ff-progress-ring-bg" cx="50" cy="50" r="40"/>
                         <circle class="ff-progress-ring-fill" id="progress-ring-circle" cx="50" cy="50" r="40"
                             stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
@@ -80,19 +86,40 @@
                 <span class="ff-progress-ring-label" id="progress-ring-label">0 / 0 quizzes</span>
             </div>
 
-            <!-- Activity Heatmap -->
+            <!-- Bug Activity Heatmap (GitHub-style) -->
             <div class="card slide-in ff-heatmap-card" id="heatmap-card">
-                <h3>Activity (Last 4 Weeks)</h3>
-                <div class="ff-heatmap" id="heatmap-grid"></div>
-                <div class="ff-heatmap-legend">
-                    <span>Less</span>
-                    <div class="ff-heatmap-legend-cell" style="background: rgba(6,182,212,0.05);"></div>
-                    <div class="ff-heatmap-legend-cell" style="background: rgba(6,182,212,0.2);"></div>
-                    <div class="ff-heatmap-legend-cell" style="background: rgba(6,182,212,0.4);"></div>
-                    <div class="ff-heatmap-legend-cell" style="background: rgba(6,182,212,0.6);"></div>
-                    <div class="ff-heatmap-legend-cell" style="background: rgba(6,182,212,0.85);"></div>
-                    <span>More</span>
+                <div class="ff-heatmap-header">
+                    <h3 id="heatmap-title">Bug Activity</h3>
                 </div>
+                <div class="ff-heatmap-scroll">
+                    <div class="ff-heatmap-months" id="heatmap-months"></div>
+                    <div class="ff-heatmap-body">
+                        <div class="ff-heatmap-days">
+                            <span></span>
+                            <span>Mon</span>
+                            <span></span>
+                            <span>Wed</span>
+                            <span></span>
+                            <span>Fri</span>
+                            <span></span>
+                        </div>
+                        <div class="ff-heatmap-grid" id="heatmap-grid"></div>
+                    </div>
+                </div>
+                <div class="ff-heatmap-footer">
+                    <span class="ff-heatmap-summary" id="heatmap-summary"></span>
+                    <div class="ff-heatmap-legend">
+                        <span>Less</span>
+                        <div class="ff-heatmap-legend-cell" data-level="0"></div>
+                        <div class="ff-heatmap-legend-cell" data-level="1"></div>
+                        <div class="ff-heatmap-legend-cell" data-level="2"></div>
+                        <div class="ff-heatmap-legend-cell" data-level="3"></div>
+                        <div class="ff-heatmap-legend-cell" data-level="4"></div>
+                        <span>More</span>
+                    </div>
+                </div>
+                <!-- Tooltip (positioned absolutely) -->
+                <div class="ff-heatmap-tooltip" id="heatmap-tooltip" role="tooltip" aria-hidden="true"></div>
             </div>
 
             <!-- Achievement Badges -->
@@ -114,12 +141,12 @@
     <script>
         // Use CSS variables for chart colors to match theme
         const style = getComputedStyle(document.body);
-        const colSyntax = style.getPropertyValue('--ff-syntax').trim() || '#eebb00';
-        const colLogic = style.getPropertyValue('--ff-logic').trim() || '#3794ff';
-        const colRuntime = style.getPropertyValue('--ff-runtime').trim() || '#f14c4c';
-        const colGrid = 'rgba(127, 127, 127, 0.1)';
+        const colSyntax = style.getPropertyValue('--ff-syntax').trim() || '#FBBF24';
+        const colLogic = style.getPropertyValue('--ff-logic').trim() || '#818CF8';
+        const colRuntime = style.getPropertyValue('--ff-runtime').trim() || '#FB7185';
+        const colGrid = 'rgba(255, 255, 255, 0.04)';
         const colText = style.getPropertyValue('--vscode-descriptionForeground').trim() || '#888';
-        const colTotal = style.getPropertyValue('--vscode-charts-blue').trim() || '#3794ff';
+        const colTotal = '#A78BFA';
 
         // Dynamic Time Generation (Relative to Now)
         const now = new Date();
@@ -182,14 +209,14 @@
 
 
         // ── Step 13: Chart.js Global Defaults ──
-        Chart.defaults.font.family = "'DM Sans', sans-serif";
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
         const tooltipConfig = {
-            backgroundColor: 'rgba(30, 30, 30, 0.95)',
-            borderColor: 'rgba(127, 127, 127, 0.3)',
+            backgroundColor: 'rgba(20, 20, 30, 0.95)',
+            borderColor: 'rgba(167, 139, 250, 0.2)',
             borderWidth: 1,
-            cornerRadius: 6,
-            padding: 10,
-            titleFont: { weight: '600' },
+            cornerRadius: 8,
+            padding: 12,
+            titleFont: { weight: '700' },
             bodyFont: { size: 12 }
         };
 
@@ -210,35 +237,117 @@
         }
         updateProgressRing(4, 6); // Mock: 4/6 quizzes completed (67%)
 
-        // ── Step 11: Activity Heatmap ──
+        // ── Step 11: Bug Activity Heatmap (GitHub-style) ──
         function renderHeatmap() {
             const grid = document.getElementById('heatmap-grid');
+            const monthsRow = document.getElementById('heatmap-months');
+            const tooltip = document.getElementById('heatmap-tooltip');
+            const titleEl = document.getElementById('heatmap-title');
+            const summaryEl = document.getElementById('heatmap-summary');
+            grid.innerHTML = '';
+            monthsRow.innerHTML = '';
+
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            // Build 28 days (4 weeks, most recent at bottom-right)
-            for (let i = 27; i >= 0; i--) {
-                const d = new Date(today);
-                d.setDate(d.getDate() - i);
-                const dayStart = d.getTime();
-                const dayEnd = dayStart + 24 * 60 * 60 * 1000;
+            // Calculate start: go back ~16 weeks (to fill the sidebar width nicely)
+            const NUM_WEEKS = 16;
+            const endDate = new Date(today);
+            const startDate = new Date(today);
+            startDate.setDate(startDate.getDate() - (NUM_WEEKS * 7 - 1) - startDate.getDay());
 
-                const count = SEED_BUGS.filter(bug => {
-                    const t = new Date(bug.timestamp).getTime();
-                    return t >= dayStart && t < dayEnd;
-                }).length;
+            // Build day-to-count map
+            const dayCounts = {};
+            let totalBugs = 0;
+            SEED_BUGS.forEach(bug => {
+                const d = new Date(bug.timestamp);
+                d.setHours(0, 0, 0, 0);
+                const key = d.toISOString().split('T')[0];
+                dayCounts[key] = (dayCounts[key] || 0) + 1;
+                totalBugs++;
+            });
 
-                let level = 0;
-                if (count === 1) level = 1;
-                else if (count === 2) level = 2;
-                else if (count === 3) level = 3;
-                else if (count >= 4) level = 4;
+            titleEl.textContent = totalBugs + ' bugs tracked';
+            summaryEl.textContent = 'Last ' + NUM_WEEKS + ' weeks';
 
-                const cell = document.createElement('div');
-                cell.className = 'ff-heatmap-cell';
-                cell.setAttribute('data-level', level);
-                cell.title = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ': ' + count + ' bug' + (count !== 1 ? 's' : '');
-                grid.appendChild(cell);
+            // Build weeks (columns)
+            const weeks = [];
+            let current = new Date(startDate);
+            let currentWeek = [];
+
+            while (current <= endDate) {
+                currentWeek.push(new Date(current));
+                if (current.getDay() === 6 || current.getTime() === endDate.getTime()) {
+                    weeks.push(currentWeek);
+                    currentWeek = [];
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            if (currentWeek.length > 0) weeks.push(currentWeek);
+
+            // Render month labels
+            let lastMonth = -1;
+            const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            monthsRow.style.gridTemplateColumns = 'repeat(' + weeks.length + ', 13px)';
+            weeks.forEach((week, wi) => {
+                const firstDay = week[0];
+                const month = firstDay.getMonth();
+                const span = document.createElement('span');
+                if (month !== lastMonth && firstDay.getDate() <= 7) {
+                    span.textContent = monthNames[month];
+                    lastMonth = month;
+                }
+                span.className = 'ff-heatmap-month-label';
+                monthsRow.appendChild(span);
+            });
+
+            // Render cells (column-first: each column = 1 week, 7 rows)
+            // We need to render row by row (day 0=Sun through day 6=Sat)
+            for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+                weeks.forEach((week, wi) => {
+                    const dayEntry = week.find(d => d.getDay() === dayOfWeek);
+                    const cell = document.createElement('div');
+                    cell.className = 'ff-heatmap-cell';
+
+                    if (dayEntry && dayEntry <= today) {
+                        const key = dayEntry.toISOString().split('T')[0];
+                        const count = dayCounts[key] || 0;
+
+                        let level = 0;
+                        if (count === 1) level = 1;
+                        else if (count === 2) level = 2;
+                        else if (count === 3) level = 3;
+                        else if (count >= 4) level = 4;
+
+                        cell.setAttribute('data-level', level);
+                        cell.setAttribute('data-count', count);
+                        cell.setAttribute('data-date', dayEntry.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }));
+
+                        // Tooltip on hover
+                        cell.addEventListener('mouseenter', function(e) {
+                            const c = this.getAttribute('data-count');
+                            const d = this.getAttribute('data-date');
+                            const label = c + ' bug' + (c !== '1' ? 's' : '') + ' on ' + d;
+                            tooltip.textContent = label;
+                            tooltip.classList.add('visible');
+                            tooltip.setAttribute('aria-hidden', 'false');
+
+                            // Position tooltip above cell
+                            const rect = this.getBoundingClientRect();
+                            const parentRect = this.closest('.ff-heatmap-card').getBoundingClientRect();
+                            tooltip.style.left = (rect.left - parentRect.left + rect.width / 2) + 'px';
+                            tooltip.style.top = (rect.top - parentRect.top - 8) + 'px';
+                        });
+                        cell.addEventListener('mouseleave', function() {
+                            tooltip.classList.remove('visible');
+                            tooltip.setAttribute('aria-hidden', 'true');
+                        });
+                    } else {
+                        cell.setAttribute('data-level', '-1');
+                    }
+
+                    grid.appendChild(cell);
+                });
             }
         }
         renderHeatmap();
@@ -285,10 +394,10 @@
                 datasets: [{
                     label: 'Count',
                     data: [syntaxCount, logicCount, runtimeCount],
-                    backgroundColor: [colSyntax + '99', colLogic + '99', colRuntime + '99'],
+                    backgroundColor: ['rgba(251,191,36,0.25)', 'rgba(129,140,248,0.25)', 'rgba(251,113,133,0.25)'],
                     borderColor: [colSyntax, colLogic, colRuntime],
-                    borderWidth: 1,
-                    borderRadius: 3
+                    borderWidth: 1.5,
+                    borderRadius: 6
                 }]
             },
             options: {
@@ -370,11 +479,14 @@
                         label: 'Total Bugs',
                         data: data,
                         borderColor: colTotal,
-                        backgroundColor: colTotal + '1A',
+                        backgroundColor: 'rgba(167, 139, 250, 0.08)',
                         fill: true,
-                        tension: 0.3,
+                        tension: 0.4,
                         pointRadius: 4,
-                        borderWidth: 2
+                        pointBackgroundColor: colTotal,
+                        pointBorderColor: 'rgba(167, 139, 250, 0.3)',
+                        pointBorderWidth: 2,
+                        borderWidth: 2.5
                     }]
                 },
                 options: {
@@ -411,17 +523,18 @@
 
         sortedBugs.forEach(bug => {
             let colorVar = '--ff-runtime';
-            if (bug.category === 'Logic') colorVar = '--ff-logic';
-            if (bug.category === 'Syntax') colorVar = '--ff-syntax';
+            let dimVar = '--ff-runtime-dim';
+            if (bug.category === 'Logic') { colorVar = '--ff-logic'; dimVar = '--ff-logic-dim'; }
+            if (bug.category === 'Syntax') { colorVar = '--ff-syntax'; dimVar = '--ff-syntax-dim'; }
 
             const dateStr = new Date(bug.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
             historyEl.innerHTML += `
-        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--vscode-widget-border);">
-          <span class="badge" style="color: var(${colorVar}); border-color: var(${colorVar}); margin-top: 2px; width: 75px; text-align: center; flex-shrink: 0;">${bug.category}</span>
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 8px; border-bottom: 1px solid var(--ff-border-subtle, rgba(255,255,255,0.06)); border-radius: 6px; transition: background 0.15s ease;" onmouseenter="this.style.background='var(--ff-surface, rgba(255,255,255,0.03))'" onmouseleave="this.style.background='transparent'">
+          <span class="badge" style="color: var(${colorVar}); background: var(${dimVar}); border-color: transparent; margin-top: 2px; width: 75px; text-align: center; flex-shrink: 0; font-size: 0.72rem;">${bug.category}</span>
           <div style="flex: 1; min-width: 0;">
-            <div style="font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${bug.error}">${bug.error}</div>
-            <div class="text-muted text-sm">${bug.file}:${bug.line} · ${dateStr}</div>
+            <div style="font-size: 0.88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;" title="${bug.error}">${bug.error}</div>
+            <div class="text-muted text-sm" style="font-size: 0.75em; margin-top: 2px;">${bug.file}:${bug.line} &middot; ${dateStr}</div>
           </div>
         </div>`;
         });

@@ -25,28 +25,30 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 6px;
-            border-radius: 10px;
-            background: var(--ff-runtime, #f14c4c);
+            min-width: 22px;
+            height: 22px;
+            padding: 0 7px;
+            border-radius: var(--radius-full, 100px);
+            background: var(--ff-runtime, #FB7185);
             color: #fff;
-            font-size: 0.8em;
+            font-size: 0.78em;
             font-weight: 700;
+            letter-spacing: 0.02em;
+            box-shadow: 0 2px 8px rgba(251, 113, 133, 0.3);
         }
 
         .actions-error-preview {
             font-family: var(--vscode-editor-font-family, monospace);
-            font-size: 0.85em;
+            font-size: 0.83em;
             color: var(--vscode-foreground);
-            background: var(--vscode-textCodeBlock-background);
-            border: 1px solid var(--vscode-widget-border);
-            border-left: 3px solid var(--ff-runtime, #f14c4c);
-            border-radius: 0 4px 4px 0;
-            padding: 10px 12px;
-            margin-bottom: 14px;
+            background: var(--ff-surface, rgba(255,255,255,0.03));
+            border: 1px solid var(--ff-border, rgba(255,255,255,0.08));
+            border-left: 3px solid var(--ff-runtime, #FB7185);
+            border-radius: 0 var(--radius-sm, 6px) var(--radius-sm, 6px) 0;
+            padding: 10px 14px;
+            margin-bottom: 16px;
             word-break: break-word;
-            line-height: 1.5;
+            line-height: 1.6;
             max-height: 80px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -61,26 +63,30 @@
             min-height: 48px;
             padding: 12px 16px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             font-family: inherit;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--radius-sm, 6px);
             cursor: pointer;
-            background: var(--vscode-button-background);
-            color: var(--vscode-button-foreground);
-            transition: background-color 0.1s ease-in-out, transform 0.05s ease-in-out;
+            background: var(--ff-gradient, linear-gradient(135deg, #A78BFA, #FB7185));
+            color: #fff;
+            box-shadow: 0 2px 12px rgba(167, 139, 250, 0.3);
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: 0.01em;
         }
 
         .actions-btn-explain:hover {
-            background: var(--vscode-button-hoverBackground);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(167, 139, 250, 0.4);
         }
 
         .actions-btn-explain:active {
-            transform: scale(0.98);
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 8px rgba(167, 139, 250, 0.2);
         }
 
         .actions-btn-explain:focus-visible {
-            outline: 2px solid var(--vscode-focusBorder);
+            outline: 2px solid var(--ff-accent, #A78BFA);
             outline-offset: 2px;
         }
 
@@ -106,30 +112,38 @@
         .ff-back-btn {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            margin-bottom: 12px;
+            gap: 6px;
+            padding: 6px 12px;
+            margin-bottom: 16px;
             font-size: 0.8em;
+            font-weight: 600;
             font-family: inherit;
             color: var(--vscode-descriptionForeground);
-            background: none;
-            border: none;
+            background: var(--ff-surface, rgba(255,255,255,0.03));
+            border: 1px solid var(--ff-border, rgba(255,255,255,0.08));
             cursor: pointer;
-            border-radius: 3px;
-            transition: color 0.1s ease-in-out, background-color 0.1s ease-in-out;
+            border-radius: var(--radius-sm, 6px);
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .ff-back-btn::before {
             content: '\2190';
+            font-size: 1.1em;
         }
 
         .ff-back-btn:hover {
-            color: var(--vscode-foreground);
-            background: var(--vscode-list-hoverBackground);
+            color: var(--ff-accent, #A78BFA);
+            background: var(--ff-accent-dim, rgba(167,139,250,0.15));
+            border-color: rgba(167, 139, 250, 0.2);
+            transform: translateX(-2px);
+        }
+
+        .ff-back-btn:active {
+            transform: translateX(0) scale(0.97);
         }
 
         .ff-back-btn:focus-visible {
-            outline: 2px solid var(--vscode-focusBorder);
+            outline: 2px solid var(--ff-accent, #A78BFA);
             outline-offset: 2px;
         }
 
@@ -169,32 +183,37 @@
                 </button>
             </div>
 
-            <!-- Loading skeleton (shown while AI analyzes) -->
-            <div id="loading-skeleton" class="ff-skeleton" style="display: none;" aria-label="Analyzing error..." role="status">
-                <div class="ff-skeleton-group">
-                    <div class="ff-skeleton-line ff-skeleton-line--heading"></div>
-                    <div class="ff-skeleton-line ff-skeleton-line--full"></div>
-                    <div class="ff-skeleton-line ff-skeleton-line--medium"></div>
-                    <div class="ff-skeleton-line ff-skeleton-line--short"></div>
+            <!-- Loading state (branded logo animation) -->
+            <div id="loading-skeleton" class="ff-loader" style="display: none;" role="status" aria-label="Analyzing error...">
+                <div class="ff-loader-icon-wrap">
+                    <div class="ff-loader-ring"></div>
+                    <div class="ff-loader-ring ff-loader-ring--outer"></div>
+                    <img class="ff-loader-icon" src="${iconUri}" alt="" aria-hidden="true" />
                 </div>
-                <div class="ff-skeleton-group">
-                    <div class="ff-skeleton-line ff-skeleton-line--heading"></div>
-                    <div class="ff-skeleton-line ff-skeleton-line--full"></div>
-                    <div class="ff-skeleton-line ff-skeleton-line--medium"></div>
-                </div>
+                <div class="ff-loader-text">Analyzing<span class="ff-loader-dots"></span></div>
+                <div class="ff-loader-subtext">Examining your code for insights</div>
             </div>
 
             <!-- No errors state (SVG empty state) -->
             <div id="empty-state" class="actions-empty" role="status">
-                <svg class="ff-empty-svg" width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <rect x="8" y="24" width="64" height="32" rx="4" stroke="var(--vscode-descriptionForeground)" stroke-width="1.5" opacity="0.3"/>
-                    <text x="22" y="46" font-family="var(--vscode-editor-font-family, monospace)" font-size="18" fill="var(--vscode-descriptionForeground)" opacity="0.5">&lt; /&gt;</text>
-                    <circle cx="60" cy="36" r="3" fill="var(--ff-success, #89d185)">
-                        <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                <svg class="ff-empty-svg" width="120" height="64" viewBox="0 0 120 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="empty-grad" x1="0" y1="0" x2="120" y2="64" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.2"/>
+                            <stop offset="100%" stop-color="#FB7185" stop-opacity="0.2"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="4" y="4" width="112" height="56" rx="10" stroke="url(#empty-grad)" stroke-width="1"/>
+                    <text x="16" y="38" font-family="var(--vscode-editor-font-family, monospace)" font-size="15" fill="var(--vscode-descriptionForeground)" opacity="0.5">&gt; _</text>
+                    <rect x="38" y="30" width="8" height="2" rx="1" fill="var(--vscode-descriptionForeground)" opacity="0.15">
+                        <animate attributeName="opacity" values="0.15;0.4;0.15" dur="1.2s" repeatCount="indefinite"/>
+                    </rect>
+                    <circle cx="100" cy="16" r="3" fill="#34D399" opacity="0.6">
+                        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.5s" repeatCount="indefinite"/>
                     </circle>
                 </svg>
-                <div class="actions-empty-heading">No errors found</div>
-                <div class="actions-empty-body">Open a file with errors to get started.</div>
+                <div class="actions-empty-heading">All clear</div>
+                <div class="actions-empty-body">No bugs in sight. Open a file with errors to get started.</div>
             </div>
         </div>
     </div>
@@ -365,8 +384,8 @@
         <div class="ff-panel">
             <div class="ff-tts-bar" id="tts-controls" role="region" aria-label="Read aloud controls">
                 <div class="ff-voice-group" role="radiogroup" aria-label="Voice">
-                    <button class="ff-voice-btn active" id="voice-female" role="radio" aria-checked="true">Female voice</button>
-                    <button class="ff-voice-btn" id="voice-male" role="radio" aria-checked="false">Male voice</button>
+                    <button class="ff-voice-btn active" id="voice-female" role="radio" aria-checked="true">Elise voice</button>
+                    <button class="ff-voice-btn" id="voice-male" role="radio" aria-checked="false" style="display:none;" disabled>Hidden</button>
                 </div>
                 <button class="ff-btn--tts" id="tts-btn" aria-label="Read explanation aloud">Read Aloud</button>
                 <span class="ff-tts-status" id="tts-status" aria-live="polite"></span>
@@ -468,7 +487,7 @@
             var container = document.createElement('div');
             container.className = 'ff-confetti-container';
             document.body.appendChild(container);
-            var colors = ['#eebb00', '#3794ff', '#f14c4c', '#89d185', '#06b6d4', '#c084fc'];
+            var colors = ['#A78BFA', '#FB7185', '#FBBF24', '#34D399', '#818CF8', '#C4B5FD'];
             for (var c = 0; c < 30; c++) {
                 var piece = document.createElement('div');
                 piece.className = 'ff-confetti-piece';
@@ -881,20 +900,19 @@
         });
 
         // ── Voice toggle ──
-        $('voice-female').addEventListener('click', function () {
+        $('voice-female')?.addEventListener('click', function () {
             selectedVoice = 'female';
             $('voice-female').classList.add('active');
             $('voice-female').setAttribute('aria-checked', 'true');
-            $('voice-male').classList.remove('active');
-            $('voice-male').setAttribute('aria-checked', 'false');
+            if ($('voice-male')) {
+                $('voice-male').classList.remove('active');
+                $('voice-male').setAttribute('aria-checked', 'false');
+            }
         });
 
-        $('voice-male').addEventListener('click', function () {
-            selectedVoice = 'male';
-            $('voice-male').classList.add('active');
-            $('voice-male').setAttribute('aria-checked', 'true');
-            $('voice-female').classList.remove('active');
-            $('voice-female').setAttribute('aria-checked', 'false');
+        $('voice-male')?.addEventListener('click', function () {
+            // Voice is intentionally locked to Elise for now.
+            selectedVoice = 'female';
         });
 
         // ── TTS button ──

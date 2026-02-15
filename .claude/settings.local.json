@@ -21,7 +21,22 @@
       "Bash(python3:*)",
       "Bash(grep:*)",
       "Bash(git rm:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(git checkout:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(/Users/kurt/Documents/Hackathons/CHD/extension/src/__tests__/phase2Handler.test.ts:*)",
+      "Bash(ls:*)",
+      "Bash(git log:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(npm test:*)",
+      "Bash(git pull:*)",
+      "Bash(test:*)",
+      "WebFetch(domain:blog.logrocket.com)",
+      "WebFetch(domain:crea8ivesolution.net)",
+      "Bash(git status:*)"
     ]
   }
 }
