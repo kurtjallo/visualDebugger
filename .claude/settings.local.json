@@ -14,8 +14,12 @@
       "Bash(git add:*)",
       "Bash(git restore:*)",
       "Bash(git commit:*)",
-      "Bash(node -e:*)",
-      "Bash(npm test)"
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "Bash(git branch:*)",
+      "Bash(LC_ALL=C grep:*)",
+      "Bash(python3:*)",
+      "Bash(grep:*)"
     ]
   }
 }
