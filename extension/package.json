@@ -3,7 +3,7 @@
   "displayName": "Visual Debugger",
   "description": "Visual Debugger - explains errors before the fix, reviews AI changes after",
   "version": "0.1.0",
-  "publisher": "visualdebugger-team",
+  "publisher": "VisualDebugger",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
