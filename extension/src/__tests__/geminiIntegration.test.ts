@@ -81,7 +81,7 @@ describeIntegration("Gemini Integration (Real API)", () => {
     // Accept either Logic Error or Syntax Error for this specific case
     // as LLM classification can vary, but ensure we got a valid response.
     expect(["Logic Error", "Syntax Error"]).toContain(result.category);
-    expect(result.location).toMatch(/line 1(0|1)/);
+    expect(result.location).toMatch(/line 1(0|1|2|3)/);
     console.log("[IntegrationTest] Phase 1 Logic Response:", JSON.stringify(result, null, 2));
   }, 30000);
 

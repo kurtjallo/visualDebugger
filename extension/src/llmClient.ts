@@ -106,7 +106,9 @@ export async function analyzeError(request: ErrorAnalysisRequest): Promise<Phase
     if (!text) {
       throw new FlowFixerError("Gemini returned an empty response");
     }
-    return JSON.parse(text) as Phase1Response;
+    const result = JSON.parse(text) as Phase1Response;
+    validatePhase1Response(result);
+    return result;
   } catch (err) {
     if (err instanceof FlowFixerError) throw err;
     throw new FlowFixerError("Failed to analyze error", err);
@@ -138,10 +140,53 @@ export async function analyzeDiff(request: DiffAnalysisRequest): Promise<Phase2R
     if (!text) {
       throw new FlowFixerError("Gemini returned an empty response");
     }
-    return JSON.parse(text) as Phase2Response;
+    const result = JSON.parse(text) as Phase2Response;
+    validatePhase2Response(result);
+    return result;
   } catch (err) {
     if (err instanceof FlowFixerError) throw err;
     throw new FlowFixerError("Failed to analyze diff", err);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Validation Helpers
+// ---------------------------------------------------------------------------
+
+function validatePhase1Response(data: any): asserts data is Phase1Response {
+  const missing: string[] = [];
+  if (!data.category) missing.push("category");
+  if (!data.location) missing.push("location");
+  if (!data.tldr) missing.push("tldr");
+  if (!data.explanation) missing.push("explanation");
+  if (!data.howToFix) missing.push("howToFix");
+  if (!data.howToPrevent) missing.push("howToPrevent");
+  if (!data.bestPractices) missing.push("bestPractices");
+  if (!data.keyTerms || !Array.isArray(data.keyTerms)) missing.push("keyTerms");
+  if (!data.quiz) {
+    missing.push("quiz");
+  } else {
+    if (!data.quiz.question) missing.push("quiz.question");
+    if (!data.quiz.options || !Array.isArray(data.quiz.options)) missing.push("quiz.options");
+    if (!data.quiz.correct) missing.push("quiz.correct");
+    if (!data.quiz.explanation) missing.push("quiz.explanation");
+  }
+
+  if (missing.length > 0) {
+    throw new FlowFixerError(`LLM response missing required fields: ${missing.join(", ")}`);
+  }
+}
+
+function validatePhase2Response(data: any): asserts data is Phase2Response {
+  const missing: string[] = [];
+  if (!data.quickSummary) missing.push("quickSummary");
+  if (!data.whyItWorks) missing.push("whyItWorks");
+  if (!data.whatToDoNext || !Array.isArray(data.whatToDoNext)) missing.push("whatToDoNext");
+  if (!data.keyTakeaway) missing.push("keyTakeaway");
+  if (!data.checkQuestion) missing.push("checkQuestion");
+
+  if (missing.length > 0) {
+    throw new FlowFixerError(`LLM response missing required fields: ${missing.join(", ")}`);
   }
 }
 
