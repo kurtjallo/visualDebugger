@@ -16,9 +16,7 @@
     "onLanguage:typescript",
     "onLanguage:javascriptreact",
     "onLanguage:typescriptreact",
-    "onView:flowfixer.actionsPanel",
-    "onView:flowfixer.errorPanel",
-    "onView:flowfixer.diffPanel",
+    "onView:flowfixer.debugPanel",
     "onView:flowfixer.dashboardPanel",
     "onCommand:flowfixer.showErrorPanel",
     "onCommand:flowfixer.showDiffPanel",
@@ -34,6 +32,10 @@
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "flowfixer.showDebugPanel",
+        "title": "Visual Debugger: Show Debug Panel"
+      },
       {
         "command": "flowfixer.showErrorPanel",
         "title": "Visual Debugger: Show Error Explanation"
@@ -92,18 +94,8 @@
       "flowfixer": [
         {
           "type": "webview",
-          "id": "flowfixer.actionsPanel",
-          "name": "Quick Actions"
-        },
-        {
-          "type": "webview",
-          "id": "flowfixer.errorPanel",
-          "name": "Error Explanation"
-        },
-        {
-          "type": "webview",
-          "id": "flowfixer.diffPanel",
-          "name": "Diff Review"
+          "id": "flowfixer.debugPanel",
+          "name": "Debug"
         },
         {
           "type": "webview",

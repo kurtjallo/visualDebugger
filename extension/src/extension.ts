@@ -3,10 +3,8 @@ import { ErrorListener } from "./errorListener";
 import { DiffEngine } from "./diffEngine";
 import { initialize as initLLM, analyzeError, analyzeDiff, isInitialized, testConnection, FlowFixerError } from "./llmClient";
 import { FlowFixerStorage } from "./storage";
-import { ErrorPanelProvider } from "./panels/ErrorPanel";
-import { DiffPanelProvider } from "./panels/DiffPanel";
+import { DebugPanelProvider } from "./panels/DebugPanel";
 import { DashboardPanelProvider } from "./panels/DashboardPanel";
-import { ActionsPanelProvider } from "./panels/ActionsPanel";
 import { CapturedError, BugRecord, WebviewToExtMessage } from "./types";
 
 import { getSeedBugRecords } from "./seedData";
@@ -64,15 +62,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const mongoUri = await mergedSecrets.get("flowfixer.mongoUri");
   const storage = new FlowFixerStorage(context.globalState, mongoUri);
 
-  const actionsPanel = new ActionsPanelProvider(context.extensionUri);
-  const errorPanel = new ErrorPanelProvider(context.extensionUri);
-  const diffPanel = new DiffPanelProvider(context.extensionUri);
+  const debugPanel = new DebugPanelProvider(context.extensionUri);
   const dashboardPanel = new DashboardPanelProvider(context.extensionUri);
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(ActionsPanelProvider.viewType, actionsPanel),
-    vscode.window.registerWebviewViewProvider(ErrorPanelProvider.viewType, errorPanel),
-    vscode.window.registerWebviewViewProvider(DiffPanelProvider.viewType, diffPanel),
+    vscode.window.registerWebviewViewProvider(DebugPanelProvider.viewType, debugPanel),
     vscode.window.registerWebviewViewProvider(DashboardPanelProvider.viewType, dashboardPanel)
   );
 
@@ -88,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   function updateActionsPanel(): void {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-      actionsPanel.postMessage({ type: "updateErrors", data: { count: 0, fileName: "", firstError: null } });
+      debugPanel.postMessage({ type: "updateErrors", data: { count: 0, fileName: "", firstError: null } });
       return;
     }
     const doc = editor.document;
@@ -99,7 +93,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     if (errors.length > 0) {
       const first = errors[0];
-      actionsPanel.postMessage({
+      debugPanel.postMessage({
         type: "updateErrors",
         data: {
           count: errors.length,
@@ -112,7 +106,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         },
       });
     } else {
-      actionsPanel.postMessage({ type: "updateErrors", data: { count: 0, fileName, firstError: null } });
+      debugPanel.postMessage({ type: "updateErrors", data: { count: 0, fileName, firstError: null } });
     }
   }
 
@@ -159,23 +153,23 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       case "analyzingError":
         statusItem.text = "$(loading~spin) Visual Debugger: Analyzing error...";
         statusItem.tooltip = "Visual Debugger is analyzing the detected error.";
-        statusItem.command = "flowfixer.showErrorPanel";
+        statusItem.command = "flowfixer.showDebugPanel";
         break;
       case "errorExplained":
         statusItem.text = "$(check) Visual Debugger: Error explained";
         statusItem.tooltip = "Error explanation ready. Click to open the panel.";
-        statusItem.command = "flowfixer.showErrorPanel";
+        statusItem.command = "flowfixer.showDebugPanel";
         resetStatusTimer = setTimeout(() => updateStatus(isInitialized() ? "ready" : "needsKey"), 5000);
         break;
       case "analyzingDiff":
         statusItem.text = "$(loading~spin) Visual Debugger: Reviewing fix...";
         statusItem.tooltip = "Visual Debugger is analyzing the code diff.";
-        statusItem.command = "flowfixer.showDiffPanel";
+        statusItem.command = "flowfixer.showDebugPanel";
         break;
       case "diffReviewed":
         statusItem.text = "$(git-compare) Visual Debugger: Fix reviewed";
         statusItem.tooltip = "Diff review ready. Click to open the panel.";
-        statusItem.command = "flowfixer.showDiffPanel";
+        statusItem.command = "flowfixer.showDebugPanel";
         resetStatusTimer = setTimeout(() => updateStatus(isInitialized() ? "ready" : "needsKey"), 5000);
         break;
       case "analysisFailed":
@@ -209,7 +203,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     lastError = error;
     // New error cycle starts here. Clear any stale Phase 2 review so users
     // don't see old fix explanations before a new diff is detected.
-    diffPanel.postMessage({ type: "clear" });
+    debugPanel.postMessage({ type: "clear" });
 
     diffEngine.startTracking(error.file);
     updateStatus("analyzingError");
@@ -226,7 +220,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         codeContext: error.codeContext,
       });
 
-      errorPanel.postMessage({
+      debugPanel.postMessage({
         type: "showError",
         data: { ...explanation, raw: error },
       });
@@ -303,7 +297,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   }
 
   context.subscriptions.push(
-    actionsPanel.onMessage((msg) => {
+    debugPanel.onMessage((msg) => {
       if (msg.type === "explainError") {
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
@@ -335,14 +329,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
         void handlePhase1(captured);
       } else {
-        void handleWebviewMessage("error", actionsPanel, msg);
+        void handleWebviewMessage("error", debugPanel, msg);
       }
-    }),
-    errorPanel.onMessage((msg) => {
-      void handleWebviewMessage("error", errorPanel, msg);
-    }),
-    diffPanel.onMessage((msg) => {
-      void handleWebviewMessage("diff", diffPanel, msg);
     }),
     dashboardPanel.onMessage((msg) => {
       void handleWebviewMessage("dashboard", dashboardPanel, msg);
@@ -369,7 +357,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         diff: diff.unifiedDiff,
       });
 
-      diffPanel.postMessage({
+      debugPanel.postMessage({
         type: "showDiff",
         data: { ...diffExplanation, diff },
       });
@@ -410,11 +398,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   });
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("flowfixer.showDebugPanel", async () => {
+      await vscode.commands.executeCommand("flowfixer.debugPanel.focus");
+    }),
     vscode.commands.registerCommand("flowfixer.showErrorPanel", async () => {
-      await vscode.commands.executeCommand("flowfixer.errorPanel.focus");
+      await vscode.commands.executeCommand("flowfixer.debugPanel.focus");
     }),
     vscode.commands.registerCommand("flowfixer.showDiffPanel", async () => {
-      await vscode.commands.executeCommand("flowfixer.diffPanel.focus");
+      await vscode.commands.executeCommand("flowfixer.debugPanel.focus");
     }),
     vscode.commands.registerCommand("flowfixer.showDashboard", async () => {
       await vscode.commands.executeCommand("flowfixer.dashboardPanel.focus");

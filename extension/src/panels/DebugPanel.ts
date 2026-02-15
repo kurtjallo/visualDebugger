@@ -2,10 +2,10 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import { ExtToWebviewMessage, WebviewToExtMessage } from "../types";
 
-const LOG = "[FlowFixer:ActionsPanel]";
+const LOG = "[FlowFixer:DebugPanel]";
 
-export class ActionsPanelProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = "flowfixer.actionsPanel";
+export class DebugPanelProvider implements vscode.WebviewViewProvider {
+  public static readonly viewType = "flowfixer.debugPanel";
   private view?: vscode.WebviewView;
   private onMessageEmitter = new vscode.EventEmitter<WebviewToExtMessage>();
   readonly onMessage = this.onMessageEmitter.event;
@@ -42,26 +42,33 @@ export class ActionsPanelProvider implements vscode.WebviewViewProvider {
     this.pendingMessage = message;
     if (this.view) {
       this.view.webview.postMessage(message);
+      this.view.show?.(true);
     }
   }
 
   private getHtml(webview: vscode.Webview): string {
-    const htmlPath = vscode.Uri.joinPath(this.extensionUri, "src", "webview", "actions.html");
+    const htmlPath = vscode.Uri.joinPath(this.extensionUri, "src", "webview", "debug.html");
     const stylesUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, "src", "webview", "styles.css"));
+    const configUri = webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, "src", "webview", "config.js"));
     const nonce = getNonce();
 
     let html = "";
     try {
-      html = fs.readFileSync(htmlPath.fsPath, "utf8");
+        html = fs.readFileSync(htmlPath.fsPath, "utf8");
     } catch (e) {
-      console.error(`${LOG} Failed to read actions.html`, e);
-      return `<div>Error loading resource: ${e}</div>`;
+        console.error(`${LOG} Failed to read debug.html`, e);
+        return `<div>Error loading resource: ${e}</div>`;
     }
 
+    // Replace resource paths
     html = html.replace('href="styles.css"', `href="${stylesUri}"`);
+    html = html.replace('src="config.js"', `src="${configUri}"`);
+
+    // Add nonce to all script tags (inline and external)
     html = html.replace(/<script/g, `<script nonce="${nonce}"`);
 
-    const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">`;
+    // Inject CSP
+    const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' 'unsafe-eval'; connect-src https://api.elevenlabs.io blob:; media-src blob:;">`;
     html = html.replace('<head>', `<head>${csp}`);
 
     return html;

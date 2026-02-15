@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug Panel — Visual Debugger</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* ── Quick Actions (top section) ── */
+        .actions-panel {
+            padding: 12px 8px;
+        }
+
+        .actions-error-count {
+            font-size: 0.85em;
+            color: var(--vscode-descriptionForeground);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .actions-error-count .count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            background: var(--ff-runtime, #f14c4c);
+            color: #fff;
+            font-size: 0.8em;
+            font-weight: 700;
+        }
+
+        .actions-error-preview {
+            font-family: var(--vscode-editor-font-family, monospace);
+            font-size: 0.85em;
+            color: var(--vscode-foreground);
+            background: var(--vscode-textCodeBlock-background);
+            border: 1px solid var(--vscode-widget-border);
+            border-left: 3px solid var(--ff-runtime, #f14c4c);
+            border-radius: 0 4px 4px 0;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+            word-break: break-word;
+            line-height: 1.5;
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .actions-btn-explain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            transition: background-color 0.1s ease-in-out, transform 0.05s ease-in-out;
+        }
+
+        .actions-btn-explain:hover {
+            background: var(--vscode-button-hoverBackground);
+        }
+
+        .actions-btn-explain:active {
+            transform: scale(0.98);
+        }
+
+        .actions-btn-explain:focus-visible {
+            outline: 2px solid var(--vscode-focusBorder);
+            outline-offset: 2px;
+        }
+
+        .actions-empty {
+            text-align: center;
+            padding: 24px 16px;
+        }
+
+        .actions-empty-heading {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--vscode-foreground);
+            margin-bottom: 6px;
+        }
+
+        .actions-empty-body {
+            font-size: 0.9em;
+            color: var(--vscode-descriptionForeground);
+            line-height: 1.5;
+        }
+
+        /* ── Section visibility ── */
+        .panel-section {
+            display: none;
+        }
+
+        .panel-section.visible {
+            display: block;
+        }
+
+        /* ── Section divider between major panels ── */
+        .panel-divider {
+            height: 1px;
+            background: var(--vscode-widget-border);
+            margin: 8px 0;
+        }
+
+        /* ── Utility ── */
+        .mt-8 { margin-top: 8px; }
+        .mb-8 { margin-bottom: 8px; }
+    </style>
+</head>
+
+<body>
+    <!-- Screen-reader live region (shared) -->
+    <div id="status-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ================================================================
+         SECTION 1: Quick Actions (always visible when errors exist)
+         ================================================================ -->
+    <div id="section-actions" class="panel-section visible" role="region" aria-label="Quick Actions">
+        <div class="actions-panel">
+            <!-- Has errors state -->
+            <div id="errors-state" style="display: none;">
+                <div class="actions-error-count" id="error-count-bar">
+                    <span class="count-badge" id="error-count">0</span>
+                    <span id="error-file-label">errors in this file</span>
+                </div>
+                <div class="actions-error-preview" id="error-preview" aria-label="First error message"></div>
+                <button class="actions-btn-explain" id="explain-btn" aria-label="Explain this error">
+                    Explain This Error
+                </button>
+            </div>
+
+            <!-- No errors state -->
+            <div id="empty-state" class="actions-empty" role="status">
+                <div class="actions-empty-heading">No errors found</div>
+                <div class="actions-empty-body">Open a file with errors to get started.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         SECTION 2: Error Explanation (hidden by default, shown after explain)
+         ================================================================ -->
+    <div id="section-error-explanation" class="panel-section" role="region" aria-label="Error explanation">
+        <div class="ff-panel">
+            <!-- Skip link for keyboard/screen-reader users -->
+            <a href="#error-section-quiz" class="sr-only sr-only--focusable">Skip to quiz</a>
+
+            <!-- 1. Error Location -->
+            <section class="ff-section ff-section--error" id="error-section-error" aria-labelledby="error-heading-error">
+                <h2 id="error-heading-error" class="ff-heading">
+                    <span id="category-badge" class="badge"></span>
+                    <span class="text-muted text-sm" id="error-location"></span>
+                </h2>
+                <p id="error-message" class="ff-body" style="font-family: var(--vscode-editor-font-family, monospace); background-color: var(--vscode-textCodeBlock-background); padding: 8px; border-radius: 3px; word-break: break-word;"></p>
+                <p class="ff-body text-muted text-sm" id="tldr-text" style="margin-top: 8px; font-weight: 600;"></p>
+            </section>
+
+            <!-- 2. What Happened -->
+            <section class="ff-section ff-section--explanation" id="error-section-explanation" aria-labelledby="error-heading-explanation" style="display: none;">
+                <h2 id="error-heading-explanation" class="ff-heading">
+                    What Happened
+                </h2>
+                <p class="ff-body" id="explanation-text"></p>
+            </section>
+
+            <!-- 3. How to Fix -->
+            <section class="ff-section ff-section--fix" id="error-section-fix" aria-labelledby="error-heading-fix" style="display: none;">
+                <h2 id="error-heading-fix" class="ff-heading">
+                    How to Fix
+                </h2>
+                <div class="ff-body" id="fix-text"></div>
+            </section>
+
+            <!-- 4. How to Prevent (progressive disclosure) -->
+            <section class="ff-section ff-section--prevent" id="error-section-prevent" aria-labelledby="error-heading-prevent" style="display: none;">
+                <details class="ff-disclosure">
+                    <summary class="ff-disclosure-trigger" id="error-heading-prevent">
+                        <span class="ff-disclosure-title">How to Prevent This</span>
+                        <span class="ff-disclosure-hint" aria-hidden="true">Show tip</span>
+                    </summary>
+                    <div class="ff-disclosure-body">
+                        <p class="ff-body" id="prevent-text"></p>
+                    </div>
+                </details>
+            </section>
+
+            <!-- 5. Best Practices (progressive disclosure) -->
+            <section class="ff-section ff-section--practices" id="error-section-practices" aria-labelledby="error-heading-practices" style="display: none;">
+                <details class="ff-disclosure">
+                    <summary class="ff-disclosure-trigger" id="error-heading-practices">
+                        <span class="ff-disclosure-title">Best Practice</span>
+                        <span class="ff-disclosure-hint" aria-hidden="true">Show details</span>
+                    </summary>
+                    <div class="ff-disclosure-body">
+                        <p class="ff-body" id="practices-text"></p>
+                    </div>
+                </details>
+            </section>
+
+            <!-- 6. Suggested Prompt -->
+            <section class="ff-section ff-section--prompt" id="error-section-prompt" aria-labelledby="error-heading-prompt" style="display: none;">
+                <h2 id="error-heading-prompt" class="ff-heading">
+                    Try This Prompt Instead
+                </h2>
+                <p class="ff-body text-muted text-sm" style="margin-bottom: 8px;">Instead of "fix the bug," try a prompt like this:</p>
+                <div class="prompt-block" id="prompt-text"></div>
+                <button class="btn btn--secondary mt-8" id="copy-prompt-btn" style="width: 100%; min-height: 36px;" aria-label="Copy prompt to clipboard">Copy Prompt</button>
+            </section>
+
+            <!-- 7. Quiz -->
+            <section class="ff-section ff-section--quiz" id="error-section-quiz" aria-labelledby="error-heading-quiz" style="display: none;">
+                <h2 id="error-heading-quiz" class="ff-heading">
+                    Test Yourself
+                </h2>
+                <p class="ff-body mb-8" id="quiz-question"></p>
+                <div class="quiz-options" id="quiz-options" role="group" aria-label="Quiz answers"></div>
+                <div class="quiz-feedback" id="quiz-feedback" style="display:none;" role="alert"></div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         SECTION 3: Diff Review (hidden by default, shown when fix detected)
+         ================================================================ -->
+    <div id="section-diff-review" class="panel-section" role="region" aria-label="Fix explanation">
+        <div class="ff-panel">
+            <!-- Skip link for keyboard/screen-reader users -->
+            <a href="#diff-section-todo" class="sr-only sr-only--focusable">Skip to action items</a>
+
+            <!-- File context -->
+            <div class="ff-file-bar" id="file-bar" style="display: none;" aria-label="File changed">
+                <span class="ff-file-name" id="diff-file"></span>
+            </div>
+
+            <!-- 1. Quick Summary -->
+            <section class="ff-section ff-section--summary" id="diff-section-summary"
+                aria-labelledby="diff-heading-summary" style="display: none;">
+                <h2 id="diff-heading-summary" class="ff-heading">
+                    Quick Summary
+                </h2>
+                <p class="ff-body" id="quick-summary"></p>
+            </section>
+
+            <!-- 2. Why This Fixes It (progressive disclosure) -->
+            <section class="ff-section ff-section--why" id="diff-section-why"
+                aria-labelledby="diff-heading-why" style="display: none;">
+                <details class="ff-disclosure">
+                    <summary class="ff-disclosure-trigger" id="diff-heading-why">
+                        <span class="ff-disclosure-title">Why This Fixes It</span>
+                        <span class="ff-disclosure-hint" aria-hidden="true">Show details</span>
+                    </summary>
+                    <div class="ff-disclosure-body">
+                        <p class="ff-body" id="why-it-works"></p>
+                    </div>
+                </details>
+            </section>
+
+            <!-- 3. What To Do Next (interactive checklist) -->
+            <section class="ff-section ff-section--todo" id="diff-section-todo"
+                aria-labelledby="diff-heading-todo" style="display: none;">
+                <h2 id="diff-heading-todo" class="ff-heading">
+                    What To Do Next
+                </h2>
+                <ul class="ff-checklist" id="what-to-do-next" role="list"
+                    aria-label="Steps to check the fix"></ul>
+                <p class="ff-check-done" id="check-done" style="display: none;" aria-live="polite">
+                    All done -- nice work!
+                </p>
+            </section>
+
+            <!-- 4. Key Takeaway -->
+            <section class="ff-section ff-section--takeaway" id="diff-section-takeaway"
+                aria-labelledby="diff-heading-takeaway" style="display: none;">
+                <h2 id="diff-heading-takeaway" class="ff-heading">
+                    Key Takeaway
+                </h2>
+                <blockquote class="ff-callout" id="key-takeaway"></blockquote>
+            </section>
+
+            <!-- 5. Think About It (progressive disclosure) -->
+            <section class="ff-section ff-section--question" id="diff-section-question"
+                aria-labelledby="diff-heading-question" style="display: none;">
+                <details class="ff-disclosure">
+                    <summary class="ff-disclosure-trigger" id="diff-heading-question">
+                        <span class="ff-disclosure-title">Think About It</span>
+                        <span class="ff-disclosure-hint" aria-hidden="true">Show question</span>
+                    </summary>
+                    <div class="ff-disclosure-body">
+                        <p class="ff-question" id="check-question"></p>
+                    </div>
+                </details>
+            </section>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         SHARED: TTS Controls (shown when error or diff content is visible)
+         ================================================================ -->
+    <div id="section-tts" class="panel-section" role="region" aria-label="Read aloud controls">
+        <div class="ff-panel">
+            <div class="ff-tts-bar" id="tts-controls" role="region" aria-label="Read aloud controls">
+                <div class="ff-voice-group" role="radiogroup" aria-label="Voice">
+                    <button class="ff-voice-btn active" id="voice-female" role="radio" aria-checked="true">Female voice</button>
+                    <button class="ff-voice-btn" id="voice-male" role="radio" aria-checked="false">Male voice</button>
+                </div>
+                <button class="ff-btn--tts" id="tts-btn" aria-label="Read explanation aloud">Read Aloud</button>
+                <span class="ff-tts-status" id="tts-status" aria-live="polite"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── State ──
+        var quizAnswered = false;
+        var currentErrorData = null;
+        var currentDiffData = null;
+        var ttsAudio = null;
+        var isSpeaking = false;
+        var selectedVoice = 'female';
+        var activeView = 'actions'; // 'actions' | 'error' | 'diff'
+
+        // ── VS Code API ──
+        var vscode;
+        try {
+            vscode = acquireVsCodeApi();
+            window.vscode = vscode;
+        } catch (e) {
+            console.log('Browser preview mode (no VS Code API)');
+        }
+
+        // ── Helpers ──
+        function $(id) { return document.getElementById(id); }
+
+        function announce(msg) {
+            var el = $('status-live');
+            if (el) el.textContent = msg;
+        }
+
+        function showSection(id, hasData) {
+            var el = $(id);
+            if (el) el.style.display = hasData ? '' : 'none';
+        }
+
+        function updateTtsStatus(text) {
+            $('tts-status').textContent = text;
+        }
+
+        function quizCorrectIndex(val) {
+            if (typeof val === 'number') return val;
+            var map = { A: 0, B: 1, C: 2, D: 3 };
+            return map[val] != null ? map[val] : 0;
+        }
+
+        function cleanTextForTTS(html) {
+            if (!html) return '';
+            return html
+                .replace(/<[^>]*>/g, '')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // ── Panel visibility ──
+        function showPanelSection(name) {
+            activeView = name;
+            var sections = {
+                actions: 'section-actions',
+                error: 'section-error-explanation',
+                diff: 'section-diff-review',
+                tts: 'section-tts'
+            };
+            // Actions is always visible when errors exist; hide when showing other content
+            $('section-actions').className = (name === 'actions') ? 'panel-section visible' : 'panel-section';
+            $('section-error-explanation').className = (name === 'error') ? 'panel-section visible' : 'panel-section';
+            $('section-diff-review').className = (name === 'diff') ? 'panel-section visible' : 'panel-section';
+            // TTS is visible when error or diff content is showing
+            $('section-tts').className = (name === 'error' || name === 'diff') ? 'panel-section visible' : 'panel-section';
+        }
+
+        // ── Disclosure hint toggle ──
+        document.querySelectorAll('.ff-disclosure').forEach(function (details) {
+            details.addEventListener('toggle', function () {
+                var hint = details.querySelector('.ff-disclosure-hint');
+                if (!hint) return;
+                var isPrevent = details.closest('#error-section-prevent');
+                var isQuestion = details.closest('#diff-section-question');
+                var showText = isPrevent ? 'Show tip' : (isQuestion ? 'Show question' : 'Show details');
+                var hideText = isPrevent ? 'Hide tip' : (isQuestion ? 'Hide question' : 'Hide details');
+                hint.textContent = details.open ? hideText : showText;
+            });
+        });
+
+        // ── Actions: update errors state ──
+        function updateActionsState(data) {
+            if (data.count > 0 && data.firstError) {
+                $('errors-state').style.display = '';
+                $('empty-state').style.display = 'none';
+
+                $('error-count').textContent = String(data.count);
+                var fileName = data.fileName || 'this file';
+                var label = data.count === 1
+                    ? '1 error in ' + fileName
+                    : data.count + ' errors in ' + fileName;
+                $('error-file-label').textContent = label;
+                $('error-preview').textContent = data.firstError.message;
+
+                showPanelSection('actions');
+                announce(label);
+            } else {
+                $('errors-state').style.display = 'none';
+                $('empty-state').style.display = '';
+                showPanelSection('actions');
+                announce('No errors found.');
+            }
+        }
+
+        // ── Error Explanation: populate and show ──
+        function updateErrorPanel(data) {
+            currentErrorData = data;
+            quizAnswered = false;
+
+            // 1. Error Location & Badge
+            var badge = $('category-badge');
+            badge.textContent = data.category;
+            badge.className = 'badge';
+            badge.setAttribute('data-type', data.category.split(' ')[0]);
+
+            var type = data.category.split(' ')[0];
+            if (type === 'Syntax') { badge.style.color = 'var(--ff-syntax)'; badge.style.borderColor = 'var(--ff-syntax)'; }
+            else if (type === 'Logic') { badge.style.color = 'var(--ff-logic)'; badge.style.borderColor = 'var(--ff-logic)'; }
+            else if (type === 'Runtime') { badge.style.color = 'var(--ff-runtime)'; badge.style.borderColor = 'var(--ff-runtime)'; }
+
+            $('error-location').textContent = data.location || (data.raw && data.raw.file + ':' + data.raw.line) || '';
+            var errorMsg = data.errorMessage || (data.raw && data.raw.message) || '';
+            $('error-message').textContent = errorMsg;
+
+            // TL;DR
+            var tldr = $('tldr-text');
+            if (data.tldr) {
+                tldr.textContent = data.tldr;
+                tldr.style.display = '';
+            } else {
+                tldr.style.display = 'none';
+            }
+
+            // 2. What Happened
+            var hasExplanation = !!data.explanation;
+            showSection('error-section-explanation', hasExplanation);
+            if (hasExplanation) $('explanation-text').innerHTML = data.explanation;
+
+            // 3. How to Fix
+            var hasFixData = !!(data.howToFix && (Array.isArray(data.howToFix) ? data.howToFix.length > 0 : data.howToFix));
+            showSection('error-section-fix', hasFixData);
+            if (hasFixData) {
+                if (Array.isArray(data.howToFix)) {
+                    var fixList = data.howToFix.map(function (step) { return '<li>' + step + '</li>'; }).join('');
+                    $('fix-text').innerHTML = '<ol style="padding-left: 18px; margin: 0;">' + fixList + '</ol>';
+                } else {
+                    $('fix-text').innerHTML = data.howToFix;
+                }
+            }
+
+            // 4. How to Prevent
+            var hasPrevent = !!data.howToPrevent;
+            showSection('error-section-prevent', hasPrevent);
+            if (hasPrevent) $('prevent-text').innerHTML = data.howToPrevent;
+
+            // 5. Best Practices
+            var hasPractices = !!data.bestPractices;
+            showSection('error-section-practices', hasPractices);
+            if (hasPractices) $('practices-text').innerHTML = data.bestPractices;
+
+            // 6. Suggested Prompt
+            var hasPrompt = !!data.suggestedPrompt;
+            showSection('error-section-prompt', hasPrompt);
+            if (hasPrompt) $('prompt-text').textContent = data.suggestedPrompt;
+
+            // 7. Quiz
+            var hasQuiz = !!data.quiz;
+            showSection('error-section-quiz', hasQuiz);
+            if (hasQuiz) {
+                var correctIdx = quizCorrectIndex(data.quiz.correct);
+                $('quiz-question').innerHTML = data.quiz.question;
+                var quizOptions = $('quiz-options');
+                quizOptions.innerHTML = '';
+                $('quiz-feedback').style.display = 'none';
+
+                data.quiz.options.forEach(function (option, index) {
+                    var optionEl = document.createElement('div');
+                    optionEl.className = 'quiz-option';
+                    optionEl.textContent = option;
+                    optionEl.style.animationDelay = (index * 0.05) + 's';
+                    optionEl.style.minHeight = '36px';
+                    optionEl.classList.add('slide-in');
+
+                    optionEl.addEventListener('click', function () {
+                        if (quizAnswered) return;
+                        quizAnswered = true;
+
+                        document.querySelectorAll('.quiz-option').forEach(function (el, i) {
+                            el.setAttribute('data-answered', 'true');
+                            el.style.cursor = 'default';
+                            if (i === correctIdx) {
+                                el.classList.add('correct');
+                            } else if (i === index && i !== correctIdx) {
+                                el.classList.add('incorrect');
+                            } else {
+                                el.style.opacity = '0.6';
+                            }
+                        });
+
+                        var isCorrect = index === correctIdx;
+                        var fb = $('quiz-feedback');
+                        fb.textContent = isCorrect
+                            ? 'Correct! ' + data.quiz.explanation
+                            : 'Not quite. ' + data.quiz.explanation;
+                        fb.style.display = 'block';
+                        fb.className = 'quiz-feedback';
+                        if (isCorrect) fb.style.borderLeftColor = 'var(--ff-success)';
+                        else fb.style.borderLeftColor = 'var(--ff-runtime)';
+
+                        if (window.vscode) {
+                            window.vscode.postMessage({ type: 'quizAnswer', correct: isCorrect });
+                        }
+                    });
+                    quizOptions.appendChild(optionEl);
+                });
+            }
+
+            showPanelSection('error');
+            updateTtsStatus('');
+            announce('Error explanation updated.');
+        }
+
+        // ── Diff Review: populate and show ──
+        function updateDiffPanel(data) {
+            currentDiffData = data;
+
+            // File bar
+            var fileName = data.fileName || (data.diff && data.diff.file) || '';
+            if (fileName) {
+                $('diff-file').textContent = fileName;
+                $('file-bar').style.display = '';
+            } else {
+                $('file-bar').style.display = 'none';
+            }
+
+            // 1. Quick Summary
+            var hasSummary = !!data.quickSummary;
+            showSection('diff-section-summary', hasSummary);
+            if (hasSummary) $('quick-summary').textContent = data.quickSummary;
+
+            // 2. Why This Fixes It
+            var hasWhy = !!data.whyItWorks;
+            showSection('diff-section-why', hasWhy);
+            if (hasWhy) $('why-it-works').textContent = data.whyItWorks;
+
+            // 3. What To Do Next (interactive checklist)
+            var hasTodo = Array.isArray(data.whatToDoNext) && data.whatToDoNext.length > 0;
+            showSection('diff-section-todo', hasTodo);
+            var todoList = $('what-to-do-next');
+            todoList.innerHTML = '';
+            $('check-done').style.display = 'none';
+            if (hasTodo) {
+                data.whatToDoNext.forEach(function (step, i) {
+                    var li = document.createElement('li');
+                    li.className = 'ff-check-item';
+
+                    var cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.id = 'todo-' + i;
+                    cb.className = 'ff-checkbox';
+                    cb.setAttribute('aria-label', step);
+                    cb.addEventListener('change', onChecklistChange);
+
+                    var label = document.createElement('label');
+                    label.htmlFor = 'todo-' + i;
+                    label.className = 'ff-check-label';
+                    label.textContent = step;
+
+                    li.appendChild(cb);
+                    li.appendChild(label);
+                    todoList.appendChild(li);
+                });
+            }
+
+            // 4. Key Takeaway
+            var hasTakeaway = !!data.keyTakeaway;
+            showSection('diff-section-takeaway', hasTakeaway);
+            if (hasTakeaway) $('key-takeaway').textContent = data.keyTakeaway;
+
+            // 5. Think About It
+            var hasQuestion = !!data.checkQuestion;
+            showSection('diff-section-question', hasQuestion);
+            if (hasQuestion) $('check-question').textContent = data.checkQuestion;
+
+            showPanelSection('diff');
+            updateTtsStatus('');
+            announce('Fix explanation updated.');
+        }
+
+        // ── Checklist logic ──
+        function onChecklistChange() {
+            var boxes = document.querySelectorAll('.ff-checkbox');
+            var allChecked = Array.from(boxes).every(function (cb) { return cb.checked; });
+            $('check-done').style.display = allChecked ? '' : 'none';
+            if (allChecked) announce('All steps complete. Nice work!');
+        }
+
+        // ── TTS helpers ──
+        function getReadableText() {
+            if (activeView === 'error' && currentErrorData) {
+                var data = currentErrorData;
+                var fixText = Array.isArray(data.howToFix) ? data.howToFix.join('. ') : (data.howToFix || '');
+                return cleanTextForTTS([
+                    data.explanation,
+                    'Here is how to fix it. ' + fixText,
+                    'To prevent this in the future: ' + (data.howToPrevent || ''),
+                ].join('. '));
+            } else if (activeView === 'diff' && currentDiffData) {
+                var parts = [];
+                if (currentDiffData.quickSummary) parts.push(currentDiffData.quickSummary);
+                if (currentDiffData.whyItWorks) parts.push(currentDiffData.whyItWorks);
+                if (currentDiffData.keyTakeaway) parts.push('Key takeaway: ' + currentDiffData.keyTakeaway);
+                return cleanTextForTTS(parts.join('. '));
+            }
+            return '';
+        }
+
+        function stopAudio() {
+            if (ttsAudio) { ttsAudio.pause(); ttsAudio = null; }
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            isSpeaking = false;
+            updateTtsStatus('');
+        }
+
+        function speakWithWebSpeech(text) {
+            if (!('speechSynthesis' in window) || !text) {
+                announce('Text-to-speech is not available.');
+                updateTtsStatus('');
+                return;
+            }
+            var u = new SpeechSynthesisUtterance(text);
+            u.rate = 0.95;
+            isSpeaking = true;
+            $('tts-btn').textContent = 'Stop';
+            $('tts-btn').classList.add('ff-btn--playing');
+            updateTtsStatus('Playing...');
+            u.onend = function () {
+                isSpeaking = false;
+                $('tts-btn').textContent = 'Read Aloud';
+                $('tts-btn').classList.remove('ff-btn--playing');
+                updateTtsStatus('');
+            };
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(u);
+        }
+
+        // ── Explain button ──
+        $('explain-btn').addEventListener('click', function () {
+            if (vscode) {
+                vscode.postMessage({ type: 'explainError' });
+            }
+        });
+
+        // ── Voice toggle ──
+        $('voice-female').addEventListener('click', function () {
+            selectedVoice = 'female';
+            $('voice-female').classList.add('active');
+            $('voice-female').setAttribute('aria-checked', 'true');
+            $('voice-male').classList.remove('active');
+            $('voice-male').setAttribute('aria-checked', 'false');
+        });
+
+        $('voice-male').addEventListener('click', function () {
+            selectedVoice = 'male';
+            $('voice-male').classList.add('active');
+            $('voice-male').setAttribute('aria-checked', 'true');
+            $('voice-female').classList.remove('active');
+            $('voice-female').setAttribute('aria-checked', 'false');
+        });
+
+        // ── TTS button ──
+        $('tts-btn').addEventListener('click', function () {
+            if (isSpeaking) {
+                stopAudio();
+                $('tts-btn').textContent = 'Read Aloud';
+                $('tts-btn').classList.remove('ff-btn--playing');
+                updateTtsStatus('');
+                return;
+            }
+            var text = getReadableText();
+            if (!text) { announce('No explanation to read yet.'); return; }
+
+            if (vscode) {
+                vscode.postMessage({ type: 'requestTts', text: text });
+                $('tts-btn').textContent = 'Loading...';
+                updateTtsStatus('Loading...');
+            } else {
+                speakWithWebSpeech(text);
+            }
+        });
+
+        // ── Copy Prompt Button ──
+        $('copy-prompt-btn').addEventListener('click', async function () {
+            var promptText = $('prompt-text').textContent;
+            try {
+                await navigator.clipboard.writeText(promptText);
+                $('copy-prompt-btn').textContent = 'Copied!';
+                $('copy-prompt-btn').classList.add('btn--success');
+                setTimeout(function () {
+                    $('copy-prompt-btn').textContent = 'Copy Prompt';
+                    $('copy-prompt-btn').classList.remove('btn--success');
+                }, 2000);
+            } catch (e) {
+                // Fallback for webview where clipboard API may not work
+                var textArea = document.createElement('textarea');
+                textArea.value = promptText;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                $('copy-prompt-btn').textContent = 'Copied!';
+                $('copy-prompt-btn').classList.add('btn--success');
+                setTimeout(function () {
+                    $('copy-prompt-btn').textContent = 'Copy Prompt';
+                    $('copy-prompt-btn').classList.remove('btn--success');
+                }, 2000);
+            }
+        });
+
+        // ── Listen for messages from extension host ──
+        window.addEventListener('message', function (event) {
+            var msg = event.data;
+
+            if (msg.type === 'updateErrors') {
+                updateActionsState(msg.data);
+
+            } else if (msg.type === 'showError') {
+                updateErrorPanel(msg.data);
+
+            } else if (msg.type === 'showDiff') {
+                stopAudio();
+                updateDiffPanel(msg.data);
+
+            } else if (msg.type === 'playAudio') {
+                stopAudio();
+                var audio = new Audio('data:' + msg.data.mimeType + ';base64,' + msg.data.base64Audio);
+                ttsAudio = audio;
+                isSpeaking = true;
+                $('tts-btn').textContent = 'Stop';
+                $('tts-btn').classList.add('ff-btn--playing');
+                updateTtsStatus('Playing...');
+                audio.onended = function () {
+                    ttsAudio = null; isSpeaking = false;
+                    $('tts-btn').textContent = 'Read Aloud';
+                    $('tts-btn').classList.remove('ff-btn--playing');
+                    updateTtsStatus('');
+                    announce('Audio finished.');
+                };
+                audio.onerror = function () {
+                    ttsAudio = null; isSpeaking = false;
+                    $('tts-btn').textContent = 'Read Aloud';
+                    $('tts-btn').classList.remove('ff-btn--playing');
+                    updateTtsStatus('');
+                    announce('Audio playback failed.');
+                };
+                audio.play().catch(function () {
+                    ttsAudio = null; isSpeaking = false;
+                    $('tts-btn').textContent = 'Read Aloud';
+                    updateTtsStatus('');
+                    announce('Could not play audio.');
+                });
+
+            } else if (msg.type === 'ttsError') {
+                announce(msg.data.message);
+                updateTtsStatus('Using browser voice...');
+                speakWithWebSpeech(getReadableText());
+
+            } else if (msg.type === 'clear') {
+                stopAudio();
+                currentErrorData = null;
+                currentDiffData = null;
+                updateActionsState({ count: 0, fileName: '', firstError: null });
+            }
+        });
+
+        // ── Initialization ──
+        var MOCK_ERROR_DATA = {
+            category: "Runtime Error",
+            location: "App.tsx, line 15",
+            errorMessage: "TypeError: Cannot read properties of undefined (reading 'map')",
+            tldr: "You called .map() on undefined -- initialize your state with [].",
+            explanation: "You're trying to call .map() on a variable called 'data', but 'data' is undefined. This means the variable hasn't been assigned a value yet -- likely because an API call hasn't finished loading when the component tries to render.",
+            howToFix: [
+                "Go to line 15 in App.tsx",
+                "Initialize your state with an empty array: const [data, setData] = useState([])",
+                "Or add a guard before .map(): data?.map(...)"
+            ],
+            howToPrevent: "Always initialize state variables with a sensible default value. If a variable will hold an array, initialize it as []. This prevents undefined errors when your component renders before async data arrives.",
+            bestPractices: "Use optional chaining (data?.map()) and nullish coalescing (data ?? []) as defensive programming patterns. These are industry-standard approaches to safely handle values that might be null or undefined.",
+            suggestedPrompt: "Fix the TypeError in App.tsx at line 15 where data.map() fails because useState() has no initial value.\n\nContext:\n- data is used with .map() to render a list of items\n- useState() returns undefined by default when no argument is passed\n- .map() is an array method -- it throws when called on undefined\n\nWhat to fix:\n- Add [] as the initial value: useState([])\n- Add a guard check before calling .map() to handle loading states\n\nExplain:\n- Why undefined causes this specific TypeError\n- What initial values prevent this class of bug\n- How to verify the fix works after applying it",
+            quiz: {
+                question: "Why does calling .map() on 'data' throw a TypeError in this case?",
+                options: [
+                    "A) .map() is not a valid JavaScript method",
+                    "B) 'data' is undefined because the state wasn't initialized with a default value",
+                    "C) The API returned an error",
+                    "D) .map() only works on strings, not arrays"
+                ],
+                correct: 1,
+                explanation: "Correct! The state variable 'data' was not given a default value (like []), so it starts as undefined. When React tries to render before the API data arrives, it calls .map() on undefined, which crashes."
+            }
+        };
+
+        var MOCK_DIFF_DATA = {
+            fileName: "App.tsx",
+            quickSummary: "useState now starts with an empty array. A safety check was added before .map().",
+            whyItWorks: "Before, data had no starting value. That made it undefined. You can't call .map() on undefined. Now data starts as [], so .map() always has a list to work with.",
+            whatToDoNext: [
+                "Confirm useState([]) has square brackets inside.",
+                "Look for other useState() calls that may need a starting value.",
+                "Run the app and verify the TypeError is gone."
+            ],
+            keyTakeaway: "Always give useState a starting value that matches how you use it.",
+            checkQuestion: "What happens if you call .map() on something that is undefined?"
+        };
+
+        var MOCK_ACTIONS_DATA = {
+            count: 2,
+            fileName: "App.tsx",
+            firstError: {
+                message: "TypeError: Cannot read properties of undefined (reading 'map')"
+            }
+        };
+
+        if (!vscode) {
+            // Browser preview: show actions first, then simulate flow
+            updateActionsState(MOCK_ACTIONS_DATA);
+            // Auto-show error explanation after a brief delay for demo purposes
+            setTimeout(function () {
+                updateErrorPanel(MOCK_ERROR_DATA);
+            }, 800);
+            // Auto-show diff review after another delay
+            setTimeout(function () {
+                updateDiffPanel(MOCK_DIFF_DATA);
+            }, 1600);
+        } else {
+            vscode.postMessage({ type: 'ready' });
+        }
+    </script>
+</body>
+
+</html>
