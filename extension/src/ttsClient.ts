@@ -1,8 +1,8 @@
 
 // ElevenLabs voice IDs — warm, natural audiobook-style voices
 const VOICES: Record<string, string> = {
-  female: "XB0fDUnXU5powFXDhCwa", // Charlotte — soft, warm, gentle teacher tone
-  male:   "onwK4e9ZLuTAKqWW03F9", // Daniel — calm, patient, warm male teacher
+  female: "EST9Ui6982FZPSi7gCHi",
+  male:   "kg2exBr4EdzouUxINhb6",
 };
 
 const TTS_MODEL_ID = "eleven_turbo_v2_5";
