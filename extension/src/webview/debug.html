@@ -29,7 +29,7 @@
             height: 22px;
             padding: 0 7px;
             border-radius: var(--radius-full, 100px);
-            background: var(--ff-runtime, #FB7185);
+            background: var(--vd-runtime, #FB7185);
             color: #fff;
             font-size: 0.78em;
             font-weight: 700;
@@ -41,9 +41,9 @@
             font-family: var(--vscode-editor-font-family, monospace);
             font-size: 0.83em;
             color: var(--vscode-foreground);
-            background: var(--ff-surface, rgba(255,255,255,0.03));
-            border: 1px solid var(--ff-border, rgba(255,255,255,0.08));
-            border-left: 3px solid var(--ff-runtime, #FB7185);
+            background: var(--vd-surface, rgba(255,255,255,0.03));
+            border: 1px solid var(--vd-border, rgba(255,255,255,0.08));
+            border-left: 3px solid var(--vd-runtime, #FB7185);
             border-radius: 0 var(--radius-sm, 6px) var(--radius-sm, 6px) 0;
             padding: 10px 14px;
             margin-bottom: 16px;
@@ -68,7 +68,7 @@
             border: none;
             border-radius: var(--radius-sm, 6px);
             cursor: pointer;
-            background: var(--ff-gradient, linear-gradient(135deg, #60A5FA, #22D3EE));
+            background: var(--vd-gradient, linear-gradient(135deg, #60A5FA, #22D3EE));
             color: #fff;
             box-shadow: 0 2px 12px rgba(96, 165, 250, 0.3);
             transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -86,7 +86,7 @@
         }
 
         .actions-btn-explain:focus-visible {
-            outline: 2px solid var(--ff-accent, #60A5FA);
+            outline: 2px solid var(--vd-accent, #60A5FA);
             outline-offset: 2px;
         }
 
@@ -109,7 +109,7 @@
         }
 
         /* ── Back button ── */
-        .ff-back-btn {
+        .vd-back-btn {
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -119,31 +119,31 @@
             font-weight: 600;
             font-family: inherit;
             color: var(--vscode-descriptionForeground);
-            background: var(--ff-surface, rgba(255,255,255,0.03));
-            border: 1px solid var(--ff-border, rgba(255,255,255,0.08));
+            background: var(--vd-surface, rgba(255,255,255,0.03));
+            border: 1px solid var(--vd-border, rgba(255,255,255,0.08));
             cursor: pointer;
             border-radius: var(--radius-sm, 6px);
             transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .ff-back-btn::before {
+        .vd-back-btn::before {
             content: '\2190';
             font-size: 1.1em;
         }
 
-        .ff-back-btn:hover {
-            color: var(--ff-accent, #60A5FA);
-            background: var(--ff-accent-dim, rgba(96,165,250,0.15));
+        .vd-back-btn:hover {
+            color: var(--vd-accent, #60A5FA);
+            background: var(--vd-accent-dim, rgba(96,165,250,0.15));
             border-color: rgba(96, 165, 250, 0.2);
             transform: translateX(-2px);
         }
 
-        .ff-back-btn:active {
+        .vd-back-btn:active {
             transform: translateX(0) scale(0.97);
         }
 
-        .ff-back-btn:focus-visible {
-            outline: 2px solid var(--ff-accent, #60A5FA);
+        .vd-back-btn:focus-visible {
+            outline: 2px solid var(--vd-accent, #60A5FA);
             outline-offset: 2px;
         }
 
@@ -184,19 +184,19 @@
             </div>
 
             <!-- Loading state (branded logo animation) -->
-            <div id="loading-skeleton" class="ff-loader" style="display: none;" role="status" aria-label="Analyzing error...">
-                <div class="ff-loader-icon-wrap">
-                    <div class="ff-loader-ring"></div>
-                    <div class="ff-loader-ring ff-loader-ring--outer"></div>
-                    <img class="ff-loader-icon" src="${iconUri}" alt="" aria-hidden="true" />
+            <div id="loading-skeleton" class="vd-loader" style="display: none;" role="status" aria-label="Analyzing error...">
+                <div class="vd-loader-icon-wrap">
+                    <div class="vd-loader-ring"></div>
+                    <div class="vd-loader-ring vd-loader-ring--outer"></div>
+                    <img class="vd-loader-icon" src="${iconUri}" alt="" aria-hidden="true" />
                 </div>
-                <div class="ff-loader-text">Analyzing<span class="ff-loader-dots"></span></div>
-                <div class="ff-loader-subtext">Examining your code for insights</div>
+                <div class="vd-loader-text">Analyzing<span class="vd-loader-dots"></span></div>
+                <div class="vd-loader-subtext">Examining your code for insights</div>
             </div>
 
             <!-- No errors state (SVG empty state) -->
             <div id="empty-state" class="actions-empty" role="status">
-                <svg class="ff-empty-svg" width="120" height="64" viewBox="0 0 120 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg class="vd-empty-svg" width="120" height="64" viewBox="0 0 120 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <defs>
                         <linearGradient id="empty-grad" x1="0" y1="0" x2="120" y2="64" gradientUnits="userSpaceOnUse">
                             <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.2"/>
@@ -222,79 +222,79 @@
          SECTION 2: Error Explanation (hidden by default, shown after explain)
          ================================================================ -->
     <div id="section-error-explanation" class="panel-section" role="region" aria-label="Error explanation">
-        <div class="ff-panel">
-            <button class="ff-back-btn" id="back-btn-error" aria-label="Back to actions">Back</button>
+        <div class="vd-panel">
+            <button class="vd-back-btn" id="back-btn-error" aria-label="Back to actions">Back</button>
             <!-- Skip link for keyboard/screen-reader users -->
             <a href="#error-section-quiz" class="sr-only sr-only--focusable">Skip to quiz</a>
 
             <!-- 1. Error Location -->
-            <section class="ff-section ff-section--error" id="error-section-error" aria-labelledby="error-heading-error">
-                <h2 id="error-heading-error" class="ff-heading">
+            <section class="vd-section vd-section--error" id="error-section-error" aria-labelledby="error-heading-error">
+                <h2 id="error-heading-error" class="vd-heading">
                     <span id="category-badge" class="badge"></span>
                     <span class="text-muted text-sm" id="error-location"></span>
                 </h2>
-                <p id="error-message" class="ff-body" style="font-family: var(--vscode-editor-font-family, monospace); background-color: var(--vscode-textCodeBlock-background); padding: 8px; border-radius: 3px; word-break: break-word;"></p>
-                <p class="ff-body text-muted text-sm" id="tldr-text" style="margin-top: 8px; font-weight: 600;"></p>
+                <p id="error-message" class="vd-body" style="font-family: var(--vscode-editor-font-family, monospace); background-color: var(--vscode-textCodeBlock-background); padding: 8px; border-radius: 3px; word-break: break-word;"></p>
+                <p class="vd-body text-muted text-sm" id="tldr-text" style="margin-top: 8px; font-weight: 600;"></p>
             </section>
 
             <!-- 2. What Happened -->
-            <section class="ff-section ff-section--explanation" id="error-section-explanation" aria-labelledby="error-heading-explanation" style="display: none;">
-                <h2 id="error-heading-explanation" class="ff-heading">
+            <section class="vd-section vd-section--explanation" id="error-section-explanation" aria-labelledby="error-heading-explanation" style="display: none;">
+                <h2 id="error-heading-explanation" class="vd-heading">
                     What Happened
                 </h2>
-                <p class="ff-body" id="explanation-text"></p>
+                <p class="vd-body" id="explanation-text"></p>
             </section>
 
             <!-- 3. How to Fix -->
-            <section class="ff-section ff-section--fix" id="error-section-fix" aria-labelledby="error-heading-fix" style="display: none;">
-                <h2 id="error-heading-fix" class="ff-heading">
+            <section class="vd-section vd-section--fix" id="error-section-fix" aria-labelledby="error-heading-fix" style="display: none;">
+                <h2 id="error-heading-fix" class="vd-heading">
                     How to Fix
                 </h2>
-                <div class="ff-body" id="fix-text"></div>
+                <div class="vd-body" id="fix-text"></div>
             </section>
 
             <!-- 4. How to Prevent (progressive disclosure) -->
-            <section class="ff-section ff-section--prevent" id="error-section-prevent" aria-labelledby="error-heading-prevent" style="display: none;">
-                <details class="ff-disclosure">
-                    <summary class="ff-disclosure-trigger" id="error-heading-prevent">
-                        <span class="ff-disclosure-title">How to Prevent This</span>
-                        <span class="ff-disclosure-hint" aria-hidden="true">Show tip</span>
+            <section class="vd-section vd-section--prevent" id="error-section-prevent" aria-labelledby="error-heading-prevent" style="display: none;">
+                <details class="vd-disclosure">
+                    <summary class="vd-disclosure-trigger" id="error-heading-prevent">
+                        <span class="vd-disclosure-title">How to Prevent This</span>
+                        <span class="vd-disclosure-hint" aria-hidden="true">Show tip</span>
                     </summary>
-                    <div class="ff-disclosure-body">
-                        <p class="ff-body" id="prevent-text"></p>
+                    <div class="vd-disclosure-body">
+                        <p class="vd-body" id="prevent-text"></p>
                     </div>
                 </details>
             </section>
 
             <!-- 5. Best Practices (progressive disclosure) -->
-            <section class="ff-section ff-section--practices" id="error-section-practices" aria-labelledby="error-heading-practices" style="display: none;">
-                <details class="ff-disclosure">
-                    <summary class="ff-disclosure-trigger" id="error-heading-practices">
-                        <span class="ff-disclosure-title">Best Practice</span>
-                        <span class="ff-disclosure-hint" aria-hidden="true">Show details</span>
+            <section class="vd-section vd-section--practices" id="error-section-practices" aria-labelledby="error-heading-practices" style="display: none;">
+                <details class="vd-disclosure">
+                    <summary class="vd-disclosure-trigger" id="error-heading-practices">
+                        <span class="vd-disclosure-title">Best Practice</span>
+                        <span class="vd-disclosure-hint" aria-hidden="true">Show details</span>
                     </summary>
-                    <div class="ff-disclosure-body">
-                        <p class="ff-body" id="practices-text"></p>
+                    <div class="vd-disclosure-body">
+                        <p class="vd-body" id="practices-text"></p>
                     </div>
                 </details>
             </section>
 
             <!-- 6. Suggested Prompt -->
-            <section class="ff-section ff-section--prompt" id="error-section-prompt" aria-labelledby="error-heading-prompt" style="display: none;">
-                <h2 id="error-heading-prompt" class="ff-heading">
+            <section class="vd-section vd-section--prompt" id="error-section-prompt" aria-labelledby="error-heading-prompt" style="display: none;">
+                <h2 id="error-heading-prompt" class="vd-heading">
                     Try This Prompt Instead
                 </h2>
-                <p class="ff-body text-muted text-sm" style="margin-bottom: 8px;">Instead of "fix the bug," try a prompt like this:</p>
+                <p class="vd-body text-muted text-sm" style="margin-bottom: 8px;">Instead of "fix the bug," try a prompt like this:</p>
                 <div class="prompt-block" id="prompt-text"></div>
                 <button class="btn btn--secondary mt-8" id="copy-prompt-btn" style="width: 100%; min-height: 36px;" aria-label="Copy prompt to clipboard">Copy Prompt</button>
             </section>
 
             <!-- 7. Quiz -->
-            <section class="ff-section ff-section--quiz" id="error-section-quiz" aria-labelledby="error-heading-quiz" style="display: none;">
-                <h2 id="error-heading-quiz" class="ff-heading">
+            <section class="vd-section vd-section--quiz" id="error-section-quiz" aria-labelledby="error-heading-quiz" style="display: none;">
+                <h2 id="error-heading-quiz" class="vd-heading">
                     Test Yourself
                 </h2>
-                <p class="ff-body mb-8" id="quiz-question"></p>
+                <p class="vd-body mb-8" id="quiz-question"></p>
                 <div class="quiz-options" id="quiz-options" role="group" aria-label="Quiz answers"></div>
                 <div class="quiz-feedback" id="quiz-feedback" style="display:none;" role="alert"></div>
             </section>
@@ -304,73 +304,73 @@
     <!-- ================================================================
          SECTION 3: Diff Review (hidden by default, shown when fix detected)
          ================================================================ -->
-    <div id="section-diff-review" class="panel-section" role="region" aria-label="Fix explanation">
-        <div class="ff-panel">
-            <button class="ff-back-btn" id="back-btn-diff" aria-label="Back to actions">Back</button>
+    <div id="section-divd-review" class="panel-section" role="region" aria-label="Fix explanation">
+        <div class="vd-panel">
+            <button class="vd-back-btn" id="back-btn-diff" aria-label="Back to actions">Back</button>
             <!-- Skip link for keyboard/screen-reader users -->
-            <a href="#diff-section-todo" class="sr-only sr-only--focusable">Skip to action items</a>
+            <a href="#divd-section-todo" class="sr-only sr-only--focusable">Skip to action items</a>
 
             <!-- Success banner -->
-            <div class="ff-success-banner" id="diff-success-banner" role="status">
-                <span class="ff-success-dot" aria-hidden="true"></span>
-                <span class="ff-success-text">No more errors</span>
+            <div class="vd-success-banner" id="divd-success-banner" role="status">
+                <span class="vd-success-dot" aria-hidden="true"></span>
+                <span class="vd-success-text">No more errors</span>
             </div>
 
             <!-- File context -->
-            <div class="ff-file-bar" id="file-bar" style="display: none;" aria-label="File changed">
-                <span class="ff-file-name" id="diff-file"></span>
+            <div class="vd-file-bar" id="file-bar" style="display: none;" aria-label="File changed">
+                <span class="vd-file-name" id="divd-file"></span>
             </div>
 
             <!-- 1. What Changed -->
-            <section class="ff-section ff-section--summary" id="diff-section-summary"
-                aria-labelledby="diff-heading-summary" style="display: none;">
-                <h2 id="diff-heading-summary" class="ff-heading">
+            <section class="vd-section vd-section--summary" id="divd-section-summary"
+                aria-labelledby="divd-heading-summary" style="display: none;">
+                <h2 id="divd-heading-summary" class="vd-heading">
                     What Changed
                 </h2>
-                <p class="ff-body" id="quick-summary"></p>
+                <p class="vd-body" id="quick-summary"></p>
             </section>
 
             <!-- 2. Why This Works -->
-            <section class="ff-section ff-section--why" id="diff-section-why"
-                aria-labelledby="diff-heading-why" style="display: none;">
-                <h2 id="diff-heading-why" class="ff-heading">
+            <section class="vd-section vd-section--why" id="divd-section-why"
+                aria-labelledby="divd-heading-why" style="display: none;">
+                <h2 id="divd-heading-why" class="vd-heading">
                     Why This Works
                 </h2>
-                <p class="ff-body" id="why-it-works"></p>
+                <p class="vd-body" id="why-it-works"></p>
             </section>
 
             <!-- 3. What To Do Next (interactive checklist) -->
-            <section class="ff-section ff-section--todo" id="diff-section-todo"
-                aria-labelledby="diff-heading-todo" style="display: none;">
-                <h2 id="diff-heading-todo" class="ff-heading">
+            <section class="vd-section vd-section--todo" id="divd-section-todo"
+                aria-labelledby="divd-heading-todo" style="display: none;">
+                <h2 id="divd-heading-todo" class="vd-heading">
                     What To Do Next
                 </h2>
-                <ul class="ff-checklist" id="what-to-do-next" role="list"
+                <ul class="vd-checklist" id="what-to-do-next" role="list"
                     aria-label="Steps to check the fix"></ul>
-                <p class="ff-check-done" id="check-done" style="display: none;" aria-live="polite">
+                <p class="vd-check-done" id="check-done" style="display: none;" aria-live="polite">
                     All done -- nice work!
                 </p>
             </section>
 
             <!-- 4. Key Takeaway -->
-            <section class="ff-section ff-section--takeaway" id="diff-section-takeaway"
-                aria-labelledby="diff-heading-takeaway" style="display: none;">
-                <h2 id="diff-heading-takeaway" class="ff-heading">
+            <section class="vd-section vd-section--takeaway" id="divd-section-takeaway"
+                aria-labelledby="divd-heading-takeaway" style="display: none;">
+                <h2 id="divd-heading-takeaway" class="vd-heading">
                     Key Takeaway
                 </h2>
-                <blockquote class="ff-callout" id="key-takeaway"></blockquote>
+                <blockquote class="vd-callout" id="key-takeaway"></blockquote>
             </section>
 
             <!-- 5. Think About It (progressive disclosure) -->
-            <section class="ff-section ff-section--question" id="diff-section-question"
-                aria-labelledby="diff-heading-question" style="display: none;">
-                <details class="ff-disclosure">
-                    <summary class="ff-disclosure-trigger" id="diff-heading-question">
-                        <span class="ff-disclosure-title">Think About It</span>
-                        <span class="ff-disclosure-hint" aria-hidden="true">Show question</span>
+            <section class="vd-section vd-section--question" id="divd-section-question"
+                aria-labelledby="divd-heading-question" style="display: none;">
+                <details class="vd-disclosure">
+                    <summary class="vd-disclosure-trigger" id="divd-heading-question">
+                        <span class="vd-disclosure-title">Think About It</span>
+                        <span class="vd-disclosure-hint" aria-hidden="true">Show question</span>
                     </summary>
-                    <div class="ff-disclosure-body">
-                        <p class="ff-question" id="check-question"></p>
+                    <div class="vd-disclosure-body">
+                        <p class="vd-question" id="check-question"></p>
                     </div>
                 </details>
             </section>
@@ -381,20 +381,20 @@
          SHARED: TTS Controls (shown when error or diff content is visible)
          ================================================================ -->
     <div id="section-tts" class="panel-section" role="region" aria-label="Read aloud controls">
-        <div class="ff-panel">
-            <div class="ff-tts-bar" id="tts-controls" role="region" aria-label="Read aloud controls">
-                <div class="ff-voice-group" role="radiogroup" aria-label="Voice">
-                    <button class="ff-voice-btn active" id="voice-female" role="radio" aria-checked="true">Elise voice</button>
-                    <button class="ff-voice-btn" id="voice-male" role="radio" aria-checked="false" style="display:none;" disabled>Hidden</button>
+        <div class="vd-panel">
+            <div class="vd-tts-bar" id="tts-controls" role="region" aria-label="Read aloud controls">
+                <div class="vd-voice-group" role="radiogroup" aria-label="Voice">
+                    <button class="vd-voice-btn active" id="voice-female" role="radio" aria-checked="true">Elise voice</button>
+                    <button class="vd-voice-btn" id="voice-male" role="radio" aria-checked="false" style="display:none;" disabled>Hidden</button>
                 </div>
-                <button class="ff-btn--tts" id="tts-btn" aria-label="Read explanation aloud">Read Aloud</button>
-                <span class="ff-tts-status" id="tts-status" aria-live="polite"></span>
+                <button class="vd-btn--tts" id="tts-btn" aria-label="Read explanation aloud">Read Aloud</button>
+                <span class="vd-tts-status" id="tts-status" aria-live="polite"></span>
             </div>
         </div>
     </div>
 
     <!-- Toast container -->
-    <div class="ff-toast-container" id="toast-container" role="status" aria-live="polite"></div>
+    <div class="vd-toast-container" id="toast-container" role="status" aria-live="polite"></div>
 
     <script>
         // ── State ──
@@ -445,19 +445,19 @@
         function typeWriter(element, text, speed, callback) {
             if (prefersReducedMotion) {
                 element.innerHTML = text;
-                element.classList.remove('ff-typing');
+                element.classList.remove('vd-typing');
                 if (callback) callback();
                 return;
             }
             element.innerHTML = '';
-            element.classList.add('ff-typing');
+            element.classList.add('vd-typing');
             var i = 0;
             var inTag = false;
             var tagBuffer = '';
 
             function tick() {
                 if (i >= text.length) {
-                    element.classList.remove('ff-typing');
+                    element.classList.remove('vd-typing');
                     if (callback) callback();
                     return;
                 }
@@ -485,12 +485,12 @@
         function launchConfetti() {
             if (prefersReducedMotion) return;
             var container = document.createElement('div');
-            container.className = 'ff-confetti-container';
+            container.className = 'vd-confetti-container';
             document.body.appendChild(container);
             var colors = ['#60A5FA', '#22D3EE', '#FBBF24', '#34D399', '#93C5FD', '#38BDF8'];
             for (var c = 0; c < 30; c++) {
                 var piece = document.createElement('div');
-                piece.className = 'ff-confetti-piece';
+                piece.className = 'vd-confetti-piece';
                 piece.style.left = (Math.random() * 100) + '%';
                 piece.style.backgroundColor = colors[c % colors.length];
                 piece.style.animationDelay = (Math.random() * 0.5) + 's';
@@ -507,11 +507,11 @@
         function showToast(message, type) {
             var container = $('toast-container');
             var toast = document.createElement('div');
-            toast.className = 'ff-toast' + (type ? ' ff-toast--' + type : '');
+            toast.className = 'vd-toast' + (type ? ' vd-toast--' + type : '');
             toast.textContent = message;
             container.appendChild(toast);
             setTimeout(function () {
-                toast.classList.add('ff-toast--out');
+                toast.classList.add('vd-toast--out');
                 setTimeout(function () { toast.remove(); }, 300);
             }, 3000);
         }
@@ -533,8 +533,8 @@
         function showPanelSection(name) {
             var prevView = activeView;
             activeView = name;
-            var ids = ['section-actions', 'section-error-explanation', 'section-diff-review', 'section-tts'];
-            var map = { actions: 'section-actions', error: 'section-error-explanation', diff: 'section-diff-review', tts: 'section-tts' };
+            var ids = ['section-actions', 'section-error-explanation', 'section-divd-review', 'section-tts'];
+            var map = { actions: 'section-actions', error: 'section-error-explanation', diff: 'section-divd-review', tts: 'section-tts' };
 
             // Slide out current panels
             ids.forEach(function (id) {
@@ -560,18 +560,18 @@
 
                 if (showActions) $('section-actions').classList.add('visible');
                 if (showError) $('section-error-explanation').classList.add('visible');
-                if (showDiff) $('section-diff-review').classList.add('visible');
+                if (showDiff) $('section-divd-review').classList.add('visible');
                 if (showTts) $('section-tts').classList.add('visible');
             }, 50);
         }
 
         // ── Disclosure hint toggle ──
-        document.querySelectorAll('.ff-disclosure').forEach(function (details) {
+        document.querySelectorAll('.vd-disclosure').forEach(function (details) {
             details.addEventListener('toggle', function () {
-                var hint = details.querySelector('.ff-disclosure-hint');
+                var hint = details.querySelector('.vd-disclosure-hint');
                 if (!hint) return;
                 var isPrevent = details.closest('#error-section-prevent');
-                var isQuestion = details.closest('#diff-section-question');
+                var isQuestion = details.closest('#divd-section-question');
                 var showText = isPrevent ? 'Show tip' : (isQuestion ? 'Show question' : 'Show details');
                 var hideText = isPrevent ? 'Hide tip' : (isQuestion ? 'Hide question' : 'Hide details');
                 hint.textContent = details.open ? hideText : showText;
@@ -589,9 +589,9 @@
                 badge.textContent = String(data.count);
                 // Pulse if count changed
                 if (prevCount !== null && prevCount !== String(data.count)) {
-                    badge.classList.remove('ff-pulse');
+                    badge.classList.remove('vd-pulse');
                     void badge.offsetWidth; // reflow to restart animation
-                    badge.classList.add('ff-pulse');
+                    badge.classList.add('vd-pulse');
                 }
                 badge.setAttribute('data-prev', String(data.count));
                 var fileName = data.fileName || 'this file';
@@ -635,9 +635,9 @@
             badge.setAttribute('data-type', data.category.split(' ')[0]);
 
             var type = data.category.split(' ')[0];
-            if (type === 'Syntax') { badge.style.color = 'var(--ff-syntax)'; badge.style.borderColor = 'var(--ff-syntax)'; }
-            else if (type === 'Logic') { badge.style.color = 'var(--ff-logic)'; badge.style.borderColor = 'var(--ff-logic)'; }
-            else if (type === 'Runtime') { badge.style.color = 'var(--ff-runtime)'; badge.style.borderColor = 'var(--ff-runtime)'; }
+            if (type === 'Syntax') { badge.style.color = 'var(--vd-syntax)'; badge.style.borderColor = 'var(--vd-syntax)'; }
+            else if (type === 'Logic') { badge.style.color = 'var(--vd-logic)'; badge.style.borderColor = 'var(--vd-logic)'; }
+            else if (type === 'Runtime') { badge.style.color = 'var(--vd-runtime)'; badge.style.borderColor = 'var(--vd-runtime)'; }
 
             $('error-location').textContent = data.location || (data.raw && data.raw.file + ':' + data.raw.line) || '';
             var errorMsg = data.errorMessage || (data.raw && data.raw.message) || '';
@@ -728,11 +728,11 @@
                         fb.style.display = 'block';
                         fb.className = 'quiz-feedback';
                         if (isCorrect) {
-                            fb.style.borderLeftColor = 'var(--ff-success)';
+                            fb.style.borderLeftColor = 'var(--vd-success)';
                             launchConfetti();
                             showToast('Correct!', 'success');
                         } else {
-                            fb.style.borderLeftColor = 'var(--ff-runtime)';
+                            fb.style.borderLeftColor = 'var(--vd-runtime)';
                         }
 
                         if (window.vscode) {
@@ -755,7 +755,7 @@
             // File bar
             var fileName = data.fileName || (data.diff && data.diff.file) || '';
             if (fileName) {
-                $('diff-file').textContent = fileName;
+                $('divd-file').textContent = fileName;
                 $('file-bar').style.display = '';
             } else {
                 $('file-bar').style.display = 'none';
@@ -763,35 +763,35 @@
 
             // 1. Quick Summary
             var hasSummary = !!data.quickSummary;
-            showSection('diff-section-summary', hasSummary);
+            showSection('divd-section-summary', hasSummary);
             if (hasSummary) $('quick-summary').textContent = data.quickSummary;
 
             // 2. Why This Works
             var hasWhy = !!data.whyItWorks;
-            showSection('diff-section-why', hasWhy);
+            showSection('divd-section-why', hasWhy);
             if (hasWhy) $('why-it-works').textContent = data.whyItWorks;
 
             // 3. What To Do Next (interactive checklist)
             var hasTodo = Array.isArray(data.whatToDoNext) && data.whatToDoNext.length > 0;
-            showSection('diff-section-todo', hasTodo);
+            showSection('divd-section-todo', hasTodo);
             var todoList = $('what-to-do-next');
             todoList.innerHTML = '';
             $('check-done').style.display = 'none';
             if (hasTodo) {
                 data.whatToDoNext.forEach(function (step, i) {
                     var li = document.createElement('li');
-                    li.className = 'ff-check-item';
+                    li.className = 'vd-check-item';
 
                     var cb = document.createElement('input');
                     cb.type = 'checkbox';
                     cb.id = 'todo-' + i;
-                    cb.className = 'ff-checkbox';
+                    cb.className = 'vd-checkbox';
                     cb.setAttribute('aria-label', step);
                     cb.addEventListener('change', onChecklistChange);
 
                     var label = document.createElement('label');
                     label.htmlFor = 'todo-' + i;
-                    label.className = 'ff-check-label';
+                    label.className = 'vd-check-label';
                     label.textContent = step;
 
                     li.appendChild(cb);
@@ -802,12 +802,12 @@
 
             // 4. Key Takeaway
             var hasTakeaway = !!data.keyTakeaway;
-            showSection('diff-section-takeaway', hasTakeaway);
+            showSection('divd-section-takeaway', hasTakeaway);
             if (hasTakeaway) $('key-takeaway').textContent = data.keyTakeaway;
 
             // 5. Think About It
             var hasQuestion = !!data.checkQuestion;
-            showSection('diff-section-question', hasQuestion);
+            showSection('divd-section-question', hasQuestion);
             if (hasQuestion) $('check-question').textContent = data.checkQuestion;
 
             showPanelSection('diff');
@@ -817,7 +817,7 @@
 
         // ── Checklist logic ──
         function onChecklistChange() {
-            var boxes = document.querySelectorAll('.ff-checkbox');
+            var boxes = document.querySelectorAll('.vd-checkbox');
             var allChecked = Array.from(boxes).every(function (cb) { return cb.checked; });
             $('check-done').style.display = allChecked ? '' : 'none';
             if (allChecked) {
@@ -866,12 +866,12 @@
             u.volume = 0.85;   // slightly softer — gentle, not blaring
             isSpeaking = true;
             $('tts-btn').textContent = 'Stop';
-            $('tts-btn').classList.add('ff-btn--playing');
+            $('tts-btn').classList.add('vd-btn--playing');
             updateTtsStatus('Playing...');
             u.onend = function () {
                 isSpeaking = false;
                 $('tts-btn').textContent = 'Read Aloud';
-                $('tts-btn').classList.remove('ff-btn--playing');
+                $('tts-btn').classList.remove('vd-btn--playing');
                 updateTtsStatus('');
             };
             window.speechSynthesis.cancel();
@@ -920,7 +920,7 @@
             if (isSpeaking) {
                 stopAudio();
                 $('tts-btn').textContent = 'Read Aloud';
-                $('tts-btn').classList.remove('ff-btn--playing');
+                $('tts-btn').classList.remove('vd-btn--playing');
                 updateTtsStatus('');
                 return;
             }
@@ -993,13 +993,13 @@
                 ttsAudio = audio;
                 isSpeaking = true;
                 $('tts-btn').textContent = 'Stop';
-                $('tts-btn').classList.add('ff-btn--playing');
+                $('tts-btn').classList.add('vd-btn--playing');
                 updateTtsStatus('Playing...');
                 audio.onended = function () {
                     URL.revokeObjectURL(blobUrl);
                     ttsAudio = null; isSpeaking = false;
                     $('tts-btn').textContent = 'Read Aloud';
-                    $('tts-btn').classList.remove('ff-btn--playing');
+                    $('tts-btn').classList.remove('vd-btn--playing');
                     updateTtsStatus('');
                     announce('Audio finished.');
                 };
@@ -1007,7 +1007,7 @@
                     URL.revokeObjectURL(blobUrl);
                     ttsAudio = null; isSpeaking = false;
                     $('tts-btn').textContent = 'Read Aloud';
-                    $('tts-btn').classList.remove('ff-btn--playing');
+                    $('tts-btn').classList.remove('vd-btn--playing');
                     updateTtsStatus('');
                     announce('Audio playback failed.');
                 };

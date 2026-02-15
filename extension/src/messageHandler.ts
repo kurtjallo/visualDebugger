@@ -1,7 +1,7 @@
 import { WebviewToExtMessage } from "./types";
 import { fetchTtsAudio } from "./ttsClient";
 
-const LOG = "[FlowFixer]";
+const LOG = "[VisualDebugger]";
 const TTS_MIME_TYPE = "audio/mpeg";
 
 export interface MessageTarget {

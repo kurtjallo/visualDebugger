@@ -1,4 +1,4 @@
-# FlowFixer
+# VisualDebugger
 
 AI Bug Tutor for VS Code — explains errors before the fix, reviews AI changes after.
 
@@ -11,5 +11,5 @@ AI Bug Tutor for VS Code — explains errors before the fix, reviews AI changes 
 ## Getting Started
 
 1. Install the extension from VSIX
-2. Set your Gemini API key: `FlowFixer: Set Gemini API Key`
+2. Set your Gemini API key: `VisualDebugger: Set Gemini API Key`
 3. Open a JavaScript/TypeScript project and start coding

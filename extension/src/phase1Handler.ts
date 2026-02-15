@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { analyzeError, isInitialized, FlowFixerError } from "./llmClient";
+import { analyzeError, isInitialized, VisualDebuggerError } from "./llmClient";
 import { CapturedError, BugRecord } from "./types";
 import { StatusManager } from "./statusManager";
 import { DiffEngine } from "./diffEngine";
@@ -8,7 +8,7 @@ import { DebugPanelProvider } from "./panels/DebugPanel";
 import { DashboardPanelProvider } from "./panels/DashboardPanel";
 import { getSeedBugRecords } from "./seedData";
 
-const LOG = "[FlowFixer]";
+const LOG = "[VisualDebugger]";
 
 export interface Phase1Deps {
   debugPanel: DebugPanelProvider;
@@ -66,7 +66,7 @@ export function createPhase1Handler(deps: Phase1Deps): Phase1Handler {
 
     try {
       if (!isInitialized()) {
-        throw new FlowFixerError("No API key set");
+        throw new VisualDebuggerError("No API key set");
       }
 
       const explanation = await analyzeError({
@@ -110,7 +110,7 @@ export function createPhase1Handler(deps: Phase1Deps): Phase1Handler {
       console.error(`${LOG} Phase 1 failed:`, err);
       statusManager.updateStatus("analysisFailed");
 
-      if (err instanceof FlowFixerError) {
+      if (err instanceof VisualDebuggerError) {
         vscode.window.showWarningMessage(`Visual Debugger: ${err.message}`);
       }
     }

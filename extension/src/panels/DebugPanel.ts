@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { ExtToWebviewMessage, WebviewToExtMessage } from "../types";
 import { getWebviewHtml } from "./panelUtils";
 
-const LOG = "[FlowFixer:DebugPanel]";
+const LOG = "[VisualDebugger:DebugPanel]";
 
 export class DebugPanelProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "visualdebugger.debugPanel";

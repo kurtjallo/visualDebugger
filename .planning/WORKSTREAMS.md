@@ -1,14 +1,14 @@
-# FlowFixer Hackathon — 3 Workstreams
+# VisualDebugger Hackathon — 3 Workstreams
 
 ## Workstream 1: Reverse Prompt Generator
 
 **Problem:** Students vibe-code, say "fix the bug," auto-accept, learn nothing. They never learn what a *good* prompt looks like.
 
-**Solution:** Use reverse prompting — when an error is detected, FlowFixer generates a **detailed, well-crafted prompt** that the student *should have written*. The student sees only the output: a ready-to-use prompt that teaches them how to think about the error.
+**Solution:** Use reverse prompting — when an error is detected, VisualDebugger generates a **detailed, well-crafted prompt** that the student *should have written*. The student sees only the output: a ready-to-use prompt that teaches them how to think about the error.
 
 **How it works:**
 1. Student hits an error
-2. FlowFixer analyzes the error + surrounding code context
+2. VisualDebugger analyzes the error + surrounding code context
 3. Gemini generates a structured, expert-level prompt the student can copy/use
 4. Student sees what a *good* debugging prompt looks like — learning by example
 
@@ -100,7 +100,7 @@
 | File | Change |
 |------|--------|
 | `extension/src/webview/error.html` | Restructure HTML with progressive disclosure, ARIA, skip links |
-| `extension/src/webview/styles.css` | Add/update styles (reuse `ff-disclosure`, `ff-section` patterns) |
+| `extension/src/webview/styles.css` | Add/update styles (reuse `vd-disclosure`, `vd-section` patterns) |
 | `extension/src/panels/ErrorPanel.ts` | Update message passing if section structure changes |
 
 **Dependencies:** Shares `error.html` with Workstream 1. Coordinate on the prompts section placement.

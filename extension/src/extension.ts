@@ -2,19 +2,19 @@ import * as vscode from "vscode";
 import { ErrorListener } from "./errorListener";
 import { DiffEngine } from "./diffEngine";
 import { initialize as initLLM, isInitialized, testConnection } from "./llmClient";
-import { FlowFixerStorage } from "./storage";
+import { VisualDebuggerStorage } from "./storage";
 import { DebugPanelProvider } from "./panels/DebugPanel";
 import { DashboardPanelProvider } from "./panels/DashboardPanel";
 import { CapturedError } from "./types";
 import { loadEnv } from "./envLoader";
-import { FlowFixerCodeLensProvider, SUPPORTED_LANGUAGES } from "./codeLensProvider";
+import { VisualDebuggerCodeLensProvider, SUPPORTED_LANGUAGES } from "./codeLensProvider";
 import { extractCodeContext } from "./utils";
 import { createStatusManager } from "./statusManager";
 import { createPhase1Handler } from "./phase1Handler";
 import { createPhase2Handler } from "./phase2Handler";
 import { createMessageHandler } from "./messageHandler";
 
-const LOG = "[FlowFixer]";
+const LOG = "[VisualDebugger]";
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   console.log(`${LOG} activating...`);
@@ -47,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   }
 
   // --- Storage ---
-  const storage = new FlowFixerStorage(context.globalState);
+  const storage = new VisualDebuggerStorage(context.globalState);
 
   const debugPanel = new DebugPanelProvider(context.extensionUri);
   const dashboardPanel = new DashboardPanelProvider(context.extensionUri);
@@ -58,7 +58,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   );
 
   // --- CodeLens provider ---
-  const codeLensProvider = new FlowFixerCodeLensProvider();
+  const codeLensProvider = new VisualDebuggerCodeLensProvider();
   const codeLensSelector = SUPPORTED_LANGUAGES.map((lang) => ({ language: lang }));
   context.subscriptions.push(
     vscode.languages.registerCodeLensProvider(codeLensSelector, codeLensProvider),

@@ -6,13 +6,13 @@
 
 ---
 
-# CHOSEN IDEA: FlowFixer — AI Bug Tutor for VS Code
+# CHOSEN IDEA: VisualDebugger — AI Bug Tutor for VS Code
 
-> "Vibe coding makes you fast. FlowFixer makes you fast AND smart."
+> "Vibe coding makes you fast. VisualDebugger makes you fast AND smart."
 
 ## The Concept
 
-A VS Code extension for students and developers that turns every AI-assisted bug fix into a learning moment. When a user asks AI to fix code, FlowFixer doesn't just apply the fix — it shows a live visual preview, classifies the bug, explains why it broke, and tracks your personal bug patterns over time.
+A VS Code extension for students and developers that turns every AI-assisted bug fix into a learning moment. When a user asks AI to fix code, VisualDebugger doesn't just apply the fix — it shows a live visual preview, classifies the bug, explains why it broke, and tracks your personal bug patterns over time.
 
 ## The Problem
 
@@ -23,7 +23,7 @@ A VS Code extension for students and developers that turns every AI-assisted bug
 
 ## The Narrative (Pitch Angle)
 
-AI coding tools made students faster but not smarter. Every accepted AI fix is a missed learning opportunity. FlowFixer is the missing feedback loop — every bug you hit becomes a lesson you retain. It's not anti-AI; it's AI that teaches instead of just doing.
+AI coding tools made students faster but not smarter. Every accepted AI fix is a missed learning opportunity. VisualDebugger is the missing feedback loop — every bug you hit becomes a lesson you retain. It's not anti-AI; it's AI that teaches instead of just doing.
 
 **Theme fit: Education** — AI-powered learning tool that turns every bug into a teachable moment.
 
@@ -47,7 +47,7 @@ AI coding tools made students faster but not smarter. Every accepted AI fix is a
 
 1. Open VS Code with a broken React app (button doesn't work, layout is off)
 2. Run the app — show the broken UI in the live preview panel
-3. Ask AI to "fix this" — FlowFixer intercepts
+3. Ask AI to "fix this" — VisualDebugger intercepts
 4. **Instead of silently applying the fix:**
    - A "Test Yourself" prompt appears: "What do you think is wrong with this code?"
    - Student guesses (or skips)
@@ -182,9 +182,9 @@ Respond in JSON format:
 
 ---
 
-## Comparison: FlowFixer vs Other Top Picks
+## Comparison: VisualDebugger vs Other Top Picks
 
-| | FlowFixer | FormBreaker | DocTranslate |
+| | VisualDebugger | FormBreaker | DocTranslate |
 |---|---|---|---|
 | **Theme** | Education | Re-engineering | Healthcare |
 | **Demo Impact** | 5 — live bug fix + dashboard | 5 — side-by-side PDF fill | 4 — before/after translation |

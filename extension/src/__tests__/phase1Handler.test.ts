@@ -5,14 +5,14 @@ import { makeCapturedError, makePhase1Response, makeBugRecord } from "./helpers"
 // Hoisted mocks
 const mockAnalyzeError = vi.hoisted(() => vi.fn());
 const mockIsInitialized = vi.hoisted(() => vi.fn().mockReturnValue(true));
-const mockFlowFixerError = vi.hoisted(() => {
-  class FlowFixerError extends Error {
+const mockVisualDebuggerError = vi.hoisted(() => {
+  class VisualDebuggerError extends Error {
     constructor(message: string) {
       super(message);
-      this.name = "FlowFixerError";
+      this.name = "VisualDebuggerError";
     }
   }
-  return FlowFixerError;
+  return VisualDebuggerError;
 });
 const mockGetSeedBugRecords = vi.hoisted(() => vi.fn().mockReturnValue([]));
 const mockShowWarningMessage = vi.hoisted(() => vi.fn());
@@ -26,7 +26,7 @@ vi.mock("vscode", () => ({
 vi.mock("../llmClient", () => ({
   analyzeError: mockAnalyzeError,
   isInitialized: mockIsInitialized,
-  FlowFixerError: mockFlowFixerError,
+  VisualDebuggerError: mockVisualDebuggerError,
 }));
 
 vi.mock("../seedData", () => ({
@@ -167,7 +167,7 @@ describe("createPhase1Handler", () => {
       expect(handler.isHoldDiffReview()).toBe(false);
     });
 
-    it("handles FlowFixerError (no API key) with warning", async () => {
+    it("handles VisualDebuggerError (no API key) with warning", async () => {
       mockIsInitialized.mockReturnValue(false);
       const handler = createPhase1Handler(deps as never);
       await handler.handlePhase1(makeCapturedError(), { trigger: "manual" });

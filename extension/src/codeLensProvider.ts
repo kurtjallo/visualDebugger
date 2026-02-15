@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-const LOG = "[FlowFixer:CodeLens]";
+const LOG = "[VisualDebugger:CodeLens]";
 
 export const SUPPORTED_LANGUAGES = [
   "javascript",
@@ -9,7 +9,7 @@ export const SUPPORTED_LANGUAGES = [
   "typescriptreact",
 ];
 
-export class FlowFixerCodeLensProvider implements vscode.CodeLensProvider {
+export class VisualDebuggerCodeLensProvider implements vscode.CodeLensProvider {
   private _onDidChangeCodeLenses = new vscode.EventEmitter<void>();
   readonly onDidChangeCodeLenses = this._onDidChangeCodeLenses.event;
 

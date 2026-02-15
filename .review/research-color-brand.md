@@ -1,4 +1,4 @@
-# FlowFixer Color & Brand Identity System
+# VisualDebugger Color & Brand Identity System
 
 ## Research Summary
 
@@ -29,7 +29,7 @@ Research on color psychology for education shows:
 
 ### Design Philosophy
 
-FlowFixer is a *guide*, not a gatekeeper. The color system should feel like a warm lamp in a dark room -- inviting, clear, and reassuring. We reject both the cold clinical feel of generic VS Code blue AND the overwhelming rainbow of typical error highlighters.
+VisualDebugger is a *guide*, not a gatekeeper. The color system should feel like a warm lamp in a dark room -- inviting, clear, and reassuring. We reject both the cold clinical feel of generic VS Code blue AND the overwhelming rainbow of typical error highlighters.
 
 **Core principle**: One distinctive warm accent (ember/coral) as the brand signature, with carefully tuned semantic colors that feel related to each other -- like a family, not a committee.
 
@@ -38,11 +38,11 @@ FlowFixer is a *guide*, not a gatekeeper. The color system should feel like a wa
 #### Primary Accent: Ember Coral
 
 ```
---ff-accent:         #E8735A    /* Warm ember coral -- the signature */
---ff-accent-bright:  #F2886F    /* Hover/active state */
---ff-accent-muted:   #C45D47    /* Pressed/subdued state */
---ff-accent-subtle:  rgba(232, 115, 90, 0.12)  /* Background tint */
---ff-accent-glow:    rgba(232, 115, 90, 0.25)  /* Glow/focus ring */
+--vd-accent:         #E8735A    /* Warm ember coral -- the signature */
+--vd-accent-bright:  #F2886F    /* Hover/active state */
+--vd-accent-muted:   #C45D47    /* Pressed/subdued state */
+--vd-accent-subtle:  rgba(232, 115, 90, 0.12)  /* Background tint */
+--vd-accent-glow:    rgba(232, 115, 90, 0.25)  /* Glow/focus ring */
 ```
 
 Why ember coral (`#E8735A`): This sits between orange and coral -- warm, friendly, and educational (per color psychology research) without being generic red or blue. It is distinctly NOT a default VS Code color. On dark backgrounds, it pops without screaming. It says "I'm here to help" not "ERROR DANGER."
@@ -53,24 +53,24 @@ These are not generic red/yellow/blue. Each has been pulled toward the warm bran
 
 ```
 /* Syntax errors -- warm amber (not generic yellow) */
---ff-syntax:         #E5A855    /* Warm amber -- like candlelight */
---ff-syntax-muted:   rgba(229, 168, 85, 0.15)
---ff-syntax-border:  rgba(229, 168, 85, 0.40)
+--vd-syntax:         #E5A855    /* Warm amber -- like candlelight */
+--vd-syntax-muted:   rgba(229, 168, 85, 0.15)
+--vd-syntax-border:  rgba(229, 168, 85, 0.40)
 
 /* Logic errors -- warm violet (not cold blue) */
---ff-logic:          #A78BDB    /* Soft lavender-violet */
---ff-logic-muted:    rgba(167, 139, 219, 0.15)
---ff-logic-border:   rgba(167, 139, 219, 0.40)
+--vd-logic:          #A78BDB    /* Soft lavender-violet */
+--vd-logic-muted:    rgba(167, 139, 219, 0.15)
+--vd-logic-border:   rgba(167, 139, 219, 0.40)
 
 /* Runtime errors -- warm rose (not aggressive red) */
---ff-runtime:        #E06B7A    /* Warm rose, not fire-truck red */
---ff-runtime-muted:  rgba(224, 107, 122, 0.15)
---ff-runtime-border: rgba(224, 107, 122, 0.40)
+--vd-runtime:        #E06B7A    /* Warm rose, not fire-truck red */
+--vd-runtime-muted:  rgba(224, 107, 122, 0.15)
+--vd-runtime-border: rgba(224, 107, 122, 0.40)
 
 /* Success -- sage green (warmer than generic green) */
---ff-success:        #7EC89B    /* Sage green, not neon */
---ff-success-muted:  rgba(126, 200, 155, 0.15)
---ff-success-border: rgba(126, 200, 155, 0.40)
+--vd-success:        #7EC89B    /* Sage green, not neon */
+--vd-success-muted:  rgba(126, 200, 155, 0.15)
+--vd-success-border: rgba(126, 200, 155, 0.40)
 ```
 
 Why these specific shifts:
@@ -83,21 +83,21 @@ Why these specific shifts:
 
 ```
 /* Surface layers (warm-shifted, not pure gray) */
---ff-bg-base:        #17181C    /* Slightly warm charcoal */
---ff-bg-raised:      #1E2025    /* Cards, panels */
---ff-bg-elevated:    #262830    /* Hover states, dropdowns */
---ff-bg-overlay:     #2E3038    /* Tooltips, modals */
+--vd-bg-base:        #17181C    /* Slightly warm charcoal */
+--vd-bg-raised:      #1E2025    /* Cards, panels */
+--vd-bg-elevated:    #262830    /* Hover states, dropdowns */
+--vd-bg-overlay:     #2E3038    /* Tooltips, modals */
 
 /* Borders (warm undertone) */
---ff-border-subtle:  rgba(255, 255, 255, 0.06)
---ff-border-default: rgba(255, 255, 255, 0.10)
---ff-border-strong:  rgba(255, 255, 255, 0.16)
+--vd-border-subtle:  rgba(255, 255, 255, 0.06)
+--vd-border-default: rgba(255, 255, 255, 0.10)
+--vd-border-strong:  rgba(255, 255, 255, 0.16)
 
 /* Text */
---ff-text-primary:   rgba(255, 255, 255, 0.92)
---ff-text-secondary: rgba(255, 255, 255, 0.60)
---ff-text-tertiary:  rgba(255, 255, 255, 0.38)
---ff-text-disabled:  rgba(255, 255, 255, 0.22)
+--vd-text-primary:   rgba(255, 255, 255, 0.92)
+--vd-text-secondary: rgba(255, 255, 255, 0.60)
+--vd-text-tertiary:  rgba(255, 255, 255, 0.38)
+--vd-text-disabled:  rgba(255, 255, 255, 0.22)
 ```
 
 Why warm-shifted neutrals: Pure gray (#1e1e1e) feels sterile. Adding a subtle warm tint (blue-shifted slightly toward indigo in the #17181C range) makes the dark background feel less clinical and more welcoming without being visibly "colored."
@@ -109,15 +109,15 @@ Why warm-shifted neutrals: Pure gray (#1e1e1e) feels sterile. Adding a subtle wa
 ### Signature Gradient 1: "Ember Flow"
 
 ```css
---ff-gradient-ember: linear-gradient(135deg, #E8735A 0%, #E5A855 100%);
+--vd-gradient-ember: linear-gradient(135deg, #E8735A 0%, #E5A855 100%);
 ```
 
-Use for: Primary CTAs, progress bars, accent headers. This is the brand signature -- warm coral flowing into amber. It captures the "flow" in FlowFixer and reads as warmth/progress.
+Use for: Primary CTAs, progress bars, accent headers. This is the brand signature -- warm coral flowing into amber. It captures the "flow" in VisualDebugger and reads as warmth/progress.
 
 ### Signature Gradient 2: "Insight Spectrum"
 
 ```css
---ff-gradient-insight: linear-gradient(135deg, #A78BDB 0%, #E06B7A 60%, #E8735A 100%);
+--vd-gradient-insight: linear-gradient(135deg, #A78BDB 0%, #E06B7A 60%, #E8735A 100%);
 ```
 
 Use for: Section dividers, loading states, explanatory UI headers. This flows through the three error categories (logic -> runtime -> brand accent) creating visual cohesion. It says "we see the full picture."
@@ -125,10 +125,10 @@ Use for: Section dividers, loading states, explanatory UI headers. This flows th
 ### Signature Gradient 3: "Resolve"
 
 ```css
---ff-gradient-resolve: linear-gradient(135deg, #E8735A 0%, #7EC89B 100%);
+--vd-gradient-resolve: linear-gradient(135deg, #E8735A 0%, #7EC89B 100%);
 ```
 
-Use for: Progress indicators showing error-to-fix journey, completion states. Coral to sage green represents the problem-to-solution arc -- the core FlowFixer experience.
+Use for: Progress indicators showing error-to-fix journey, completion states. Coral to sage green represents the problem-to-solution arc -- the core VisualDebugger experience.
 
 ### Gradient Usage Rules
 
@@ -145,7 +145,7 @@ Use for: Progress indicators showing error-to-fix journey, completion states. Co
 Add a subtle CSS noise overlay to card surfaces for premium texture:
 
 ```css
-.ff-card::before {
+.vd-card::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -165,7 +165,7 @@ Intensity: Keep noise at 2-3% opacity. It should be felt, not seen. On light-on-
 For elevated panels and modals:
 
 ```css
-.ff-glass {
+.vd-glass {
   background: rgba(30, 32, 37, 0.75);
   backdrop-filter: blur(16px) saturate(150%);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
@@ -176,12 +176,12 @@ For elevated panels and modals:
 Important: Glass effects require something behind them to distort. Place subtle ambient gradient orbs (using the brand colors at very low opacity) behind glass panels:
 
 ```css
-.ff-ambient-glow {
+.vd-ambient-glow {
   position: absolute;
   width: 300px;
   height: 300px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--ff-accent-glow) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--vd-accent-glow) 0%, transparent 70%);
   filter: blur(60px);
   pointer-events: none;
   z-index: -1;
@@ -194,19 +194,19 @@ Three-tier shadow system for cards:
 
 ```css
 /* Resting -- barely visible, just enough separation */
---ff-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3),
+--vd-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3),
                 0 0 1px rgba(0, 0, 0, 0.2);
 
 /* Raised -- interactive hover state */
---ff-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35),
+--vd-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35),
                 0 1px 3px rgba(0, 0, 0, 0.2);
 
 /* Floating -- modals, dropdowns */
---ff-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45),
+--vd-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45),
                 0 4px 12px rgba(0, 0, 0, 0.25);
 
 /* Brand glow -- for accent elements on hover */
---ff-shadow-glow: 0 0 20px rgba(232, 115, 90, 0.15),
+--vd-shadow-glow: 0 0 20px rgba(232, 115, 90, 0.15),
                   0 4px 12px rgba(0, 0, 0, 0.3);
 ```
 
@@ -216,28 +216,28 @@ Why two-layer shadows: A tight, dark inner shadow creates grounding; a larger, s
 
 ```css
 /* Default card border -- subtle separation */
-.ff-card {
-  border: 1px solid var(--ff-border-subtle);
+.vd-card {
+  border: 1px solid var(--vd-border-subtle);
   border-radius: 8px;
 }
 
 /* Interactive card border -- reveals on hover */
-.ff-card:hover {
-  border-color: var(--ff-border-default);
+.vd-card:hover {
+  border-color: var(--vd-border-default);
 }
 
 /* Accent border -- for active/selected states */
-.ff-card--active {
+.vd-card--active {
   border-color: rgba(232, 115, 90, 0.40);
-  box-shadow: var(--ff-shadow-glow);
+  box-shadow: var(--vd-shadow-glow);
 }
 
 /* Gradient border -- for premium/featured elements */
-.ff-card--featured {
+.vd-card--featured {
   border: 1px solid transparent;
   background:
-    linear-gradient(var(--ff-bg-raised), var(--ff-bg-raised)) padding-box,
-    var(--ff-gradient-ember) border-box;
+    linear-gradient(var(--vd-bg-raised), var(--vd-bg-raised)) padding-box,
+    var(--vd-gradient-ember) border-box;
 }
 ```
 
@@ -248,71 +248,71 @@ Why two-layer shadows: A tight, dark inner shadow creates grounding; a larger, s
 ```css
 :root {
   /* ── Brand Accent: Ember Coral ──────────────────── */
-  --ff-accent:            #E8735A;
-  --ff-accent-bright:     #F2886F;
-  --ff-accent-muted:      #C45D47;
-  --ff-accent-subtle:     rgba(232, 115, 90, 0.12);
-  --ff-accent-glow:       rgba(232, 115, 90, 0.25);
+  --vd-accent:            #E8735A;
+  --vd-accent-bright:     #F2886F;
+  --vd-accent-muted:      #C45D47;
+  --vd-accent-subtle:     rgba(232, 115, 90, 0.12);
+  --vd-accent-glow:       rgba(232, 115, 90, 0.25);
 
   /* ── Semantic: Syntax (Warm Amber) ─────────────── */
-  --ff-syntax:            #E5A855;
-  --ff-syntax-muted:      rgba(229, 168, 85, 0.15);
-  --ff-syntax-border:     rgba(229, 168, 85, 0.40);
+  --vd-syntax:            #E5A855;
+  --vd-syntax-muted:      rgba(229, 168, 85, 0.15);
+  --vd-syntax-border:     rgba(229, 168, 85, 0.40);
 
   /* ── Semantic: Logic (Lavender Violet) ─────────── */
-  --ff-logic:             #A78BDB;
-  --ff-logic-muted:       rgba(167, 139, 219, 0.15);
-  --ff-logic-border:      rgba(167, 139, 219, 0.40);
+  --vd-logic:             #A78BDB;
+  --vd-logic-muted:       rgba(167, 139, 219, 0.15);
+  --vd-logic-border:      rgba(167, 139, 219, 0.40);
 
   /* ── Semantic: Runtime (Warm Rose) ─────────────── */
-  --ff-runtime:           #E06B7A;
-  --ff-runtime-muted:     rgba(224, 107, 122, 0.15);
-  --ff-runtime-border:    rgba(224, 107, 122, 0.40);
+  --vd-runtime:           #E06B7A;
+  --vd-runtime-muted:     rgba(224, 107, 122, 0.15);
+  --vd-runtime-border:    rgba(224, 107, 122, 0.40);
 
   /* ── Semantic: Success (Sage Green) ────────────── */
-  --ff-success:           #7EC89B;
-  --ff-success-muted:     rgba(126, 200, 155, 0.15);
-  --ff-success-border:    rgba(126, 200, 155, 0.40);
+  --vd-success:           #7EC89B;
+  --vd-success-muted:     rgba(126, 200, 155, 0.15);
+  --vd-success-border:    rgba(126, 200, 155, 0.40);
 
   /* ── Surface Layers ────────────────────────────── */
-  --ff-bg-base:           #17181C;
-  --ff-bg-raised:         #1E2025;
-  --ff-bg-elevated:       #262830;
-  --ff-bg-overlay:        #2E3038;
+  --vd-bg-base:           #17181C;
+  --vd-bg-raised:         #1E2025;
+  --vd-bg-elevated:       #262830;
+  --vd-bg-overlay:        #2E3038;
 
   /* ── Borders ───────────────────────────────────── */
-  --ff-border-subtle:     rgba(255, 255, 255, 0.06);
-  --ff-border-default:    rgba(255, 255, 255, 0.10);
-  --ff-border-strong:     rgba(255, 255, 255, 0.16);
+  --vd-border-subtle:     rgba(255, 255, 255, 0.06);
+  --vd-border-default:    rgba(255, 255, 255, 0.10);
+  --vd-border-strong:     rgba(255, 255, 255, 0.16);
 
   /* ── Text ──────────────────────────────────────── */
-  --ff-text-primary:      rgba(255, 255, 255, 0.92);
-  --ff-text-secondary:    rgba(255, 255, 255, 0.60);
-  --ff-text-tertiary:     rgba(255, 255, 255, 0.38);
-  --ff-text-disabled:     rgba(255, 255, 255, 0.22);
+  --vd-text-primary:      rgba(255, 255, 255, 0.92);
+  --vd-text-secondary:    rgba(255, 255, 255, 0.60);
+  --vd-text-tertiary:     rgba(255, 255, 255, 0.38);
+  --vd-text-disabled:     rgba(255, 255, 255, 0.22);
 
   /* ── Gradients ─────────────────────────────────── */
-  --ff-gradient-ember:    linear-gradient(135deg, #E8735A 0%, #E5A855 100%);
-  --ff-gradient-insight:  linear-gradient(135deg, #A78BDB 0%, #E06B7A 60%, #E8735A 100%);
-  --ff-gradient-resolve:  linear-gradient(135deg, #E8735A 0%, #7EC89B 100%);
+  --vd-gradient-ember:    linear-gradient(135deg, #E8735A 0%, #E5A855 100%);
+  --vd-gradient-insight:  linear-gradient(135deg, #A78BDB 0%, #E06B7A 60%, #E8735A 100%);
+  --vd-gradient-resolve:  linear-gradient(135deg, #E8735A 0%, #7EC89B 100%);
 
   /* ── Shadows ───────────────────────────────────── */
-  --ff-shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.2);
-  --ff-shadow-md:   0 4px 12px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
-  --ff-shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
-  --ff-shadow-glow: 0 0 20px rgba(232, 115, 90, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --vd-shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.2);
+  --vd-shadow-md:   0 4px 12px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --vd-shadow-lg:   0 12px 40px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
+  --vd-shadow-glow: 0 0 20px rgba(232, 115, 90, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
 
   /* ── Spacing & Shape ───────────────────────────── */
-  --ff-radius-sm:   4px;
-  --ff-radius-md:   8px;
-  --ff-radius-lg:   12px;
-  --ff-radius-xl:   16px;
-  --ff-gap:         16px;
+  --vd-radius-sm:   4px;
+  --vd-radius-md:   8px;
+  --vd-radius-lg:   12px;
+  --vd-radius-xl:   16px;
+  --vd-gap:         16px;
 
   /* ── Motion ────────────────────────────────────── */
-  --ff-transition-fast:   0.1s ease-out;
-  --ff-transition:        0.2s ease-out;
-  --ff-transition-slow:   0.35s ease-out;
+  --vd-transition-fast:   0.1s ease-out;
+  --vd-transition:        0.2s ease-out;
+  --vd-transition-slow:   0.35s ease-out;
 }
 ```
 
@@ -348,7 +348,7 @@ All semantic colors have been checked for WCAG AA contrast on dark backgrounds:
 | Runtime errors      | `#f14c4c` red      | `#E06B7A` warm rose    |
 | Success states      | `#89d185` green    | `#7EC89B` sage green   |
 | Accent/interactive  | `#06b6d4` cyan     | `#E8735A` ember coral  |
-| Chart accent        | `#c084fc` purple   | Use `--ff-logic` or `--ff-accent` |
+| Chart accent        | `#c084fc` purple   | Use `--vd-logic` or `--vd-accent` |
 
 ### Files That Need Updates
 

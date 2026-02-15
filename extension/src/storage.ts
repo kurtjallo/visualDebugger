@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { BugRecord } from "./types";
 
-const LOG = "[FlowFixer:Storage]";
+const LOG = "[VisualDebugger:Storage]";
 const GLOBAL_STATE_KEY = "visualdebugger.bugHistory";
 
 export interface StorageProvider {
@@ -15,7 +15,7 @@ export interface StorageProvider {
  * VS Code globalState-backed storage.
  * Always available, no external dependencies.
  */
-export class FlowFixerStorage implements StorageProvider {
+export class VisualDebuggerStorage implements StorageProvider {
   constructor(private readonly globalState: vscode.Memento) {}
 
   async save(record: BugRecord): Promise<void> {

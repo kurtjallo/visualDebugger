@@ -7,14 +7,14 @@ import type { CapturedDiff } from "../types";
 // ---------------------------------------------------------------------------
 const mockAnalyzeDiff = vi.hoisted(() => vi.fn());
 const mockIsInitialized = vi.hoisted(() => vi.fn().mockReturnValue(true));
-const mockFlowFixerError = vi.hoisted(() => {
-  class FlowFixerError extends Error {
+const mockVisualDebuggerError = vi.hoisted(() => {
+  class VisualDebuggerError extends Error {
     constructor(message: string) {
       super(message);
-      this.name = "FlowFixerError";
+      this.name = "VisualDebuggerError";
     }
   }
-  return FlowFixerError;
+  return VisualDebuggerError;
 });
 const mockShowWarningMessage = vi.hoisted(() => vi.fn());
 
@@ -27,7 +27,7 @@ vi.mock("vscode", () => ({
 vi.mock("../llmClient", () => ({
   analyzeDiff: mockAnalyzeDiff,
   isInitialized: mockIsInitialized,
-  FlowFixerError: mockFlowFixerError,
+  VisualDebuggerError: mockVisualDebuggerError,
 }));
 
 const { createPhase2Handler, buildFallbackDiffExplanation } = await import("../phase2Handler");
@@ -221,7 +221,7 @@ describe("createPhase2Handler", () => {
       expect(calls).toContain("diffReviewed");
     });
 
-    it("shows warning message on FlowFixerError", async () => {
+    it("shows warning message on VisualDebuggerError", async () => {
       mockIsInitialized.mockReturnValue(false);
       const handler = createPhase2Handler(deps as never);
       await handler(makeCapturedDiff());

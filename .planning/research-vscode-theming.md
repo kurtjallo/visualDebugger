@@ -20,11 +20,11 @@ The extension already uses VS Code variables correctly for base colors:
 - `var(--vscode-widget-border)` for dividers
 - `var(--vscode-textCodeBlock-background)` for code blocks
 
-**Recommendation:** Keep all `var(--vscode-*)` references unchanged. Only replace the custom `--ff-*` brand tokens.
+**Recommendation:** Keep all `var(--vscode-*)` references unchanged. Only replace the custom `--vd-*` brand tokens.
 
 ### Layering custom brand colors on top of VS Code variables
 
-The current approach is correct: define custom `--ff-*` CSS custom properties in `:root` for brand colors, while using `var(--vscode-*)` for base chrome. This ensures the extension respects the user's theme while maintaining brand identity.
+The current approach is correct: define custom `--vd-*` CSS custom properties in `:root` for brand colors, while using `var(--vscode-*)` for base chrome. This ensures the extension respects the user's theme while maintaining brand identity.
 
 ---
 
@@ -83,14 +83,14 @@ VS Code dark theme backgrounds range from `#1e1e1e` (default dark) to `#1a1a2e` 
 
 ### Current gradient
 ```css
---ff-gradient: linear-gradient(135deg, #A78BFA, #FB7185); /* violet to coral */
+--vd-gradient: linear-gradient(135deg, #A78BFA, #FB7185); /* violet to coral */
 ```
 
 ### Recommended blue gradient options
 
 **Option A: Blue to Cyan (ocean-inspired)**
 ```css
---ff-gradient: linear-gradient(135deg, #60A5FA, #22D3EE);
+--vd-gradient: linear-gradient(135deg, #60A5FA, #22D3EE);
 ```
 - Goes from brand blue to cyan. Feels fresh, modern, distinctive.
 - High contrast at both ends. Excellent for text gradient effect.
@@ -98,14 +98,14 @@ VS Code dark theme backgrounds range from `#1e1e1e` (default dark) to `#1a1a2e` 
 
 **Option B: Blue to Indigo (deeper, more premium)**
 ```css
---ff-gradient: linear-gradient(135deg, #60A5FA, #A78BFA);
+--vd-gradient: linear-gradient(135deg, #60A5FA, #A78BFA);
 ```
 - Blue to light purple. Feels richer, more premium.
 - Risk: the purple end overlaps with VS Code's own purple in some themes.
 
 **Option C: Blue to Teal (nature-inspired, calming)**
 ```css
---ff-gradient: linear-gradient(135deg, #60A5FA, #2DD4BF);
+--vd-gradient: linear-gradient(135deg, #60A5FA, #2DD4BF);
 ```
 - Blue to teal/emerald. Fresh, educational feel, calming.
 - Risk: the teal end may be confused with the success color (#34D399).
@@ -119,7 +119,7 @@ VS Code dark theme backgrounds range from `#1e1e1e` (default dark) to `#1a1a2e` 
 
 ### Subtle gradient variant
 ```css
---ff-gradient-subtle: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(34,211,238,0.12));
+--vd-gradient-subtle: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(34,211,238,0.12));
 ```
 
 ---
@@ -147,7 +147,7 @@ VS Code's own UI is blue. The default accent is `#007ACC`. Many extensions defau
 
 ### The logic color problem
 
-The current `--ff-logic: #818CF8` (indigo) is too close to blue. If the primary accent becomes `#60A5FA`, users could confuse "logic error" indicators with "brand accent."
+The current `--vd-logic: #818CF8` (indigo) is too close to blue. If the primary accent becomes `#60A5FA`, users could confuse "logic error" indicators with "brand accent."
 
 ### Recommended semantic color updates
 
@@ -171,28 +171,28 @@ Why `#C084FC` for logic?
 ```css
 :root {
     /* Brand -- Blue-to-cyan gradient signature */
-    --ff-accent: #60A5FA;
-    --ff-accent-dim: rgba(96, 165, 250, 0.15);
-    --ff-accent-glow: rgba(96, 165, 250, 0.25);
-    --ff-gradient: linear-gradient(135deg, #60A5FA, #22D3EE);
-    --ff-gradient-subtle: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(34,211,238,0.12));
+    --vd-accent: #60A5FA;
+    --vd-accent-dim: rgba(96, 165, 250, 0.15);
+    --vd-accent-glow: rgba(96, 165, 250, 0.25);
+    --vd-gradient: linear-gradient(135deg, #60A5FA, #22D3EE);
+    --vd-gradient-subtle: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(34,211,238,0.12));
 
     /* Semantic -- Error categories */
-    --ff-syntax: #FBBF24;           /* amber -- unchanged */
-    --ff-syntax-dim: rgba(251, 191, 36, 0.12);
-    --ff-logic: #C084FC;            /* purple-400 -- changed from indigo */
-    --ff-logic-dim: rgba(192, 132, 252, 0.12);
-    --ff-runtime: #FB7185;          /* rose -- unchanged */
-    --ff-runtime-dim: rgba(251, 113, 133, 0.12);
-    --ff-success: #34D399;          /* emerald -- unchanged */
-    --ff-success-dim: rgba(52, 211, 153, 0.10);
+    --vd-syntax: #FBBF24;           /* amber -- unchanged */
+    --vd-syntax-dim: rgba(251, 191, 36, 0.12);
+    --vd-logic: #C084FC;            /* purple-400 -- changed from indigo */
+    --vd-logic-dim: rgba(192, 132, 252, 0.12);
+    --vd-runtime: #FB7185;          /* rose -- unchanged */
+    --vd-runtime-dim: rgba(251, 113, 133, 0.12);
+    --vd-success: #34D399;          /* emerald -- unchanged */
+    --vd-success-dim: rgba(52, 211, 153, 0.10);
 
     /* Surface layers -- unchanged, these work with any accent */
-    --ff-surface: rgba(255, 255, 255, 0.03);
-    --ff-surface-raised: rgba(255, 255, 255, 0.05);
-    --ff-surface-overlay: rgba(255, 255, 255, 0.07);
-    --ff-border-subtle: rgba(255, 255, 255, 0.06);
-    --ff-border: rgba(255, 255, 255, 0.08);
+    --vd-surface: rgba(255, 255, 255, 0.03);
+    --vd-surface-raised: rgba(255, 255, 255, 0.05);
+    --vd-surface-overlay: rgba(255, 255, 255, 0.07);
+    --vd-border-subtle: rgba(255, 255, 255, 0.06);
+    --vd-border: rgba(255, 255, 255, 0.08);
 }
 ```
 
@@ -203,7 +203,7 @@ Why `#C084FC` for logic?
 ### Chart.js colors to update
 - Trend line: `colTotal` changes from `#A78BFA` to `#60A5FA`
 - Trend fill: `rgba(167, 139, 250, 0.08)` to `rgba(96, 165, 250, 0.08)`
-- Logic bar chart: update background/border to use new `--ff-logic` purple
+- Logic bar chart: update background/border to use new `--vd-logic` purple
 - Tooltip border: `rgba(167, 139, 250, 0.2)` to `rgba(96, 165, 250, 0.2)`
 
 ### Heatmap cells to update
@@ -239,16 +239,16 @@ Since `#C084FC` is now the logic error color, change keyword to brand blue:
 
 Current:
 ```css
-.ff-loader-ring { border-top-color: #A78BFA; border-right-color: #A78BFA; }
-.ff-loader-ring--outer { border-bottom-color: #FB7185; border-left-color: #FB7185; }
-.ff-loader-icon { filter: drop-shadow(0 4px 14px rgba(167, 139, 250, 0.3)); }
+.vd-loader-ring { border-top-color: #A78BFA; border-right-color: #A78BFA; }
+.vd-loader-ring--outer { border-bottom-color: #FB7185; border-left-color: #FB7185; }
+.vd-loader-icon { filter: drop-shadow(0 4px 14px rgba(167, 139, 250, 0.3)); }
 ```
 
 Updated:
 ```css
-.ff-loader-ring { border-top-color: #60A5FA; border-right-color: #60A5FA; }
-.ff-loader-ring--outer { border-bottom-color: #22D3EE; border-left-color: #22D3EE; }
-.ff-loader-icon { filter: drop-shadow(0 4px 14px rgba(96, 165, 250, 0.3)); }
+.vd-loader-ring { border-top-color: #60A5FA; border-right-color: #60A5FA; }
+.vd-loader-ring--outer { border-bottom-color: #22D3EE; border-left-color: #22D3EE; }
+.vd-loader-icon { filter: drop-shadow(0 4px 14px rgba(96, 165, 250, 0.3)); }
 ```
 
 ---
@@ -257,13 +257,13 @@ Updated:
 
 | Token/Location | Old Value | New Value |
 |---|---|---|
-| `--ff-accent` | `#A78BFA` | `#60A5FA` |
-| `--ff-accent-dim` | `rgba(167,139,250,0.15)` | `rgba(96,165,250,0.15)` |
-| `--ff-accent-glow` | `rgba(167,139,250,0.25)` | `rgba(96,165,250,0.25)` |
-| `--ff-gradient` | `135deg, #A78BFA, #FB7185` | `135deg, #60A5FA, #22D3EE` |
-| `--ff-gradient-subtle` | `rgba(167,139,250,0.12), rgba(251,113,133,0.12)` | `rgba(96,165,250,0.12), rgba(34,211,238,0.12)` |
-| `--ff-logic` | `#818CF8` | `#C084FC` |
-| `--ff-logic-dim` | `rgba(129,140,248,0.12)` | `rgba(192,132,252,0.12)` |
+| `--vd-accent` | `#A78BFA` | `#60A5FA` |
+| `--vd-accent-dim` | `rgba(167,139,250,0.15)` | `rgba(96,165,250,0.15)` |
+| `--vd-accent-glow` | `rgba(167,139,250,0.25)` | `rgba(96,165,250,0.25)` |
+| `--vd-gradient` | `135deg, #A78BFA, #FB7185` | `135deg, #60A5FA, #22D3EE` |
+| `--vd-gradient-subtle` | `rgba(167,139,250,0.12), rgba(251,113,133,0.12)` | `rgba(96,165,250,0.12), rgba(34,211,238,0.12)` |
+| `--vd-logic` | `#818CF8` | `#C084FC` |
+| `--vd-logic-dim` | `rgba(129,140,248,0.12)` | `rgba(192,132,252,0.12)` |
 | Hover `a:hover` color | `#C4B5FD` | `#93C5FD` (blue-300) |
 | All hardcoded `rgba(167,139,250,...)` | violet-based | `rgba(96,165,250,...)` |
 | All hardcoded `rgba(129,140,248,...)` | indigo-based | `rgba(192,132,252,...)` |
@@ -276,9 +276,9 @@ Updated:
 
 ### What stays the same
 - All `--vscode-*` variable references
-- `--ff-syntax` (`#FBBF24` amber)
-- `--ff-runtime` (`#FB7185` rose)
-- `--ff-success` (`#34D399` emerald)
+- `--vd-syntax` (`#FBBF24` amber)
+- `--vd-runtime` (`#FB7185` rose)
+- `--vd-success` (`#34D399` emerald)
 - All surface/border tokens (white-alpha based)
 - Plus Jakarta Sans font
 - Spacing scale, radius scale, motion easings

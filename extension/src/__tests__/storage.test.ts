@@ -20,7 +20,7 @@ function createMockGlobalState(): Record<string, unknown> & {
 }
 
 // Import after mocks
-const { FlowFixerStorage } = await import("../storage");
+const { VisualDebuggerStorage } = await import("../storage");
 
 function makeBugRecord(overrides: Partial<{ id: string; category: string; file: string; errorMessage: string; timestamp: number }> = {}) {
   return {
@@ -49,13 +49,13 @@ function makeBugRecord(overrides: Partial<{ id: string; category: string; file: 
   };
 }
 
-describe("FlowFixerStorage", () => {
+describe("VisualDebuggerStorage", () => {
   let globalState: ReturnType<typeof createMockGlobalState>;
-  let storage: InstanceType<typeof FlowFixerStorage>;
+  let storage: InstanceType<typeof VisualDebuggerStorage>;
 
   beforeEach(() => {
     globalState = createMockGlobalState();
-    storage = new FlowFixerStorage(globalState as never);
+    storage = new VisualDebuggerStorage(globalState as never);
   });
 
   describe("getAll", () => {

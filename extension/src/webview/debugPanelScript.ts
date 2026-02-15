@@ -110,19 +110,19 @@ const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)
 function typeWriter(element: HTMLElement, text: string, speed: number, callback?: () => void): void {
   if (prefersReducedMotion) {
     element.innerHTML = text;
-    element.classList.remove("ff-typing");
+    element.classList.remove("vd-typing");
     if (callback) callback();
     return;
   }
   element.innerHTML = "";
-  element.classList.add("ff-typing");
+  element.classList.add("vd-typing");
   let i = 0;
   let inTag = false;
   let tagBuffer = "";
 
   function tick(): void {
     if (i >= text.length) {
-      element.classList.remove("ff-typing");
+      element.classList.remove("vd-typing");
       if (callback) callback();
       return;
     }
@@ -156,12 +156,12 @@ function typeWriter(element: HTMLElement, text: string, speed: number, callback?
 function launchConfetti(): void {
   if (prefersReducedMotion) return;
   const container = document.createElement("div");
-  container.className = "ff-confetti-container";
+  container.className = "vd-confetti-container";
   document.body.appendChild(container);
   const colors = ["#60A5FA", "#22D3EE", "#FBBF24", "#34D399", "#93C5FD", "#38BDF8"];
   for (let c = 0; c < 30; c++) {
     const piece = document.createElement("div");
-    piece.className = "ff-confetti-piece";
+    piece.className = "vd-confetti-piece";
     piece.style.left = Math.random() * 100 + "%";
     piece.style.backgroundColor = colors[c % colors.length];
     piece.style.animationDelay = Math.random() * 0.5 + "s";
@@ -181,11 +181,11 @@ function showToast(message: string, type?: string): void {
   const container = $("toast-container");
   if (!container) return;
   const toast = document.createElement("div");
-  toast.className = "ff-toast" + (type ? " ff-toast--" + type : "");
+  toast.className = "vd-toast" + (type ? " vd-toast--" + type : "");
   toast.textContent = message;
   container.appendChild(toast);
   setTimeout(function () {
-    toast.classList.add("ff-toast--out");
+    toast.classList.add("vd-toast--out");
     setTimeout(function () {
       toast.remove();
     }, 300);
@@ -208,11 +208,11 @@ function cleanTextForTTS(html: string): string {
 // ── Panel visibility (smooth transitions) ──
 function showPanelSection(name: ViewState): void {
   activeView = name;
-  const ids = ["section-actions", "section-error-explanation", "section-diff-review", "section-tts"];
+  const ids = ["section-actions", "section-error-explanation", "section-divd-review", "section-tts"];
   const map: Record<ViewState, string> = {
     actions: "section-actions",
     error: "section-error-explanation",
-    diff: "section-diff-review",
+    diff: "section-divd-review",
   };
 
   // Slide out current panels
@@ -239,18 +239,18 @@ function showPanelSection(name: ViewState): void {
 
     if (showActions) $("section-actions")?.classList.add("visible");
     if (showError) $("section-error-explanation")?.classList.add("visible");
-    if (showDiff) $("section-diff-review")?.classList.add("visible");
+    if (showDiff) $("section-divd-review")?.classList.add("visible");
     if (showTts) $("section-tts")?.classList.add("visible");
   }, 50);
 }
 
 // ── Disclosure hint toggle ──
-document.querySelectorAll<HTMLDetailsElement>(".ff-disclosure").forEach(function (details) {
+document.querySelectorAll<HTMLDetailsElement>(".vd-disclosure").forEach(function (details) {
   details.addEventListener("toggle", function () {
-    const hint = details.querySelector(".ff-disclosure-hint");
+    const hint = details.querySelector(".vd-disclosure-hint");
     if (!hint) return;
     const isPrevent = details.closest("#error-section-prevent");
-    const isQuestion = details.closest("#diff-section-question");
+    const isQuestion = details.closest("#divd-section-question");
     const showText = isPrevent ? "Show tip" : isQuestion ? "Show question" : "Show details";
     const hideText = isPrevent ? "Hide tip" : isQuestion ? "Hide question" : "Hide details";
     hint.textContent = details.open ? hideText : showText;
@@ -268,9 +268,9 @@ function updateActionsState(data: ActionsData): void {
     badge.textContent = String(data.count);
     // Pulse if count changed
     if (prevCount !== null && prevCount !== String(data.count)) {
-      badge.classList.remove("ff-pulse");
+      badge.classList.remove("vd-pulse");
       void (badge as HTMLElement).offsetWidth; // reflow to restart animation
-      badge.classList.add("ff-pulse");
+      badge.classList.add("vd-pulse");
     }
     badge.setAttribute("data-prev", String(data.count));
     const fileName = data.fileName || "this file";
@@ -314,14 +314,14 @@ function updateErrorPanel(data: ErrorData): void {
 
   const type = data.category.split(" ")[0];
   if (type === "Syntax") {
-    badge.style.color = "var(--ff-syntax)";
-    badge.style.borderColor = "var(--ff-syntax)";
+    badge.style.color = "var(--vd-syntax)";
+    badge.style.borderColor = "var(--vd-syntax)";
   } else if (type === "Logic") {
-    badge.style.color = "var(--ff-logic)";
-    badge.style.borderColor = "var(--ff-logic)";
+    badge.style.color = "var(--vd-logic)";
+    badge.style.borderColor = "var(--vd-logic)";
   } else if (type === "Runtime") {
-    badge.style.color = "var(--ff-runtime)";
-    badge.style.borderColor = "var(--ff-runtime)";
+    badge.style.color = "var(--vd-runtime)";
+    badge.style.borderColor = "var(--vd-runtime)";
   }
 
   $("error-location")!.textContent =
@@ -422,11 +422,11 @@ function updateErrorPanel(data: ErrorData): void {
         fb.style.display = "block";
         fb.className = "quiz-feedback";
         if (isCorrect) {
-          fb.style.borderLeftColor = "var(--ff-success)";
+          fb.style.borderLeftColor = "var(--vd-success)";
           launchConfetti();
           showToast("Correct!", "success");
         } else {
-          fb.style.borderLeftColor = "var(--ff-runtime)";
+          fb.style.borderLeftColor = "var(--vd-runtime)";
         }
 
         vscode.postMessage({ type: "quizAnswer", correct: isCorrect });
@@ -447,7 +447,7 @@ function updateDiffPanel(data: DiffData): void {
   // File bar
   const fileName = data.fileName || (data.diff && data.diff.file) || "";
   if (fileName) {
-    $("diff-file")!.textContent = fileName;
+    $("divd-file")!.textContent = fileName;
     $("file-bar")!.style.display = "";
   } else {
     $("file-bar")!.style.display = "none";
@@ -455,35 +455,35 @@ function updateDiffPanel(data: DiffData): void {
 
   // 1. Quick Summary
   const hasSummary = !!data.quickSummary;
-  showSection("diff-section-summary", hasSummary);
+  showSection("divd-section-summary", hasSummary);
   if (hasSummary) $("quick-summary")!.textContent = data.quickSummary!;
 
   // 2. Why This Works
   const hasWhy = !!data.whyItWorks;
-  showSection("diff-section-why", hasWhy);
+  showSection("divd-section-why", hasWhy);
   if (hasWhy) $("why-it-works")!.textContent = data.whyItWorks!;
 
   // 3. What To Do Next (interactive checklist)
   const hasTodo = Array.isArray(data.whatToDoNext) && data.whatToDoNext.length > 0;
-  showSection("diff-section-todo", hasTodo);
+  showSection("divd-section-todo", hasTodo);
   const todoList = $("what-to-do-next")!;
   todoList.innerHTML = "";
   $("check-done")!.style.display = "none";
   if (hasTodo) {
     data.whatToDoNext!.forEach(function (step: string, i: number) {
       const li = document.createElement("li");
-      li.className = "ff-check-item";
+      li.className = "vd-check-item";
 
       const cb = document.createElement("input");
       cb.type = "checkbox";
       cb.id = "todo-" + i;
-      cb.className = "ff-checkbox";
+      cb.className = "vd-checkbox";
       cb.setAttribute("aria-label", step);
       cb.addEventListener("change", onChecklistChange);
 
       const label = document.createElement("label");
       label.htmlFor = "todo-" + i;
-      label.className = "ff-check-label";
+      label.className = "vd-check-label";
       label.textContent = step;
 
       li.appendChild(cb);
@@ -494,12 +494,12 @@ function updateDiffPanel(data: DiffData): void {
 
   // 4. Key Takeaway
   const hasTakeaway = !!data.keyTakeaway;
-  showSection("diff-section-takeaway", hasTakeaway);
+  showSection("divd-section-takeaway", hasTakeaway);
   if (hasTakeaway) $("key-takeaway")!.textContent = data.keyTakeaway!;
 
   // 5. Think About It
   const hasQuestion = !!data.checkQuestion;
-  showSection("diff-section-question", hasQuestion);
+  showSection("divd-section-question", hasQuestion);
   if (hasQuestion) $("check-question")!.textContent = data.checkQuestion!;
 
   showPanelSection("diff");
@@ -509,7 +509,7 @@ function updateDiffPanel(data: DiffData): void {
 
 // ── Checklist logic ──
 function onChecklistChange(): void {
-  const boxes = document.querySelectorAll<HTMLInputElement>(".ff-checkbox");
+  const boxes = document.querySelectorAll<HTMLInputElement>(".vd-checkbox");
   const allChecked = Array.from(boxes).every(function (cb) {
     return cb.checked;
   });
@@ -566,12 +566,12 @@ function speakWithWebSpeech(text: string): void {
   u.rate = 0.95;
   isSpeaking = true;
   $("tts-btn")!.textContent = "Stop";
-  $("tts-btn")!.classList.add("ff-btn--playing");
+  $("tts-btn")!.classList.add("vd-btn--playing");
   updateTtsStatus("Playing...");
   u.onend = function () {
     isSpeaking = false;
     $("tts-btn")!.textContent = "Read Aloud";
-    $("tts-btn")!.classList.remove("ff-btn--playing");
+    $("tts-btn")!.classList.remove("vd-btn--playing");
     updateTtsStatus("");
   };
   window.speechSynthesis.cancel();
@@ -624,7 +624,7 @@ function initDebugPanelListeners(): void {
     if (isSpeaking) {
       stopAudio();
       $("tts-btn")!.textContent = "Read Aloud";
-      $("tts-btn")!.classList.remove("ff-btn--playing");
+      $("tts-btn")!.classList.remove("vd-btn--playing");
       updateTtsStatus("");
       return;
     }
@@ -690,13 +690,13 @@ function initDebugPanelListeners(): void {
       ttsAudio = audio;
       isSpeaking = true;
       $("tts-btn")!.textContent = "Stop";
-      $("tts-btn")!.classList.add("ff-btn--playing");
+      $("tts-btn")!.classList.add("vd-btn--playing");
       updateTtsStatus("Playing...");
       audio.onended = function () {
         ttsAudio = null;
         isSpeaking = false;
         $("tts-btn")!.textContent = "Read Aloud";
-        $("tts-btn")!.classList.remove("ff-btn--playing");
+        $("tts-btn")!.classList.remove("vd-btn--playing");
         updateTtsStatus("");
         announce("Audio finished.");
       };
@@ -704,7 +704,7 @@ function initDebugPanelListeners(): void {
         ttsAudio = null;
         isSpeaking = false;
         $("tts-btn")!.textContent = "Read Aloud";
-        $("tts-btn")!.classList.remove("ff-btn--playing");
+        $("tts-btn")!.classList.remove("vd-btn--playing");
         updateTtsStatus("");
         announce("Audio playback failed.");
       };
@@ -721,7 +721,7 @@ function initDebugPanelListeners(): void {
       updateTtsStatus("ElevenLabs unavailable");
       isSpeaking = false;
       $("tts-btn")!.textContent = "Read Aloud";
-      $("tts-btn")!.classList.remove("ff-btn--playing");
+      $("tts-btn")!.classList.remove("vd-btn--playing");
     } else if (msg.type === "clear") {
       stopAudio();
       currentErrorData = null;

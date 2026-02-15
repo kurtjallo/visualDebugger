@@ -1,6 +1,6 @@
-# FlowFixer — Product Requirements Document
+# VisualDebugger — Product Requirements Document
 
-> **Project:** FlowFixer — AI Bug Tutor for VS Code
+> **Project:** VisualDebugger — AI Bug Tutor for VS Code
 > **Theme:** Education | Healthcare
 > **Event:** 24-Hour Hackathon (CHD)
 > **Team Size:** 3 Engineers (Full Stack)
@@ -49,7 +49,7 @@ When the student prompts an AI tool (Copilot, Cursor, ChatGPT) to fix the code:
 
 ### Accessibility by Design
 
-Every feature in FlowFixer maps to a clinical accommodation backed by learning science research:
+Every feature in VisualDebugger maps to a clinical accommodation backed by learning science research:
 
 | Feature | Research Basis | Accommodates |
 |---------|---------------|-------------|
@@ -125,7 +125,7 @@ Every feature in FlowFixer maps to a clinical accommodation backed by learning s
 ```
 AS A student who just hit a compile/runtime error,
 WHEN I see a confusing error message I don't understand,
-I WANT FlowFixer to explain where the bug is, what the error means,
+I WANT VisualDebugger to explain where the bug is, what the error means,
   how to fix it, and how to prevent it in the future,
 SO THAT I learn to read and understand error messages on my own.
 ```
@@ -417,14 +417,14 @@ Hour 21─24: REHEARSE + SUBMIT                    │        │
 
 | Time | Action | What Judges See |
 |------|--------|----------------|
-| 0:00–0:15 | **Lead with accessibility** | "19% of CS students have a learning disability or ADHD. Error messages were designed by experts for experts. For a neurodivergent student, this isn't just confusing — it's an accessibility barrier. FlowFixer is assistive technology for debugging." |
+| 0:00–0:15 | **Lead with accessibility** | "19% of CS students have a learning disability or ADHD. Error messages were designed by experts for experts. For a neurodivergent student, this isn't just confusing — it's an accessibility barrier. VisualDebugger is assistive technology for debugging." |
 | 0:15–0:30 | **Show the broken app** | React app running. Student clicks a button — app crashes. Terminal shows: `TypeError: Cannot read properties of undefined (reading 'map')` |
-| 0:30–0:50 | **Phase 1: FlowFixer explains the error** | Error Explanation Panel opens automatically. TL;DR one-liner visible first. Sections collapsed — progressive disclosure reduces cognitive load (Sweller's Cognitive Load Theory). Expanding sections shows: bug location (line 15), category badge [Runtime Error], plain-English explanation, "How to fix it", "How to prevent it", best practices. Key terms highlighted. Student now UNDERSTANDS the bug. |
+| 0:30–0:50 | **Phase 1: VisualDebugger explains the error** | Error Explanation Panel opens automatically. TL;DR one-liner visible first. Sections collapsed — progressive disclosure reduces cognitive load (Sweller's Cognitive Load Theory). Expanding sections shows: bug location (line 15), category badge [Runtime Error], plain-English explanation, "How to fix it", "How to prevent it", best practices. Key terms highlighted. Student now UNDERSTANDS the bug. |
 | 0:50–1:10 | **Student asks AI to fix it** | Student prompts Copilot/Cursor: "fix this error". AI modifies the file. |
-| 1:10–1:30 | **Phase 2: FlowFixer shows what AI changed** | Diff Panel opens. Red = removed code, Green = new code. Explanation card: "The AI added a null check before calling .map() and initialized the state with an empty array." Student now understands the fix. |
+| 1:10–1:30 | **Phase 2: VisualDebugger shows what AI changed** | Diff Panel opens. Red = removed code, Green = new code. Explanation card: "The AI added a null check before calling .map() and initialized the state with an empty array." Student now understands the fix. |
 | 1:30–1:40 | **TTS read-aloud moment** | Click the read-aloud button. "For a dyslexic student, hearing this explanation activates dual-coding — research-backed multi-modal learning." Natural ElevenLabs voice reads the explanation while key terms stay highlighted. |
 | 1:40–1:50 | **Show the dashboard** | Bug Dashboard with seeded week of data. Bar chart: Runtime (8), Logic (5), Syntax (3). "Focus area: Runtime errors — practice null checking and defensive programming." |
-| 1:50–2:00 | **Close with impact** | "FlowFixer turns every error into a lesson. It's not just education — it's assistive technology that makes coding accessible for the 1 in 5 students who learn differently." |
+| 1:50–2:00 | **Close with impact** | "VisualDebugger turns every error into a lesson. It's not just education — it's assistive technology that makes coding accessible for the 1 in 5 students who learn differently." |
 
 ---
 
@@ -508,7 +508,7 @@ Hour 21─24: REHEARSE + SUBMIT                    │        │
 ## 16. Repository Structure
 
 ```
-flowfixer/
+visualdebugger/
 ├── extension/                    # VS Code extension (TypeScript)
 │   ├── src/
 │   │   ├── extension.ts          # Entry point, activation, command registration
@@ -559,8 +559,8 @@ flowfixer/
 |-------|----------|
 | **Best Overall Hack** | Build it well — ambitious, technical, great narrative |
 | **Best UI & UX Designed Hack** | Polish webview panels, smooth transitions, dark theme compat |
-| **Best Community Impact Hack** | Accessibility-focused — 15–20% of CS students are neurodivergent; FlowFixer makes debugging accessible |
-| **Best Healthcare Hack** | ADHD and learning disabilities are DSM-5 diagnoses; FlowFixer IS assistive technology for cognitively accessible debugging |
+| **Best Community Impact Hack** | Accessibility-focused — 15–20% of CS students are neurodivergent; VisualDebugger makes debugging accessible |
+| **Best Healthcare Hack** | ADHD and learning disabilities are DSM-5 diagnoses; VisualDebugger IS assistive technology for cognitively accessible debugging |
 
 ### Sponsor Prize Targets (integrated into tech stack)
 | Prize | Integration | Effort |
@@ -575,7 +575,7 @@ flowfixer/
 |-------|--------|
 | Best Use of Solana | No blockchain angle |
 | Best Use of Snowflake API | Data warehouse doesn't fit |
-| Most Useless Hack | FlowFixer is useful |
+| Most Useless Hack | VisualDebugger is useful |
 
 ---
 
@@ -595,11 +595,11 @@ flowfixer/
 
 ## 19. Research & Evidence Base
 
-FlowFixer's design is grounded in peer-reviewed research on cognitive science, accessibility, and computer science education.
+VisualDebugger's design is grounded in peer-reviewed research on cognitive science, accessibility, and computer science education.
 
 ### Cognitive Science & Learning Theory
 
-| Citation | Finding | How FlowFixer Uses It |
+| Citation | Finding | How VisualDebugger Uses It |
 |----------|---------|----------------------|
 | **Sweller (1988)** — Cognitive Load Theory | Extraneous cognitive load impairs learning; reduce it to free working memory for schema acquisition | Plain-English explanations, card-based chunking, progressive disclosure — all reduce extraneous load |
 | **Mayer (2009)** — Multimedia Learning / Dual Coding | Presenting information through both visual and auditory channels improves comprehension | TTS read-aloud + highlighted text activates dual-channel processing |
@@ -608,30 +608,30 @@ FlowFixer's design is grounded in peer-reviewed research on cognitive science, a
 
 ### Computer Science Education
 
-| Citation | Finding | How FlowFixer Uses It |
+| Citation | Finding | How VisualDebugger Uses It |
 |----------|---------|----------------------|
-| **Becker et al. (2019)** | 49% of novice programming time is spent on syntax errors alone | FlowFixer activates on every error — turns dead time into learning |
-| **Lee & Ko (2015)** | Novice programmers spend an average of 9.2 minutes per error | FlowFixer reduces diagnosis time by providing instant, structured explanation |
+| **Becker et al. (2019)** | 49% of novice programming time is spent on syntax errors alone | VisualDebugger activates on every error — turns dead time into learning |
+| **Lee & Ko (2015)** | Novice programmers spend an average of 9.2 minutes per error | VisualDebugger reduces diagnosis time by providing instant, structured explanation |
 | **Prather et al. (2018)** | Students who can self-diagnose errors show 2.3x greater persistence | Phase 1 teaches self-diagnosis; dashboard tracks progress toward independence |
 
 ### Accessibility & Neurodivergence
 
-| Citation | Finding | How FlowFixer Uses It |
+| Citation | Finding | How VisualDebugger Uses It |
 |----------|---------|----------------------|
 | **Stack Overflow Developer Survey (2023)** | ~10% of developers self-report ADHD | Chunked information, focus mode, progressive disclosure accommodate ADHD working memory |
-| **NSF (2019)** | Neurodivergent students drop STEM at 1.5x the rate of neurotypical peers | FlowFixer reduces the frustration barrier that drives dropout |
-| **CAST (2018)** — UDL Guidelines v2.2 | Universal Design for Learning: provide multiple means of engagement, representation, and action | FlowFixer implements all 3 UDL principles (see Section 20) |
+| **NSF (2019)** | Neurodivergent students drop STEM at 1.5x the rate of neurotypical peers | VisualDebugger reduces the frustration barrier that drives dropout |
+| **CAST (2018)** — UDL Guidelines v2.2 | Universal Design for Learning: provide multiple means of engagement, representation, and action | VisualDebugger implements all 3 UDL principles (see Section 20) |
 
 ---
 
 ## 20. UDL Alignment Matrix
 
-FlowFixer maps to all three principles of Universal Design for Learning (CAST, 2018).
+VisualDebugger maps to all three principles of Universal Design for Learning (CAST, 2018).
 
 ### Principle 1: Multiple Means of Engagement
 *The "why" of learning — how students stay motivated and engaged.*
 
-| UDL Guideline | FlowFixer Feature | How It Works |
+| UDL Guideline | VisualDebugger Feature | How It Works |
 |--------------|-------------------|-------------|
 | 7.1: Optimize individual choice | Simplified Mode Toggle (F18) | Students choose their explanation depth |
 | 7.2: Optimize relevance | Bug Dashboard (F8) | Shows personal bug patterns — relevant to the student's own code |
@@ -641,7 +641,7 @@ FlowFixer maps to all three principles of Universal Design for Learning (CAST, 2
 ### Principle 2: Multiple Means of Representation
 *The "what" of learning — how information is presented.*
 
-| UDL Guideline | FlowFixer Feature | How It Works |
+| UDL Guideline | VisualDebugger Feature | How It Works |
 |--------------|-------------------|-------------|
 | 1.1: Offer ways of customizing display | Focus Mode (F22), Progressive Disclosure (F17) | One card at a time, collapsible sections |
 | 1.3: Offer alternatives for visual info | TTS Read-Aloud (F10) | Audio alternative for all text content |
@@ -652,7 +652,7 @@ FlowFixer maps to all three principles of Universal Design for Learning (CAST, 2
 ### Principle 3: Multiple Means of Action & Expression
 *The "how" of learning — how students demonstrate understanding.*
 
-| UDL Guideline | FlowFixer Feature | How It Works |
+| UDL Guideline | VisualDebugger Feature | How It Works |
 |--------------|-------------------|-------------|
 | 4.1: Vary methods for response | Quiz (F9) | Multiple-choice quiz tests comprehension after explanation |
 | 5.2: Use multiple tools | Keyboard Nav (F21) | Full keyboard navigation for motor accessibility |

@@ -17,7 +17,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <h1>Student Project Showcase</h1>
-        <span className="header-badge">FlowFixer</span>
+        <span className="header-badge">VisualDebugger</span>
       </header>
       <nav className="tab-bar">
         {tabs.map(tab => (
@@ -37,7 +37,7 @@ export default function App() {
             <p className="description">Open <code>BrokenSyntax.tsx</code> in the editor to see the syntax error demo.</p>
             <p style={{ color: 'var(--text-subtle)', fontSize: '0.85rem', marginTop: '12px' }}>
               This file has a missing closing parenthesis — VS Code will flag it with a red squiggly line.
-              FlowFixer will explain what the error means.
+              VisualDebugger will explain what the error means.
             </p>
           </div>
         )}

@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { CapturedError } from "./types";
 import { extractCodeContext } from "./utils";
 
-const LOG = "[FlowFixer:ErrorListener]";
+const LOG = "[VisualDebugger:ErrorListener]";
 const SUPPORTED_LANGUAGES = new Set([
   "javascript",
   "typescript",

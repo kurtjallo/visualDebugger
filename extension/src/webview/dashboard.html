@@ -26,15 +26,15 @@
                         <div class="stat-label">Total Bugs</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" style="color: var(--ff-syntax);" id="syntax-count">0</div>
+                        <div class="stat-value" style="color: var(--vd-syntax);" id="syntax-count">0</div>
                         <div class="stat-label">Syntax</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" style="color: var(--ff-logic);" id="logic-count">0</div>
+                        <div class="stat-value" style="color: var(--vd-logic);" id="logic-count">0</div>
                         <div class="stat-label">Logic</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value" style="color: var(--ff-runtime);" id="runtime-count">0</div>
+                        <div class="stat-value" style="color: var(--vd-runtime);" id="runtime-count">0</div>
                         <div class="stat-label">Runtime</div>
                     </div>
                 </div>
@@ -67,34 +67,34 @@
 
 
             <!-- Learning Progress Ring -->
-            <div class="card slide-in ff-progress-ring-card" id="progress-ring-card">
+            <div class="card slide-in vd-progress-ring-card" id="progress-ring-card">
                 <h3>Learning Progress</h3>
-                <div class="ff-progress-ring">
+                <div class="vd-progress-ring">
                     <svg width="100" height="100" viewBox="0 0 100 100">
                         <defs>
-                            <linearGradient id="ff-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <linearGradient id="vd-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stop-color="#60A5FA"/>
                                 <stop offset="100%" stop-color="#22D3EE"/>
                             </linearGradient>
                         </defs>
-                        <circle class="ff-progress-ring-bg" cx="50" cy="50" r="40"/>
-                        <circle class="ff-progress-ring-fill" id="progress-ring-circle" cx="50" cy="50" r="40"
+                        <circle class="vd-progress-ring-bg" cx="50" cy="50" r="40"/>
+                        <circle class="vd-progress-ring-fill" id="progress-ring-circle" cx="50" cy="50" r="40"
                             stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
                     </svg>
-                    <span class="ff-progress-ring-text" id="progress-ring-pct">0%</span>
+                    <span class="vd-progress-ring-text" id="progress-ring-pct">0%</span>
                 </div>
-                <span class="ff-progress-ring-label" id="progress-ring-label">0 / 0 quizzes</span>
+                <span class="vd-progress-ring-label" id="progress-ring-label">0 / 0 quizzes</span>
             </div>
 
             <!-- Bug Activity Heatmap (GitHub-style) -->
-            <div class="card slide-in ff-heatmap-card" id="heatmap-card">
-                <div class="ff-heatmap-header">
+            <div class="card slide-in vd-heatmap-card" id="heatmap-card">
+                <div class="vd-heatmap-header">
                     <h3 id="heatmap-title">Bug Activity</h3>
                 </div>
-                <div class="ff-heatmap-scroll">
-                    <div class="ff-heatmap-months" id="heatmap-months"></div>
-                    <div class="ff-heatmap-body">
-                        <div class="ff-heatmap-days">
+                <div class="vd-heatmap-scroll">
+                    <div class="vd-heatmap-months" id="heatmap-months"></div>
+                    <div class="vd-heatmap-body">
+                        <div class="vd-heatmap-days">
                             <span></span>
                             <span>Mon</span>
                             <span></span>
@@ -103,29 +103,29 @@
                             <span>Fri</span>
                             <span></span>
                         </div>
-                        <div class="ff-heatmap-grid" id="heatmap-grid"></div>
+                        <div class="vd-heatmap-grid" id="heatmap-grid"></div>
                     </div>
                 </div>
-                <div class="ff-heatmap-footer">
-                    <span class="ff-heatmap-summary" id="heatmap-summary"></span>
-                    <div class="ff-heatmap-legend">
+                <div class="vd-heatmap-footer">
+                    <span class="vd-heatmap-summary" id="heatmap-summary"></span>
+                    <div class="vd-heatmap-legend">
                         <span>Less</span>
-                        <div class="ff-heatmap-legend-cell" data-level="0"></div>
-                        <div class="ff-heatmap-legend-cell" data-level="1"></div>
-                        <div class="ff-heatmap-legend-cell" data-level="2"></div>
-                        <div class="ff-heatmap-legend-cell" data-level="3"></div>
-                        <div class="ff-heatmap-legend-cell" data-level="4"></div>
+                        <div class="vd-heatmap-legend-cell" data-level="0"></div>
+                        <div class="vd-heatmap-legend-cell" data-level="1"></div>
+                        <div class="vd-heatmap-legend-cell" data-level="2"></div>
+                        <div class="vd-heatmap-legend-cell" data-level="3"></div>
+                        <div class="vd-heatmap-legend-cell" data-level="4"></div>
                         <span>More</span>
                     </div>
                 </div>
                 <!-- Tooltip (positioned absolutely) -->
-                <div class="ff-heatmap-tooltip" id="heatmap-tooltip" role="tooltip" aria-hidden="true"></div>
+                <div class="vd-heatmap-tooltip" id="heatmap-tooltip" role="tooltip" aria-hidden="true"></div>
             </div>
 
             <!-- Achievement Badges -->
             <div class="card slide-in" id="achievements-card">
                 <h3>Achievements</h3>
-                <div class="ff-achievements" id="achievements-grid"></div>
+                <div class="vd-achievements" id="achievements-grid"></div>
             </div>
 
             <!-- Recent Bug History -->
@@ -141,9 +141,9 @@
     <script>
         // Use CSS variables for chart colors to match theme
         const style = getComputedStyle(document.body);
-        const colSyntax = style.getPropertyValue('--ff-syntax').trim() || '#FBBF24';
-        const colLogic = style.getPropertyValue('--ff-logic').trim() || '#C084FC';
-        const colRuntime = style.getPropertyValue('--ff-runtime').trim() || '#FB7185';
+        const colSyntax = style.getPropertyValue('--vd-syntax').trim() || '#FBBF24';
+        const colLogic = style.getPropertyValue('--vd-logic').trim() || '#C084FC';
+        const colRuntime = style.getPropertyValue('--vd-runtime').trim() || '#FB7185';
         const colGrid = 'rgba(255, 255, 255, 0.04)';
         const colText = style.getPropertyValue('--vscode-descriptionForeground').trim() || '#888';
         const colTotal = '#60A5FA';
@@ -158,7 +158,7 @@
         const SEED_BUGS = [
             { id: 1, category: "Runtime", error: "TypeError: Cannot read properties of undefined (reading 'map')", file: "App.tsx", line: 15, timestamp: new Date(now - 15 * min).toISOString() },
             { id: 2, category: "Syntax", error: "SyntaxError: Unexpected token '}'", file: "Header.tsx", line: 23, timestamp: new Date(now - 45 * min).toISOString() },
-            { id: 3, category: "Logic", error: "Off-by-one: renders extra undefined item in list", file: "List.tsx", line: 8, timestamp: new Date(now - 2 * hour).toISOString() },
+            { id: 3, category: "Logic", error: "Ovd-by-one: renders extra undefined item in list", file: "List.tsx", line: 8, timestamp: new Date(now - 2 * hour).toISOString() },
             { id: 4, category: "Runtime", error: "ReferenceError: data is not defined", file: "Dashboard.tsx", line: 42, timestamp: new Date(now - 5 * hour).toISOString() },
             { id: 5, category: "Syntax", error: "SyntaxError: Unexpected token, expected ','", file: "Form.tsx", line: 31, timestamp: new Date(now - 12 * hour).toISOString() },
             { id: 6, category: "Runtime", error: "TypeError: setItems is not a function", file: "App.tsx", line: 20, timestamp: new Date(now - 1.5 * day).toISOString() },
@@ -297,7 +297,7 @@
                     span.textContent = monthNames[month];
                     lastMonth = month;
                 }
-                span.className = 'ff-heatmap-month-label';
+                span.className = 'vd-heatmap-month-label';
                 monthsRow.appendChild(span);
             });
 
@@ -307,7 +307,7 @@
                 weeks.forEach((week, wi) => {
                     const dayEntry = week.find(d => d.getDay() === dayOfWeek);
                     const cell = document.createElement('div');
-                    cell.className = 'ff-heatmap-cell';
+                    cell.className = 'vd-heatmap-cell';
 
                     if (dayEntry && dayEntry <= today) {
                         const key = dayEntry.toISOString().split('T')[0];
@@ -334,7 +334,7 @@
 
                             // Position tooltip above cell
                             const rect = this.getBoundingClientRect();
-                            const parentRect = this.closest('.ff-heatmap-card').getBoundingClientRect();
+                            const parentRect = this.closest('.vd-heatmap-card').getBoundingClientRect();
                             tooltip.style.left = (rect.left - parentRect.left + rect.width / 2) + 'px';
                             tooltip.style.top = (rect.top - parentRect.top - 8) + 'px';
                         });
@@ -374,12 +374,12 @@
             grid.innerHTML = '';
             achievements.forEach(a => {
                 const el = document.createElement('div');
-                el.className = 'ff-achievement ' + (a.check ? 'unlocked' : 'locked');
+                el.className = 'vd-achievement ' + (a.check ? 'unlocked' : 'locked');
                 el.setAttribute('aria-label', a.name + (a.check ? ' - Unlocked' : ' - Locked'));
                 el.innerHTML =
-                    '<span class="ff-achievement-icon" aria-hidden="true">' + a.icon + '</span>' +
-                    '<span class="ff-achievement-name">' + a.name + '</span>' +
-                    '<span class="ff-achievement-desc">' + a.desc + '</span>';
+                    '<span class="vd-achievement-icon" aria-hidden="true">' + a.icon + '</span>' +
+                    '<span class="vd-achievement-name">' + a.name + '</span>' +
+                    '<span class="vd-achievement-desc">' + a.desc + '</span>';
                 grid.appendChild(el);
             });
         }
@@ -522,15 +522,15 @@
         const sortedBugs = [...SEED_BUGS].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         sortedBugs.forEach(bug => {
-            let colorVar = '--ff-runtime';
-            let dimVar = '--ff-runtime-dim';
-            if (bug.category === 'Logic') { colorVar = '--ff-logic'; dimVar = '--ff-logic-dim'; }
-            if (bug.category === 'Syntax') { colorVar = '--ff-syntax'; dimVar = '--ff-syntax-dim'; }
+            let colorVar = '--vd-runtime';
+            let dimVar = '--vd-runtime-dim';
+            if (bug.category === 'Logic') { colorVar = '--vd-logic'; dimVar = '--vd-logic-dim'; }
+            if (bug.category === 'Syntax') { colorVar = '--vd-syntax'; dimVar = '--vd-syntax-dim'; }
 
             const dateStr = new Date(bug.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
             historyEl.innerHTML += `
-        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 8px; border-bottom: 1px solid var(--ff-border-subtle, rgba(255,255,255,0.06)); border-radius: 6px; transition: background 0.15s ease;" onmouseenter="this.style.background='var(--ff-surface, rgba(255,255,255,0.03))'" onmouseleave="this.style.background='transparent'">
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 8px; border-bottom: 1px solid var(--vd-border-subtle, rgba(255,255,255,0.06)); border-radius: 6px; transition: background 0.15s ease;" onmouseenter="this.style.background='var(--vd-surface, rgba(255,255,255,0.03))'" onmouseleave="this.style.background='transparent'">
           <span class="badge" style="color: var(${colorVar}); background: var(${dimVar}); border-color: transparent; margin-top: 2px; width: 75px; text-align: center; flex-shrink: 0; font-size: 0.72rem;">${bug.category}</span>
           <div style="flex: 1; min-width: 0;">
             <div style="font-size: 0.88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;" title="${bug.error}">${bug.error}</div>

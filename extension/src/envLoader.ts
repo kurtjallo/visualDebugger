@@ -69,6 +69,6 @@ function loadIntoMap(filePath: string, map: Map<string, string>): void {
       }
     }
   } catch (err) {
-    console.warn(`[FlowFixer:EnvLoader] Failed to read ${filePath}:`, err);
+    console.warn(`[VisualDebugger:EnvLoader] Failed to read ${filePath}:`, err);
   }
 }

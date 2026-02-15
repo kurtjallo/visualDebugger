@@ -1,8 +1,8 @@
-# UI/UX Pattern Research: FlowFixer Visual Identity Overhaul
+# UI/UX Pattern Research: VisualDebugger Visual Identity Overhaul
 
 ## Executive Summary
 
-FlowFixer currently uses standard VS Code dark theme styling with cyan accents, basic cards, and left-border section indicators. This research identifies specific, actionable patterns from premium developer tools and anti-AI design movements to give FlowFixer a distinctive, hand-crafted identity.
+VisualDebugger currently uses standard VS Code dark theme styling with cyan accents, basic cards, and left-border section indicators. This research identifies specific, actionable patterns from premium developer tools and anti-AI design movements to give VisualDebugger a distinctive, hand-crafted identity.
 
 **Current problems identified in the codebase:**
 - Every section uses the same `border-left: 3px solid rgba(6, 182, 212, 0.3)` -- no visual differentiation
@@ -33,12 +33,12 @@ FlowFixer currently uses standard VS Code dark theme styling with cyan accents, 
 - Split-panel layouts with custom resizable dividers
 - Custom input fields with rounded corners and branded focus states
 
-### Actionable recommendations for FlowFixer
+### Actionable recommendations for VisualDebugger
 
 1. **Replace generic card borders with a "notch" indicator system.**
    Instead of `border-left: 3px solid cyan` for every section, use a small colored notch/tab that juts out from the left edge:
    ```css
-   .ff-section::before {
+   .vd-section::before {
      content: '';
      position: absolute;
      left: -1px;
@@ -54,13 +54,13 @@ FlowFixer currently uses standard VS Code dark theme styling with cyan accents, 
 2. **Use a "content island" pattern instead of flat cards.**
    Instead of cards with visible borders, use subtle background shifts:
    ```css
-   .ff-island {
+   .vd-island {
      background: color-mix(in srgb, var(--vscode-editor-background) 92%, white);
      border-radius: 8px;
      border: 1px solid transparent;
      transition: border-color 0.15s ease;
    }
-   .ff-island:hover {
+   .vd-island:hover {
      border-color: color-mix(in srgb, var(--vscode-widget-border) 60%, transparent);
    }
    ```
@@ -77,7 +77,7 @@ FlowFixer currently uses standard VS Code dark theme styling with cyan accents, 
 ### Linear's design DNA
 
 Linear's premium feel comes from **restraint with purpose**:
-- **Dark backgrounds are never pure black.** They use brand color at 1-10% lightness. FlowFixer should shift from `--vscode-editor-background` for its own surfaces to a slightly warm/cool-tinted dark.
+- **Dark backgrounds are never pure black.** They use brand color at 1-10% lightness. VisualDebugger should shift from `--vscode-editor-background` for its own surfaces to a slightly warm/cool-tinted dark.
 - **Typography does the heavy lifting.** Linear uses Inter with tight letter-spacing at larger sizes and relaxed spacing for body text. Font weight contrast (700 for headings, 400 for body) creates hierarchy without color.
 - **Gradients are functional, not decorative.** The famous Linear gradient sphere communicates brand identity. Gradients appear in backgrounds of hero sections, not scattered on every element.
 - **Micro-interactions confirm every action.** Buttons scale on press, items slide on hover, checkboxes animate completion.
@@ -104,7 +104,7 @@ Linear's premium feel comes from **restraint with purpose**:
    - Quiz sections: purple notch (a new accent)
    - Default/info: neutral gray notch
 
-2. **Introduce a "data font" pattern.** File names, line numbers, error codes, and timestamps should use the editor monospace font. Explanatory text uses DM Sans. This creates a visual rhythm between "what the machine says" and "what FlowFixer explains."
+2. **Introduce a "data font" pattern.** File names, line numbers, error codes, and timestamps should use the editor monospace font. Explanatory text uses DM Sans. This creates a visual rhythm between "what the machine says" and "what VisualDebugger explains."
 
 3. **Add deliberate whitespace between major sections.** Currently sections have `margin-bottom: 20px`. Increase to 28-32px between conceptual groups (error display vs. fix suggestions vs. quiz) while keeping 16px within groups.
 
@@ -116,7 +116,7 @@ Linear's premium feel comes from **restraint with purpose**:
 
 Based on 2025-2026 design criticism, these patterns signal "AI slop":
 
-1. **Uniform gradients on everything.** The current FlowFixer gradient border on `.ff-section--error` (conic-gradient spinning animation) is exactly the kind of pattern that reads as AI-generated.
+1. **Uniform gradients on everything.** The current VisualDebugger gradient border on `.vd-section--error` (conic-gradient spinning animation) is exactly the kind of pattern that reads as AI-generated.
 2. **Glassmorphism on every surface.** Using blur and transparency everywhere with no restraint.
 3. **Generic icon choices.** Using the same icon library as every other tool.
 4. **Symmetric, perfectly balanced layouts.** No element breaks the grid.
@@ -131,14 +131,14 @@ The 2026 anti-AI design movement identifies these as signals of human authorship
 1. **Intentional asymmetry.** One element breaks the pattern. A heading is slightly oversized. A card has different padding on top vs. bottom.
 2. **Opinionated color choices.** Not every color needs to be from the same palette. A warm accent in a cool palette creates tension and personality.
 3. **Custom empty states with personality.** Instead of "No errors found" with a generic icon, a custom illustration or clever copy that reflects the brand voice.
-4. **Unique micro-copy.** "All done -- nice work!" (which FlowFixer already has) is good. Lean into this more.
+4. **Unique micro-copy.** "All done -- nice work!" (which VisualDebugger already has) is good. Lean into this more.
 5. **Mixed border radii with purpose.** Badges are fully rounded (pill), cards are slightly rounded (6-8px), code blocks are barely rounded (3px). This creates a visual taxonomy.
 
 ### Actionable recommendations
 
-1. **Remove the spinning gradient border from `.ff-section--error`.** Replace it with a single, opinionated design: a bold 2px left notch in the category color + a subtle top gradient bar (the `::before` pseudo-element that already exists, but simplified).
+1. **Remove the spinning gradient border from `.vd-section--error`.** Replace it with a single, opinionated design: a bold 2px left notch in the category color + a subtle top gradient bar (the `::before` pseudo-element that already exists, but simplified).
 
-2. **Create a FlowFixer "voice" for empty states.**
+2. **Create a VisualDebugger "voice" for empty states.**
    Current: "No errors found. Open a file with errors to get started."
    Proposed: "Clean slate. No bugs here -- keep going." or "All clear. Your code is looking good."
    The empty state SVG should be a distinctive, brand-specific illustration -- not a generic code icon.
@@ -163,7 +163,7 @@ The 2026 anti-AI design movement identifies these as signals of human authorship
 
 ### Current hierarchy problems
 
-The FlowFixer debug panel has 7 sections in the error view:
+The VisualDebugger debug panel has 7 sections in the error view:
 1. Error Location + Badge
 2. What Happened (explanation)
 3. How to Fix
@@ -192,7 +192,7 @@ Currently they all look the same: same left border, same heading weight, same pa
 
 1. **Give Tier 1 sections a subtle background elevation.**
    ```css
-   .ff-section--error, .ff-section--fix {
+   .vd-section--error, .vd-section--fix {
      background: color-mix(in srgb, var(--vscode-editor-background) 94%, var(--vscode-focusBorder));
      padding: 16px;
      border-radius: 8px;
@@ -211,9 +211,9 @@ Currently they all look the same: same left border, same heading weight, same pa
 3. **Make the Quiz section visually distinct with a different background treatment.**
    The quiz is the gamification hook. Give it a unique container:
    ```css
-   .ff-section--quiz {
-     background: color-mix(in srgb, var(--vscode-editor-background) 96%, var(--ff-quiz-accent));
-     border: 1px dashed color-mix(in srgb, var(--ff-quiz-accent) 30%, transparent);
+   .vd-section--quiz {
+     background: color-mix(in srgb, var(--vscode-editor-background) 96%, var(--vd-quiz-accent));
+     border: 1px dashed color-mix(in srgb, var(--vd-quiz-accent) 30%, transparent);
      border-radius: 8px;
    }
    ```
@@ -242,14 +242,14 @@ Replace the uniform cyan left border with a category-aware "notch" system:
 
 **Implementation:**
 ```css
-.ff-section {
+.vd-section {
   position: relative;
   border-left: none;        /* Remove the old left border */
   padding-left: 20px;
   border-bottom: 1px solid var(--vscode-widget-border);
 }
 
-.ff-section::before {
+.vd-section::before {
   content: '';
   position: absolute;
   left: 0;
@@ -257,16 +257,16 @@ Replace the uniform cyan left border with a category-aware "notch" system:
   width: 4px;
   height: 20px;
   border-radius: 0 4px 4px 0;
-  background: var(--ff-section-accent, rgba(127,127,127,0.3));
+  background: var(--vd-section-accent, rgba(127,127,127,0.3));
 }
 
 /* Per-section accent override */
-.ff-section--error { --ff-section-accent: var(--ff-runtime); }
-.ff-section--explanation { --ff-section-accent: var(--ff-logic); }
-.ff-section--fix { --ff-section-accent: var(--ff-success); }
-.ff-section--prevent { --ff-section-accent: var(--ff-syntax); }
-.ff-section--quiz { --ff-section-accent: #c084fc; }  /* Purple */
-.ff-section--prompt { --ff-section-accent: #06b6d4; } /* Cyan/teal */
+.vd-section--error { --vd-section-accent: var(--vd-runtime); }
+.vd-section--explanation { --vd-section-accent: var(--vd-logic); }
+.vd-section--fix { --vd-section-accent: var(--vd-success); }
+.vd-section--prevent { --vd-section-accent: var(--vd-syntax); }
+.vd-section--quiz { --vd-section-accent: #c084fc; }  /* Purple */
+.vd-section--prompt { --vd-section-accent: #06b6d4; } /* Cyan/teal */
 ```
 
 This creates **immediate visual categorization** -- users can scan the left edge and know what type of content each section contains without reading headings.
@@ -276,25 +276,25 @@ This creates **immediate visual categorization** -- users can scan the left edge
 Replace the current spinning gradient border with a **"severity strip"** at the top of the error card:
 
 ```css
-.ff-severity-strip {
+.vd-severity-strip {
   height: 3px;
   border-radius: 2px;
   margin-bottom: 12px;
 }
 
 /* Syntax errors: steady gold */
-.ff-severity-strip[data-severity="syntax"] {
-  background: var(--ff-syntax);
+.vd-severity-strip[data-severity="syntax"] {
+  background: var(--vd-syntax);
 }
 
 /* Logic errors: blue with a subtle pulse */
-.ff-severity-strip[data-severity="logic"] {
-  background: var(--ff-logic);
+.vd-severity-strip[data-severity="logic"] {
+  background: var(--vd-logic);
 }
 
 /* Runtime errors: red with animated gradient showing urgency */
-.ff-severity-strip[data-severity="runtime"] {
-  background: linear-gradient(90deg, var(--ff-runtime), #ff8080, var(--ff-runtime));
+.vd-severity-strip[data-severity="runtime"] {
+  background: linear-gradient(90deg, var(--vd-runtime), #ff8080, var(--vd-runtime));
   background-size: 200% 100%;
   animation: ffSeverityPulse 3s ease-in-out infinite;
 }
@@ -318,25 +318,25 @@ Replace the existing progress ring (which is standard) with a **"learning path" 
 
 The fill uses a multi-color gradient where each segment represents a completed quiz's error category color:
 ```css
-.ff-learning-bar {
+.vd-learning-bar {
   height: 6px;
   border-radius: 3px;
   background: var(--vscode-widget-border);
   overflow: hidden;
 }
 
-.ff-learning-bar-fill {
+.vd-learning-bar-fill {
   height: 100%;
   border-radius: 3px;
   /* Dynamic gradient built from quiz completion categories */
   background: linear-gradient(90deg,
-    var(--ff-runtime) 0%,
-    var(--ff-runtime) 25%,
-    var(--ff-syntax) 25%,
-    var(--ff-syntax) 50%,
-    var(--ff-logic) 50%,
-    var(--ff-logic) 75%,
-    var(--ff-runtime) 75%
+    var(--vd-runtime) 0%,
+    var(--vd-runtime) 25%,
+    var(--vd-syntax) 25%,
+    var(--vd-syntax) 50%,
+    var(--vd-logic) 50%,
+    var(--vd-logic) 75%,
+    var(--vd-runtime) 75%
   );
   transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -355,7 +355,7 @@ Replace the current pill badges with **"chip" badges** that include a small icon
 ```
 
 ```css
-.ff-chip {
+.vd-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -369,7 +369,7 @@ Replace the current pill badges with **"chip" badges** that include a small icon
   border: 1px solid color-mix(in srgb, var(--chip-color) 25%, transparent);
 }
 
-.ff-chip::before {
+.vd-chip::before {
   content: '';
   width: 6px;
   height: 6px;
@@ -378,9 +378,9 @@ Replace the current pill badges with **"chip" badges** that include a small icon
   flex-shrink: 0;
 }
 
-.ff-chip[data-type="Runtime"] { --chip-color: var(--ff-runtime); }
-.ff-chip[data-type="Syntax"]  { --chip-color: var(--ff-syntax); }
-.ff-chip[data-type="Logic"]   { --chip-color: var(--ff-logic); }
+.vd-chip[data-type="Runtime"] { --chip-color: var(--vd-runtime); }
+.vd-chip[data-type="Syntax"]  { --chip-color: var(--vd-syntax); }
+.vd-chip[data-type="Logic"]   { --chip-color: var(--vd-logic); }
 ```
 
 **Why this is distinctive:** The colored dot + tinted background is used by Linear and Vercel but NOT by any VS Code extension currently. It immediately reads as "premium tool" rather than "VS Code panel."
@@ -391,7 +391,7 @@ Instead of uniform `.card` with `border: 1px solid widget-border`, introduce thr
 
 **1. "Surface" card (default, most sections):**
 ```css
-.ff-surface {
+.vd-surface {
   background: transparent;
   border: none;
   padding: 14px 16px;
@@ -401,7 +401,7 @@ Instead of uniform `.card` with `border: 1px solid widget-border`, introduce thr
 
 **2. "Elevated" card (important content like error display, fix steps):**
 ```css
-.ff-elevated {
+.vd-elevated {
   background: color-mix(in srgb, var(--vscode-editor-background) 92%, var(--vscode-foreground));
   border: 1px solid var(--vscode-widget-border);
   border-radius: 8px;
@@ -412,7 +412,7 @@ Instead of uniform `.card` with `border: 1px solid widget-border`, introduce thr
 
 **3. "Interactive" card (quiz options, checklist items):**
 ```css
-.ff-interactive {
+.vd-interactive {
   background: var(--vscode-input-background);
   border: 1px solid var(--vscode-widget-border);
   border-radius: 6px;
@@ -420,11 +420,11 @@ Instead of uniform `.card` with `border: 1px solid widget-border`, introduce thr
   cursor: pointer;
   transition: border-color 0.12s ease, transform 0.08s ease;
 }
-.ff-interactive:hover {
+.vd-interactive:hover {
   border-color: var(--vscode-focusBorder);
   transform: translateY(-1px);
 }
-.ff-interactive:active {
+.vd-interactive:active {
   transform: translateY(0);
 }
 ```
@@ -439,25 +439,25 @@ Replace the generic SVG with a branded empty state:
 - A subtle, warm message: "Keep coding -- we'll be here when you need us."
 
 ```html
-<div class="ff-empty-state">
-  <div class="ff-terminal-prompt" aria-hidden="true">
-    <span class="ff-prompt-symbol">&gt;</span>
-    <span class="ff-prompt-cursor">_</span>
+<div class="vd-empty-state">
+  <div class="vd-terminal-prompt" aria-hidden="true">
+    <span class="vd-prompt-symbol">&gt;</span>
+    <span class="vd-prompt-cursor">_</span>
   </div>
-  <p class="ff-empty-title">All clear</p>
-  <p class="ff-empty-subtitle">No bugs in sight. Keep coding.</p>
+  <p class="vd-empty-title">All clear</p>
+  <p class="vd-empty-subtitle">No bugs in sight. Keep coding.</p>
 </div>
 ```
 
 ```css
-.ff-terminal-prompt {
+.vd-terminal-prompt {
   font-family: var(--vscode-editor-font-family, monospace);
   font-size: 2em;
-  color: var(--ff-success);
+  color: var(--vd-success);
   margin-bottom: 16px;
   letter-spacing: 2px;
 }
-.ff-prompt-cursor {
+.vd-prompt-cursor {
   animation: ffCursorBlink 1s step-end infinite;
 }
 @keyframes ffCursorBlink {
@@ -477,14 +477,14 @@ This is simple, on-brand (it's a debugger), and unlike any other VS Code extensi
 Make the total bug count a "hero number" at the top:
 
 ```css
-.ff-hero-stat {
+.vd-hero-stat {
   font-size: 3.5em;
   font-weight: 200;  /* Thin weight for the big number */
   letter-spacing: -0.02em;
   line-height: 1;
   color: var(--vscode-foreground);
 }
-.ff-hero-label {
+.vd-hero-label {
   font-size: 0.85em;
   font-weight: 600;
   text-transform: uppercase;
@@ -515,7 +515,7 @@ Each shape uses a consistent 20x20 SVG with 1.5px stroke, filled when unlocked, 
 
 ## 7. What to Remove
 
-1. **The spinning conic-gradient border on `.ff-section--error`** -- reads as AI-generated demo code
+1. **The spinning conic-gradient border on `.vd-section--error`** -- reads as AI-generated demo code
 2. **The uniform cyan left borders** -- replace with the notch system
 3. **The `@property` CSS trick** -- browser support is inconsistent and adds complexity for minimal visual benefit
 4. **Confetti colors array** -- should use the brand palette, not random colors

@@ -20,7 +20,7 @@ vi.mock("@google/genai", () => {
 });
 
 // Import after mock is set up
-import { initialize, analyzeError, analyzeDiff, FlowFixerError } from "../llmClient.js";
+import { initialize, analyzeError, analyzeDiff, VisualDebuggerError } from "../llmClient.js";
 
 function makeSecrets(apiKey?: string) {
   return {
@@ -206,10 +206,10 @@ describe("llmClient", () => {
   });
 
   describe("initialize", () => {
-    it("throws FlowFixerError when no API key is stored", async () => {
+    it("throws VisualDebuggerError when no API key is stored", async () => {
       const secrets = makeSecrets(undefined);
 
-      await expect(initialize(secrets)).rejects.toThrow(FlowFixerError);
+      await expect(initialize(secrets)).rejects.toThrow(VisualDebuggerError);
       await expect(initialize(secrets)).rejects.toThrow("API key not found");
     });
 
@@ -221,7 +221,7 @@ describe("llmClient", () => {
   });
 
   describe("analyzeError", () => {
-    it("throws FlowFixerError when client is not initialized", async () => {
+    it("throws VisualDebuggerError when client is not initialized", async () => {
       // Force uninitialized state by importing fresh — but since we can't
       // easily reset module state, we test by calling before initialize.
       // Note: if a previous test called initialize(), this won't trigger.
@@ -273,7 +273,7 @@ describe("llmClient", () => {
       expect(call.config.responseMimeType).toBe("application/json");
     });
 
-    it("throws FlowFixerError when Gemini returns empty response", async () => {
+    it("throws VisualDebuggerError when Gemini returns empty response", async () => {
       const secrets = makeSecrets("test-api-key");
       await initialize(secrets);
 
@@ -286,10 +286,10 @@ describe("llmClient", () => {
           errorMessage: "Error",
           codeContext: "code",
         }),
-      ).rejects.toThrow(FlowFixerError);
+      ).rejects.toThrow(VisualDebuggerError);
     });
 
-    it("throws FlowFixerError when API call fails", async () => {
+    it("throws VisualDebuggerError when API call fails", async () => {
       const secrets = makeSecrets("test-api-key");
       await initialize(secrets);
 
@@ -302,7 +302,7 @@ describe("llmClient", () => {
           errorMessage: "Error",
           codeContext: "code",
         }),
-      ).rejects.toThrow(FlowFixerError);
+      ).rejects.toThrow(VisualDebuggerError);
 
       await expect(
         analyzeError({
@@ -542,7 +542,7 @@ describe("llmClient", () => {
       expect(call.config.responseMimeType).toBe("application/json");
     });
 
-    it("throws FlowFixerError when Gemini returns empty response", async () => {
+    it("throws VisualDebuggerError when Gemini returns empty response", async () => {
       const secrets = makeSecrets("test-api-key");
       await initialize(secrets);
 
@@ -555,10 +555,10 @@ describe("llmClient", () => {
           originalError: "Error",
           diff: "diff",
         }),
-      ).rejects.toThrow(FlowFixerError);
+      ).rejects.toThrow(VisualDebuggerError);
     });
 
-    it("throws FlowFixerError when API call fails", async () => {
+    it("throws VisualDebuggerError when API call fails", async () => {
       const secrets = makeSecrets("test-api-key");
       await initialize(secrets);
 
@@ -702,15 +702,15 @@ describe("llmClient", () => {
     });
   });
 
-  describe("FlowFixerError", () => {
+  describe("VisualDebuggerError", () => {
     it("has the correct name", () => {
-      const error = new FlowFixerError("test");
-      expect(error.name).toBe("FlowFixerError");
+      const error = new VisualDebuggerError("test");
+      expect(error.name).toBe("VisualDebuggerError");
     });
 
     it("preserves the original cause", () => {
       const cause = new Error("original");
-      const error = new FlowFixerError("wrapped", cause);
+      const error = new VisualDebuggerError("wrapped", cause);
       expect(error.cause).toBe(cause);
       expect(error.message).toBe("wrapped");
     });

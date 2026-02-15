@@ -8,15 +8,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { ErrorAnalysisRequest, DiffAnalysisRequest, Phase1Response, Phase2Response } from "./types";
 
-const LOG = "[FlowFixer:LLMClient]";
+const LOG = "[VisualDebugger:LLMClient]";
 const MODEL = "gemini-2.0-flash";
 
 // ---------------------------------------------------------------------------
-// FlowFixerError
+// VisualDebuggerError
 // ---------------------------------------------------------------------------
 
-export class FlowFixerError extends Error {
-  override readonly name = "FlowFixerError";
+export class VisualDebuggerError extends Error {
+  override readonly name = "VisualDebuggerError";
 
   constructor(message: string, cause?: unknown) {
     super(message);
@@ -39,14 +39,14 @@ let genai: GoogleGenAI | undefined;
 /**
  * Initialize the Gemini client.
  * @param secrets – object with `get(key)` that returns the API key
- * @throws FlowFixerError when no API key is found
+ * @throws VisualDebuggerError when no API key is found
  */
 export async function initialize(
   secrets: { get(key: string): PromiseLike<string | undefined> | string | undefined }
 ): Promise<void> {
   const apiKey = await secrets.get("visualdebugger.geminiKey");
   if (!apiKey) {
-    throw new FlowFixerError("API key not found. Add GEMINI_API_KEY to .env or use 'Visual Debugger: Set Gemini API Key' command.");
+    throw new VisualDebuggerError("API key not found. Add GEMINI_API_KEY to .env or use 'Visual Debugger: Set Gemini API Key' command.");
   }
   genai = new GoogleGenAI({ apiKey });
   console.log(`${LOG} initialized with Gemini model ${MODEL}`);
@@ -60,11 +60,11 @@ export function isInitialized(): boolean {
 /**
  * Validates the connection by making a minimal API call.
  * @returns The definition of "Hello" or a confirmation message.
- * @throws FlowFixerError if connection fails.
+ * @throws VisualDebuggerError if connection fails.
  */
 export async function testConnection(): Promise<string> {
   if (!genai) {
-    throw new FlowFixerError("LLM client not initialized. Call initialize() first.");
+    throw new VisualDebuggerError("LLM client not initialized. Call initialize() first.");
   }
 
   try {
@@ -76,18 +76,18 @@ export async function testConnection(): Promise<string> {
     });
     return response.text || "No response text";
   } catch (err) {
-    throw new FlowFixerError("Connection test failed", err);
+    throw new VisualDebuggerError("Connection test failed", err);
   }
 }
 
 
 /**
  * Phase 1 — Explain an error for a student.
- * @throws FlowFixerError on API failure or empty response
+ * @throws VisualDebuggerError on API failure or empty response
  */
 export async function analyzeError(request: ErrorAnalysisRequest): Promise<Phase1Response> {
   if (!genai) {
-    throw new FlowFixerError("LLM client not initialized. Call initialize() first.");
+    throw new VisualDebuggerError("LLM client not initialized. Call initialize() first.");
   }
 
   const prompt = buildErrorPrompt(request);
@@ -104,32 +104,32 @@ export async function analyzeError(request: ErrorAnalysisRequest): Promise<Phase
 
     const text = response.text;
     if (!text) {
-      throw new FlowFixerError("Gemini returned an empty response");
+      throw new VisualDebuggerError("Gemini returned an empty response");
     }
     try {
       return JSON.parse(text) as Phase1Response;
     } catch (parseErr) {
       console.error(`${LOG} Phase 1 JSON parse failed. Raw response:`, text);
-      throw new FlowFixerError(
+      throw new VisualDebuggerError(
         "Gemini returned invalid JSON in Phase 1 response",
         parseErr,
       );
     }
   } catch (err) {
-    if (err instanceof FlowFixerError) throw err;
+    if (err instanceof VisualDebuggerError) throw err;
     const detail = extractErrorDetail(err);
     console.error(`${LOG} analyzeError failed:`, err);
-    throw new FlowFixerError(`Failed to analyze error: ${detail}`, err);
+    throw new VisualDebuggerError(`Failed to analyze error: ${detail}`, err);
   }
 }
 
 /**
  * Phase 2 — Explain a diff (what the AI fix changed).
- * @throws FlowFixerError on API failure or empty response
+ * @throws VisualDebuggerError on API failure or empty response
  */
 export async function analyzeDiff(request: DiffAnalysisRequest): Promise<Phase2Response> {
   if (!genai) {
-    throw new FlowFixerError("LLM client not initialized. Call initialize() first.");
+    throw new VisualDebuggerError("LLM client not initialized. Call initialize() first.");
   }
 
   const prompt = buildDiffPrompt(request);
@@ -146,22 +146,22 @@ export async function analyzeDiff(request: DiffAnalysisRequest): Promise<Phase2R
 
     const text = response.text;
     if (!text) {
-      throw new FlowFixerError("Gemini returned an empty response");
+      throw new VisualDebuggerError("Gemini returned an empty response");
     }
     try {
       return JSON.parse(text) as Phase2Response;
     } catch (parseErr) {
       console.error(`${LOG} Phase 2 JSON parse failed. Raw response:`, text);
-      throw new FlowFixerError(
+      throw new VisualDebuggerError(
         "Gemini returned invalid JSON in Phase 2 response",
         parseErr,
       );
     }
   } catch (err) {
-    if (err instanceof FlowFixerError) throw err;
+    if (err instanceof VisualDebuggerError) throw err;
     const detail = extractErrorDetail(err);
     console.error(`${LOG} analyzeDiff failed:`, err);
-    throw new FlowFixerError(`Failed to analyze diff: ${detail}`, err);
+    throw new VisualDebuggerError(`Failed to analyze diff: ${detail}`, err);
   }
 }
 

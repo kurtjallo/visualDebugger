@@ -1,19 +1,19 @@
-# FlowFixer Demo Script (2 Minutes)
+# VisualDebugger Demo Script (2 Minutes)
 
-**Target**: Show how FlowFixer turns every error into a lesson and every AI fix into a teachable moment.
+**Target**: Show how VisualDebugger turns every error into a lesson and every AI fix into a teachable moment.
 
 ---
 
 ## Pre-Demo Checklist
 
-- [ ] VS Code open with FlowFixer extension installed and enabled
+- [ ] VS Code open with VisualDebugger extension installed and enabled
 - [ ] Demo app project open (`/Users/kurt/Documents/Hackathons/CHD/demo-app/`)
 - [ ] Terminal ready to run `npm run dev` (port 5173)
-- [ ] Gemini API key configured via `FlowFixer: Set Gemini API Key` command
+- [ ] Gemini API key configured via `VisualDebugger: Set Gemini API Key` command
 - [ ] Browser tab open to `http://localhost:5173`
 - [ ] Start on **"User Profiles"** tab in the demo app (runtime bug)
 - [ ] GitHub Copilot or Cursor AI enabled and ready
-- [ ] FlowFixer Error Panel visible in VS Code sidebar
+- [ ] VisualDebugger Error Panel visible in VS Code sidebar
 - [ ] `BrokenRuntime.tsx` file ready to open
 - [ ] Backup: Pre-recorded 30-second demo video ready (if live demo fails)
 
@@ -24,7 +24,7 @@
 ### **0:00 – 0:15 | Pitch the Problem**
 
 **Script:**
-> "Every day, millions of students hit error messages they can't read. They copy-paste into ChatGPT, accept the fix, and move on — never understanding what went wrong. They're coding, but they're not learning. FlowFixer changes that."
+> "Every day, millions of students hit error messages they can't read. They copy-paste into ChatGPT, accept the fix, and move on — never understanding what went wrong. They're coding, but they're not learning. VisualDebugger changes that."
 
 **Action:**
 - Stand confidently, make eye contact with judges
@@ -49,13 +49,13 @@
 
 ---
 
-### **0:30 – 0:50 | Phase 1: FlowFixer Explains**
+### **0:30 – 0:50 | Phase 1: VisualDebugger Explains**
 
 **Script:**
-> "But FlowFixer catches this error instantly. It tells the student exactly where the bug is, what the error message means in plain English, and how to fix it. The student now UNDERSTANDS the bug before touching anything."
+> "But VisualDebugger catches this error instantly. It tells the student exactly where the bug is, what the error message means in plain English, and how to fix it. The student now UNDERSTANDS the bug before touching anything."
 
 **Action:**
-1. FlowFixer Error Panel opens automatically in VS Code sidebar
+1. VisualDebugger Error Panel opens automatically in VS Code sidebar
 2. Point to each section as you mention it:
    - **Error badge**: `[Runtime Error]`
    - **Location**: `line 8, BrokenRuntime.tsx`
@@ -93,13 +93,13 @@
 
 ---
 
-### **1:10 – 1:30 | Phase 2: FlowFixer Reviews the Fix**
+### **1:10 – 1:30 | Phase 2: VisualDebugger Reviews the Fix**
 
 **Script:**
-> "But here's where FlowFixer shines. Instead of blindly accepting, the student sees exactly what the AI changed — red is removed, green is added — with a clear explanation of WHY this fixes the problem. Every AI fix becomes a teachable moment."
+> "But here's where VisualDebugger shines. Instead of blindly accepting, the student sees exactly what the AI changed — red is removed, green is added — with a clear explanation of WHY this fixes the problem. Every AI fix becomes a teachable moment."
 
 **Action:**
-1. FlowFixer Diff Panel opens automatically in VS Code sidebar
+1. VisualDebugger Diff Panel opens automatically in VS Code sidebar
 2. Point to the visual diff:
    - **Red highlight** (removed): `const [users, setUsers] = useState();`
    - **Green highlight** (added): `const [users, setUsers] = useState([]);`
@@ -114,10 +114,10 @@
 ### **1:30 – 1:45 | Dashboard**
 
 **Script:**
-> "Over time, FlowFixer tracks your bug patterns. This student struggles most with runtime errors — FlowFixer knows, and recommends focusing on defensive programming."
+> "Over time, VisualDebugger tracks your bug patterns. This student struggles most with runtime errors — VisualDebugger knows, and recommends focusing on defensive programming."
 
 **Action:**
-1. Run command: `FlowFixer: Show Dashboard` (or click Dashboard button)
+1. Run command: `VisualDebugger: Show Dashboard` (or click Dashboard button)
 2. Dashboard opens showing:
    - **Bar chart**: Runtime (8), Logic (5), Syntax (3)
    - **Trend line**: Showing improvement over time
@@ -130,7 +130,7 @@
 ### **1:45 – 2:00 | Close**
 
 **Script:**
-> "FlowFixer turns every error into a lesson and every AI fix into a teachable moment. Students don't just vibe code — they learn to code. Built with Gemini for AI explanations, MongoDB Atlas for persistence, ElevenLabs for accessibility, and deployed on DigitalOcean. Thank you."
+> "VisualDebugger turns every error into a lesson and every AI fix into a teachable moment. Students don't just vibe code — they learn to code. Built with Gemini for AI explanations, MongoDB Atlas for persistence, ElevenLabs for accessibility, and deployed on DigitalOcean. Thank you."
 
 **Action:**
 - Smile, make eye contact
@@ -168,9 +168,9 @@
 |----------|-------------|--------------|
 | 0:00 – 0:15 | Pitch the Problem | 15s |
 | 0:15 – 0:30 | Show the Broken App | 15s |
-| 0:30 – 0:50 | Phase 1: FlowFixer Explains | 20s |
+| 0:30 – 0:50 | Phase 1: VisualDebugger Explains | 20s |
 | 0:50 – 1:10 | Student Asks AI to Fix | 20s |
-| 1:10 – 1:30 | Phase 2: FlowFixer Reviews the Fix | 20s |
+| 1:10 – 1:30 | Phase 2: VisualDebugger Reviews the Fix | 20s |
 | 1:30 – 1:45 | Dashboard | 15s |
 | 1:45 – 2:00 | Close | 15s |
 | **Total** | | **2:00** |
@@ -183,7 +183,7 @@
 - **Why MongoDB Atlas?** Student bug history needs to persist across sessions; MongoDB is fast and scalable.
 - **Why ElevenLabs?** Accessibility — students with visual impairments or reading disabilities can hear explanations read aloud.
 - **Why DigitalOcean?** Simple, affordable deployment for the backend API.
-- **What makes FlowFixer different?** It's the only tool that combines error explanation AND AI fix review in one flow. Students learn from both their mistakes AND the solutions.
+- **What makes VisualDebugger different?** It's the only tool that combines error explanation AND AI fix review in one flow. Students learn from both their mistakes AND the solutions.
 
 ---
 

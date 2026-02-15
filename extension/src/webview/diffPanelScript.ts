@@ -85,13 +85,13 @@ function speakWithWebSpeech(text: string): void {
   const btn = $("tts-btn");
   if (btn) {
     btn.textContent = "⏹️ Stop";
-    btn.classList.add("ff-btn--playing");
+    btn.classList.add("vd-btn--playing");
   }
   utterance.onend = () => {
     isSpeaking = false;
     if (btn) {
       btn.textContent = "🔊 Read Aloud";
-      btn.classList.remove("ff-btn--playing");
+      btn.classList.remove("vd-btn--playing");
     }
     updateTtsStatus("");
   };
@@ -102,7 +102,7 @@ function speakWithWebSpeech(text: string): void {
 // ── Checklist logic ──
 
 function onChecklistChange(): void {
-  const boxes = document.querySelectorAll<HTMLInputElement>(".ff-checkbox");
+  const boxes = document.querySelectorAll<HTMLInputElement>(".vd-checkbox");
   const allChecked = Array.from(boxes).every((cb) => cb.checked);
   const doneEl = $("check-done");
   if (doneEl) doneEl.style.display = allChecked ? "" : "none";
@@ -117,7 +117,7 @@ function updatePanel(data: DiffData): void {
   // File bar
   const fileName = data.fileName || (data.diff && data.diff.file) || "";
   if (fileName) {
-    $("diff-file")!.textContent = fileName;
+    $("divd-file")!.textContent = fileName;
     $("file-bar")!.style.display = "";
   } else {
     $("file-bar")!.style.display = "none";
@@ -142,18 +142,18 @@ function updatePanel(data: DiffData): void {
   if (hasTodo) {
     data.whatToDoNext!.forEach((step, i) => {
       const li = document.createElement("li");
-      li.className = "ff-check-item";
+      li.className = "vd-check-item";
 
       const cb = document.createElement("input");
       cb.type = "checkbox";
       cb.id = `todo-${i}`;
-      cb.className = "ff-checkbox";
+      cb.className = "vd-checkbox";
       cb.setAttribute("aria-label", step);
       cb.addEventListener("change", onChecklistChange);
 
       const label = document.createElement("label");
       label.htmlFor = `todo-${i}`;
-      label.className = "ff-check-label";
+      label.className = "vd-check-label";
       label.textContent = step;
 
       li.appendChild(cb);
@@ -174,7 +174,7 @@ function updatePanel(data: DiffData): void {
 
   // Show content, hide empty state
   $("empty-state")!.style.display = "none";
-  $("diff-content")!.style.display = "";
+  $("divd-content")!.style.display = "";
   $("tts-controls")!.style.display = "";
 
   announce("Fix explanation updated.");
@@ -211,7 +211,7 @@ function initDiffPanelListeners(): void {
       const btn = $("tts-btn");
       if (btn) {
         btn.textContent = "⏹️ Stop";
-        btn.classList.add("ff-btn--playing");
+        btn.classList.add("vd-btn--playing");
       }
       audio.onended = () => {
         URL.revokeObjectURL(blobUrl);
@@ -219,7 +219,7 @@ function initDiffPanelListeners(): void {
         isSpeaking = false;
         if (btn) {
           btn.textContent = "🔊 Read Aloud";
-          btn.classList.remove("ff-btn--playing");
+          btn.classList.remove("vd-btn--playing");
         }
         updateTtsStatus("");
         announce("Audio finished.");
@@ -230,7 +230,7 @@ function initDiffPanelListeners(): void {
         isSpeaking = false;
         if (btn) {
           btn.textContent = "🔊 Read Aloud";
-          btn.classList.remove("ff-btn--playing");
+          btn.classList.remove("vd-btn--playing");
         }
         updateTtsStatus("Playback failed");
         announce("Audio playback failed.");
@@ -251,7 +251,7 @@ function initDiffPanelListeners(): void {
       stopAudio();
       updateTtsStatus("");
       $("empty-state")!.style.display = "";
-      $("diff-content")!.style.display = "none";
+      $("divd-content")!.style.display = "none";
     }
   });
 
@@ -280,7 +280,7 @@ function initDiffPanelListeners(): void {
     if (isSpeaking) {
       stopAudio();
       ttsBtn.textContent = "🔊 Read Aloud";
-      ttsBtn.classList.remove("ff-btn--playing");
+      ttsBtn.classList.remove("vd-btn--playing");
       return;
     }
     const text = getReadableText();
@@ -295,8 +295,8 @@ function initDiffPanelListeners(): void {
 
   // ── Disclosure hint toggles ──
 
-  document.querySelectorAll<HTMLDetailsElement>(".ff-disclosure").forEach((details) => {
-    const hint = details.querySelector(".ff-disclosure-hint");
+  document.querySelectorAll<HTMLDetailsElement>(".vd-disclosure").forEach((details) => {
+    const hint = details.querySelector(".vd-disclosure-hint");
     if (!hint) return;
     const showText = hint.textContent || "Show details";
     const hideText = showText.replace("Show", "Hide");

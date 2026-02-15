@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { isInitialized } from "./llmClient";
 
-const LOG = "[FlowFixer]";
+const LOG = "[VisualDebugger]";
 
 export type StatusState =
   | "ready"

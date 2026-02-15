@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { analyzeDiff, isInitialized, FlowFixerError } from "./llmClient";
+import { analyzeDiff, isInitialized, VisualDebuggerError } from "./llmClient";
 import { CapturedDiff, DiffExplanation, BugRecord } from "./types";
 import { StatusManager } from "./statusManager";
 import { StorageProvider } from "./storage";
@@ -7,7 +7,7 @@ import { DebugPanelProvider } from "./panels/DebugPanel";
 import { DashboardPanelProvider } from "./panels/DashboardPanel";
 import { Phase1Handler } from "./phase1Handler";
 
-const LOG = "[FlowFixer]";
+const LOG = "[VisualDebugger]";
 
 export interface Phase2Deps {
   debugPanel: DebugPanelProvider;
@@ -33,7 +33,7 @@ export function createPhase2Handler(deps: Phase2Deps): (diff: CapturedDiff) => P
 
     try {
       if (!isInitialized()) {
-        throw new FlowFixerError("No API key set");
+        throw new VisualDebuggerError("No API key set");
       }
 
       console.log(`${LOG} Phase 2: calling analyzeDiff for ${diff.file}...`);
@@ -90,7 +90,7 @@ export function createPhase2Handler(deps: Phase2Deps): (diff: CapturedDiff) => P
       phase1Handler.setHoldDiffReview(true);
       statusManager.updateStatus("diffReviewed");
 
-      if (err instanceof FlowFixerError) {
+      if (err instanceof VisualDebuggerError) {
         vscode.window.showWarningMessage(
           `Visual Debugger: ${err.message}. Showing local fix summary instead.`
         );

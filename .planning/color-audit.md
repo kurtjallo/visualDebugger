@@ -12,31 +12,31 @@ grouped by file. Each entry shows the line number, the exact color value, and it
 | Line | Color Value | Usage |
 |------|-------------|-------|
 | 15 | (comment) | `/* Brand -- Warm violet-to-coral gradient signature */` |
-| 16 | `#A78BFA` | `--ff-accent` (main brand violet) |
-| 17 | `rgba(167, 139, 250, 0.15)` | `--ff-accent-dim` |
-| 18 | `rgba(167, 139, 250, 0.25)` | `--ff-accent-glow` |
-| 19 | `#A78BFA, #FB7185` | `--ff-gradient` (violet-to-coral gradient) |
-| 20 | `rgba(167,139,250,0.12), rgba(251,113,133,0.12)` | `--ff-gradient-subtle` |
-| 25 | `#818CF8` | `--ff-logic` (indigo, logic bug color) |
-| 26 | `rgba(129, 140, 248, 0.12)` | `--ff-logic-dim` |
-| 27 | `#FB7185` | `--ff-runtime` (coral/pink, runtime bug color) |
-| 28 | `rgba(251, 113, 133, 0.12)` | `--ff-runtime-dim` |
+| 16 | `#A78BFA` | `--vd-accent` (main brand violet) |
+| 17 | `rgba(167, 139, 250, 0.15)` | `--vd-accent-dim` |
+| 18 | `rgba(167, 139, 250, 0.25)` | `--vd-accent-glow` |
+| 19 | `#A78BFA, #FB7185` | `--vd-gradient` (violet-to-coral gradient) |
+| 20 | `rgba(167,139,250,0.12), rgba(251,113,133,0.12)` | `--vd-gradient-subtle` |
+| 25 | `#818CF8` | `--vd-logic` (indigo, logic bug color) |
+| 26 | `rgba(129, 140, 248, 0.12)` | `--vd-logic-dim` |
+| 27 | `#FB7185` | `--vd-runtime` (coral/pink, runtime bug color) |
+| 28 | `rgba(251, 113, 133, 0.12)` | `--vd-runtime-dim` |
 
 ### Hardcoded Colors in Rules
 
 | Line | Color Value | Usage |
 |------|-------------|-------|
-| 105 | `#C4B5FD` | `.ff-sidebar a` link color (lighter violet) |
-| 107 | `rgba(167, 139, 250, 0.3)` | `.ff-sidebar a` text-decoration-color |
-| 171 | `rgba(167, 139, 250, 0.2)` | `.ff-card` hover border-color |
-| 173 | `rgba(167, 139, 250, 0.08)` | `.ff-card` hover box-shadow inset |
-| 215 | `rgba(129, 140, 248, 0.25)` | `.ff-card--logic` border-color |
-| 220 | `rgba(251, 113, 133, 0.25)` | `.ff-card--runtime` border-color |
-| 249 | `rgba(167, 139, 250, 0.25)` | `.ff-btn--primary` box-shadow |
-| 252 | `rgba(167, 139, 250, 0.35)` | `.ff-btn--primary:hover` box-shadow |
-| 262 | `rgba(167, 139, 250, 0.2)` | `.ff-btn--secondary` border-color |
+| 105 | `#C4B5FD` | `.vd-sidebar a` link color (lighter violet) |
+| 107 | `rgba(167, 139, 250, 0.3)` | `.vd-sidebar a` text-decoration-color |
+| 171 | `rgba(167, 139, 250, 0.2)` | `.vd-card` hover border-color |
+| 173 | `rgba(167, 139, 250, 0.08)` | `.vd-card` hover box-shadow inset |
+| 215 | `rgba(129, 140, 248, 0.25)` | `.vd-card--logic` border-color |
+| 220 | `rgba(251, 113, 133, 0.25)` | `.vd-card--runtime` border-color |
+| 249 | `rgba(167, 139, 250, 0.25)` | `.vd-btn--primary` box-shadow |
+| 252 | `rgba(167, 139, 250, 0.35)` | `.vd-btn--primary:hover` box-shadow |
+| 262 | `rgba(167, 139, 250, 0.2)` | `.vd-btn--secondary` border-color |
 | 432 | `rgba(167, 139, 250, 0.2)` | `.stat-item:hover` border-color |
-| 491 | `rgba(167, 139, 250, 0.2)` | `.ff-code-block` border |
+| 491 | `rgba(167, 139, 250, 0.2)` | `.vd-code-block` border |
 | 503 | `#c084fc` | `.token.keyword` syntax highlight color (purple) |
 | 504 | `#FB7185` | `.token.string` syntax highlight color (coral) |
 | 836 | `rgba(167, 139, 250, 0.15)` | (likely a section/panel border) |
@@ -76,18 +76,18 @@ grouped by file. Each entry shows the line number, the exact color value, and it
 
 | Line | Color Value | Usage |
 |------|-------------|-------|
-| 32 | `#FB7185` | `.ff-debug-tag` background fallback (runtime color) |
-| 37 | `rgba(251, 113, 133, 0.3)` | `.ff-debug-tag:hover` box-shadow |
-| 46 | `#FB7185` | `.ff-debug-insight` border-left fallback |
-| 71 | `#A78BFA, #FB7185` | `.ff-debug-btn-primary` gradient background fallback |
-| 73 | `rgba(167, 139, 250, 0.3)` | `.ff-debug-btn-primary` box-shadow |
-| 80 | `rgba(167, 139, 250, 0.4)` | `.ff-debug-btn-primary:hover` box-shadow |
-| 85 | `rgba(167, 139, 250, 0.2)` | `.ff-debug-btn-secondary` box-shadow |
-| 89 | `#A78BFA` | `.ff-debug-btn-secondary:focus-visible` outline fallback |
-| 135 | `#A78BFA` | `.ff-debug-fix-link` color fallback |
-| 136 | `rgba(167,139,250,0.15)` | `.ff-debug-fix-link` background fallback |
-| 137 | `rgba(167, 139, 250, 0.2)` | `.ff-debug-fix-link` border-color |
-| 146 | `#A78BFA` | `.ff-debug-fix-link:focus-visible` outline fallback |
+| 32 | `#FB7185` | `.vd-debug-tag` background fallback (runtime color) |
+| 37 | `rgba(251, 113, 133, 0.3)` | `.vd-debug-tag:hover` box-shadow |
+| 46 | `#FB7185` | `.vd-debug-insight` border-left fallback |
+| 71 | `#A78BFA, #FB7185` | `.vd-debug-btn-primary` gradient background fallback |
+| 73 | `rgba(167, 139, 250, 0.3)` | `.vd-debug-btn-primary` box-shadow |
+| 80 | `rgba(167, 139, 250, 0.4)` | `.vd-debug-btn-primary:hover` box-shadow |
+| 85 | `rgba(167, 139, 250, 0.2)` | `.vd-debug-btn-secondary` box-shadow |
+| 89 | `#A78BFA` | `.vd-debug-btn-secondary:focus-visible` outline fallback |
+| 135 | `#A78BFA` | `.vd-debug-fix-link` color fallback |
+| 136 | `rgba(167,139,250,0.15)` | `.vd-debug-fix-link` background fallback |
+| 137 | `rgba(167, 139, 250, 0.2)` | `.vd-debug-fix-link` border-color |
+| 146 | `#A78BFA` | `.vd-debug-fix-link:focus-visible` outline fallback |
 
 ### SVG Gradient Stops
 
@@ -212,7 +212,7 @@ Checked all three files:
 ## Strategy Recommendation
 
 1. **styles.css CSS variables (lines 15-29)** are the single source of truth. Changing these 10 variable definitions will cascade to all `var()` usages automatically.
-2. **Hardcoded fallback values** in debug.html and dashboard.html (e.g., `var(--ff-accent, #A78BFA)`) need their fallback hex updated too.
+2. **Hardcoded fallback values** in debug.html and dashboard.html (e.g., `var(--vd-accent, #A78BFA)`) need their fallback hex updated too.
 3. **JavaScript color arrays** in debug.html:490, debugPanelScript.ts:154, and dashboard.html Chart.js configs must be updated manually.
 4. **SVG gradient stops** in debug.html:202-203 and dashboard.html:76-77 must be updated manually.
 5. **Standalone hex/rgba values** not using CSS variables (e.g., styles.css:105, 503, 504, 1322-1418) must be updated manually.

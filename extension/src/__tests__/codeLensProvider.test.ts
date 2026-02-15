@@ -51,7 +51,7 @@ vi.mock("vscode", () => {
   };
 });
 
-import { FlowFixerCodeLensProvider, SUPPORTED_LANGUAGES } from "../codeLensProvider";
+import { VisualDebuggerCodeLensProvider, SUPPORTED_LANGUAGES } from "../codeLensProvider";
 
 function makeDocument(languageId: string, fsPath: string = "/test/file.ts") {
   return {
@@ -72,7 +72,7 @@ function makeDiagnostic(line: number, message: string, severity: number = 0) {
   };
 }
 
-describe("FlowFixerCodeLensProvider", () => {
+describe("VisualDebuggerCodeLensProvider", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -86,12 +86,12 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("registers diagnostics change listener on construction", () => {
-    new FlowFixerCodeLensProvider();
+    new VisualDebuggerCodeLensProvider();
     expect(mockOnDidChangeDiagnostics).toHaveBeenCalledOnce();
   });
 
   it("returns empty array for unsupported languages", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     const doc = makeDocument("python");
     mockGetDiagnostics.mockReturnValue([]);
 
@@ -100,7 +100,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("returns empty array when no error diagnostics exist", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     const doc = makeDocument("typescript");
     mockGetDiagnostics.mockReturnValue([
       makeDiagnostic(0, "unused variable", 1), // Warning, not Error
@@ -111,7 +111,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("creates two CodeLens per error diagnostic", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     const doc = makeDocument("typescript");
     mockGetDiagnostics.mockReturnValue([
       makeDiagnostic(5, "TypeError: Cannot read properties of undefined"),
@@ -122,7 +122,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("first CodeLens is 'Explain this error' with correct command", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     const doc = makeDocument("typescript", "/src/app.ts");
     mockGetDiagnostics.mockReturnValue([
       makeDiagnostic(10, "SyntaxError: Unexpected token"),
@@ -137,7 +137,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("second CodeLens is 'Fix it for me' with correct command", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     const doc = makeDocument("typescript", "/src/app.ts");
     mockGetDiagnostics.mockReturnValue([
       makeDiagnostic(10, "SyntaxError: Unexpected token"),
@@ -152,7 +152,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("creates lenses for multiple errors", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     const doc = makeDocument("javascript");
     mockGetDiagnostics.mockReturnValue([
       makeDiagnostic(0, "Error 1"),
@@ -165,7 +165,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("filters out warnings and only processes errors", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     const doc = makeDocument("typescriptreact");
     mockGetDiagnostics.mockReturnValue([
       makeDiagnostic(0, "Error!", 0),    // Error
@@ -179,7 +179,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("works for all supported languages", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     mockGetDiagnostics.mockReturnValue([
       makeDiagnostic(0, "Test error"),
     ]);
@@ -192,7 +192,7 @@ describe("FlowFixerCodeLensProvider", () => {
   });
 
   it("dispose cleans up resources", () => {
-    const provider = new FlowFixerCodeLensProvider();
+    const provider = new VisualDebuggerCodeLensProvider();
     provider.dispose();
     expect(mockEventEmitterDispose).toHaveBeenCalled();
   });

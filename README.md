@@ -1,10 +1,10 @@
 # visualDebugger
 
-FlowFixer (visualDebugger) is an AI bug tutor for VS Code that helps students understand errors before and after AI-generated fixes.
+VisualDebugger (visualDebugger) is an AI bug tutor for VS Code that helps students understand errors before and after AI-generated fixes.
 
 ## About the Project
 
-Read the full story here: [About FlowFixer](docs/about-project.md)
+Read the full story here: [About VisualDebugger](docs/about-project.md)
 
 It covers:
 
@@ -15,7 +15,7 @@ It covers:
 
 ## Quick Summary
 
-FlowFixer turns debugging into a guided learning loop:
+VisualDebugger turns debugging into a guided learning loop:
 
 1. Explain the error in plain English with fix and prevention guidance.
 2. Visualize AI code changes with a red/green diff and explanation.

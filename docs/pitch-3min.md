@@ -1,4 +1,4 @@
-# FlowFixer -- 3-Minute Pitch Script
+# VisualDebugger -- 3-Minute Pitch Script
 
 **Total time: 3:00 | Aim for 2:45 to leave buffer**
 
@@ -14,7 +14,7 @@
 >
 > "They're not debugging. They're just... vibe coding."
 >
-> "We built FlowFixer to change that. It's a VS Code extension that turns every error into a lesson -- and every AI fix into a teachable moment."
+> "We built VisualDebugger to change that. It's a VS Code extension that turns every error into a lesson -- and every AI fix into a teachable moment."
 
 **[Screen: VS Code open with demo app ready]**
 
@@ -28,13 +28,13 @@
 
 > "-- crash. `TypeError: Cannot read properties of undefined reading 'map'`. To a beginner, this is gibberish."
 
-**[Action: Switch to VS Code. FlowFixer panel is visible.]**
+**[Action: Switch to VS Code. VisualDebugger panel is visible.]**
 
 ---
 
 ## 0:50 -- 1:20 | Phase 1: Error Explanation (30s)
 
-> "FlowFixer catches this instantly. It classifies the bug -- this is a *Runtime Error* -- and breaks down the error in plain English."
+> "VisualDebugger catches this instantly. It classifies the bug -- this is a *Runtime Error* -- and breaks down the error in plain English."
 
 **[Action: Point to each section as you mention it]**
 
@@ -58,7 +58,7 @@
 
 ## 1:40 -- 2:10 | Phase 2: Diff Review (30s)
 
-> "This is where FlowFixer is different. It automatically detects the code change, shows a visual red-and-green diff, and explains WHY the fix works."
+> "This is where VisualDebugger is different. It automatically detects the code change, shows a visual red-and-green diff, and explains WHY the fix works."
 
 **[Action: Point to the diff panel -- red (removed) vs green (added)]**
 
@@ -72,11 +72,11 @@
 
 ## 2:10 -- 2:30 | Dashboard + Accessibility (20s)
 
-> "Over time, FlowFixer tracks your bug patterns."
+> "Over time, VisualDebugger tracks your bug patterns."
 
 **[Action: Open the Dashboard panel]**
 
-> "This student struggles most with runtime errors. FlowFixer shows the trend, tracks progress, and even awards achievements to keep them motivated."
+> "This student struggles most with runtime errors. VisualDebugger shows the trend, tracks progress, and even awards achievements to keep them motivated."
 >
 > "And for accessibility -- every explanation can be read aloud with natural AI voices, so students with visual impairments or reading disabilities aren't left behind."
 
@@ -94,9 +94,9 @@
 
 ## 2:50 -- 3:00 | Close (10s)
 
-> "AI tools are making it easier to write code. FlowFixer makes sure students still learn from the process."
+> "AI tools are making it easier to write code. VisualDebugger makes sure students still learn from the process."
 >
-> "We're FlowFixer. Thank you."
+> "We're VisualDebugger. Thank you."
 
 **[Smile. Step back. Ready for Q&A.]**
 
@@ -147,12 +147,12 @@
 
 ## Pre-Demo Checklist
 
-- [ ] VS Code open, FlowFixer installed and activated
+- [ ] VS Code open, VisualDebugger installed and activated
 - [ ] Demo app running (`npm run dev` in demo-app/)
 - [ ] Browser on `http://localhost:5173`, starting on a working tab
 - [ ] Gemini API key set (test with "Test Gemini Connection" command)
 - [ ] ElevenLabs API key set in `.env`
-- [ ] FlowFixer debug panel visible in sidebar
+- [ ] VisualDebugger debug panel visible in sidebar
 - [ ] Dashboard pre-populated with seed data
 - [ ] `BrokenRuntime.tsx` file ready to open
 - [ ] Copilot/Cursor ready to fix on command

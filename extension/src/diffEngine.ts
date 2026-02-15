@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as Diff from "diff";
 import { CapturedDiff } from "./types";
 
-const LOG = "[FlowFixer:DiffEngine]";
+const LOG = "[VisualDebugger:DiffEngine]";
 
 export class DiffEngine implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];

@@ -1,8 +1,8 @@
-# Motion Design Research: Premium Micro-Interactions for FlowFixer
+# Motion Design Research: Premium Micro-Interactions for VisualDebugger
 
 ## Executive Summary
 
-The current FlowFixer animation system uses generic CSS defaults: `ease-in-out` timing, basic `translateY` fades, uniform shimmer, and simple confetti. These feel stock. Premium dev tools (Linear, Raycast, Arc, Vercel) distinguish themselves through **intentional timing curves**, **physics-based easing**, **staggered choreography**, and **meaningful transitions** that communicate state changes rather than just decorating them.
+The current VisualDebugger animation system uses generic CSS defaults: `ease-in-out` timing, basic `translateY` fades, uniform shimmer, and simple confetti. These feel stock. Premium dev tools (Linear, Raycast, Arc, Vercel) distinguish themselves through **intentional timing curves**, **physics-based easing**, **staggered choreography**, and **meaningful transitions** that communicate state changes rather than just decorating them.
 
 This document provides drop-in CSS `@keyframes`, `cubic-bezier` curves, and implementation patterns to upgrade every animation touchpoint.
 
@@ -31,7 +31,7 @@ This document provides drop-in CSS `@keyframes`, `cubic-bezier` curves, and impl
 
 The most impactful single change is replacing generic `ease-in-out` with purpose-built cubic-bezier curves. Every premium app has its own easing "signature."
 
-### FlowFixer Signature Curves
+### VisualDebugger Signature Curves
 
 ```css
 :root {
@@ -39,34 +39,34 @@ The most impactful single change is replacing generic `ease-in-out` with purpose
 
     /* Standard: default for most transitions. Starts fast, decelerates smoothly.
        Inspired by Apple's default curve, slightly more pronounced deceleration. */
-    --ff-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --vd-ease-standard: cubic-bezier(0.2, 0, 0, 1);
 
     /* Emphasize: for entrances and things that need to "arrive" with presence.
        Starts with a burst, long gentle coast to rest. */
-    --ff-ease-emphasize: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --vd-ease-emphasize: cubic-bezier(0.05, 0.7, 0.1, 1);
 
     /* Spring: overshoots slightly then settles. For UI elements that feel alive.
        The 1.04 creates a ~4% overshoot — enough to feel springy, not enough to look broken. */
-    --ff-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --vd-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
     /* Bounce: more dramatic overshoot for celebration moments.
        ~8% overshoot with quick settle. Use sparingly. */
-    --ff-ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --vd-ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     /* Snap: for micro-interactions (hover, press). Near-instant start, smooth stop.
        Feels responsive without being jarring. */
-    --ff-ease-snap: cubic-bezier(0.4, 0, 0.2, 1);
+    --vd-ease-snap: cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Exit: for elements leaving. Accelerates out — opposite of entrance curves.
        Quick departure so it doesn't linger. */
-    --ff-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+    --vd-ease-exit: cubic-bezier(0.4, 0, 1, 1);
 
     /* ── Duration Tokens ── */
-    --ff-duration-instant: 80ms;    /* Hover state changes, color shifts */
-    --ff-duration-fast: 150ms;      /* Micro-interactions, button press */
-    --ff-duration-normal: 250ms;    /* Panel transitions, slides */
-    --ff-duration-slow: 400ms;      /* Entrance animations, reveals */
-    --ff-duration-emphasis: 600ms;  /* Celebration, achievement unlock */
+    --vd-duration-instant: 80ms;    /* Hover state changes, color shifts */
+    --vd-duration-fast: 150ms;      /* Micro-interactions, button press */
+    --vd-duration-normal: 250ms;    /* Panel transitions, slides */
+    --vd-duration-slow: 400ms;      /* Entrance animations, reveals */
+    --vd-duration-emphasis: 600ms;  /* Celebration, achievement unlock */
 }
 ```
 
@@ -101,19 +101,19 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
     }
 }
 
-.ff-section {
-    animation: ffEnterUp var(--ff-duration-slow) var(--ff-ease-emphasize) backwards;
+.vd-section {
+    animation: ffEnterUp var(--vd-duration-slow) var(--vd-ease-emphasize) backwards;
 }
 
 /* Stagger: 60ms between each section creates a readable cascade
    without feeling slow. Total cascade for 6 items = 360ms. */
-.ff-section:nth-child(1) { animation-delay: 0ms; }
-.ff-section:nth-child(2) { animation-delay: 60ms; }
-.ff-section:nth-child(3) { animation-delay: 120ms; }
-.ff-section:nth-child(4) { animation-delay: 180ms; }
-.ff-section:nth-child(5) { animation-delay: 240ms; }
-.ff-section:nth-child(6) { animation-delay: 300ms; }
-.ff-section:nth-child(7) { animation-delay: 360ms; }
+.vd-section:nth-child(1) { animation-delay: 0ms; }
+.vd-section:nth-child(2) { animation-delay: 60ms; }
+.vd-section:nth-child(3) { animation-delay: 120ms; }
+.vd-section:nth-child(4) { animation-delay: 180ms; }
+.vd-section:nth-child(5) { animation-delay: 240ms; }
+.vd-section:nth-child(6) { animation-delay: 300ms; }
+.vd-section:nth-child(7) { animation-delay: 360ms; }
 ```
 
 ### 2b. Elastic Bounce for Important Elements (Error Card, TL;DR)
@@ -141,13 +141,13 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
     }
 }
 
-.ff-section--error {
-    animation: ffElasticPop 500ms var(--ff-ease-emphasize) backwards;
+.vd-section--error {
+    animation: ffElasticPop 500ms var(--vd-ease-emphasize) backwards;
 }
 
 /* TL;DR text reveal — scale from slightly small with spring */
-.ff-tldr {
-    animation: ffElasticPop 400ms var(--ff-ease-spring) backwards;
+.vd-tldr {
+    animation: ffElasticPop 400ms var(--vd-ease-spring) backwards;
     animation-delay: 150ms;
 }
 ```
@@ -167,12 +167,12 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
     }
 }
 
-.ff-success-banner {
-    animation: ffClipReveal 400ms var(--ff-ease-standard) backwards;
+.vd-success-banner {
+    animation: ffClipReveal 400ms var(--vd-ease-standard) backwards;
 }
 
-.ff-file-bar {
-    animation: ffClipReveal 300ms var(--ff-ease-standard) backwards;
+.vd-file-bar {
+    animation: ffClipReveal 300ms var(--vd-ease-standard) backwards;
     animation-delay: 100ms;
 }
 ```
@@ -196,16 +196,16 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
     }
 }
 
-.ff-achievement {
-    animation: ffScaleRotateIn 350ms var(--ff-ease-spring) backwards;
+.vd-achievement {
+    animation: ffScaleRotateIn 350ms var(--vd-ease-spring) backwards;
 }
 
-.ff-achievement:nth-child(1) { animation-delay: 0ms; }
-.ff-achievement:nth-child(2) { animation-delay: 50ms; }
-.ff-achievement:nth-child(3) { animation-delay: 100ms; }
-.ff-achievement:nth-child(4) { animation-delay: 150ms; }
-.ff-achievement:nth-child(5) { animation-delay: 200ms; }
-.ff-achievement:nth-child(6) { animation-delay: 250ms; }
+.vd-achievement:nth-child(1) { animation-delay: 0ms; }
+.vd-achievement:nth-child(2) { animation-delay: 50ms; }
+.vd-achievement:nth-child(3) { animation-delay: 100ms; }
+.vd-achievement:nth-child(4) { animation-delay: 150ms; }
+.vd-achievement:nth-child(5) { animation-delay: 200ms; }
+.vd-achievement:nth-child(6) { animation-delay: 250ms; }
 ```
 
 ---
@@ -218,16 +218,16 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
 /* ── Premium button hover: lift + glow ── */
 .btn,
 .actions-btn-explain,
-.ff-btn--tts {
+.vd-btn--tts {
     transition:
-        background-color var(--ff-duration-instant) var(--ff-ease-snap),
-        transform var(--ff-duration-fast) var(--ff-ease-spring),
-        box-shadow var(--ff-duration-fast) var(--ff-ease-snap);
+        background-color var(--vd-duration-instant) var(--vd-ease-snap),
+        transform var(--vd-duration-fast) var(--vd-ease-spring),
+        box-shadow var(--vd-duration-fast) var(--vd-ease-snap);
 }
 
 .btn:hover,
 .actions-btn-explain:hover,
-.ff-btn--tts:hover {
+.vd-btn--tts:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15),
                 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -247,23 +247,23 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
 /* ── Button press: compress + flatten shadow ── */
 .btn:active,
 .actions-btn-explain:active,
-.ff-btn--tts:active {
+.vd-btn--tts:active {
     transform: translateY(0px) scale(0.97);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition-duration: var(--ff-duration-instant);
+    transition-duration: var(--vd-duration-instant);
 }
 
 /* Quiz option press feedback */
 .quiz-option:active:not([data-answered]) {
     transform: scale(0.98);
-    transition: transform var(--ff-duration-instant) var(--ff-ease-snap);
+    transition: transform var(--vd-duration-instant) var(--vd-ease-snap);
 }
 ```
 
 ### 3c. Button Loading State (Custom Spinner)
 
 ```css
-/* ── FlowFixer-branded loading spinner ── */
+/* ── VisualDebugger-branded loading spinner ── */
 @keyframes ffSpinnerRotate {
     to { transform: rotate(360deg); }
 }
@@ -283,23 +283,23 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
     }
 }
 
-.ff-spinner {
+.vd-spinner {
     display: inline-block;
     width: 18px;
     height: 18px;
     animation: ffSpinnerRotate 1.4s linear infinite;
 }
 
-.ff-spinner circle {
+.vd-spinner circle {
     stroke: currentColor;
     stroke-linecap: round;
     fill: none;
     stroke-width: 3;
-    animation: ffSpinnerDash 1.4s var(--ff-ease-standard) infinite;
+    animation: ffSpinnerDash 1.4s var(--vd-ease-standard) infinite;
 }
 
 /* Usage: replace "Loading..." text with SVG spinner
-   <svg class="ff-spinner" viewBox="0 0 24 24">
+   <svg class="vd-spinner" viewBox="0 0 24 24">
        <circle cx="12" cy="12" r="10"/>
    </svg>
 */
@@ -324,14 +324,14 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
     100% { transform: scale(1); opacity: 1; }
 }
 
-.ff-check-icon {
+.vd-check-icon {
     display: inline-block;
     width: 16px;
     height: 16px;
-    animation: ffCheckScale 300ms var(--ff-ease-spring) forwards;
+    animation: ffCheckScale 300ms var(--vd-ease-spring) forwards;
 }
 
-.ff-check-icon path {
+.vd-check-icon path {
     stroke: currentColor;
     stroke-width: 2.5;
     stroke-linecap: round;
@@ -339,12 +339,12 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
     fill: none;
     stroke-dasharray: 24;
     stroke-dashoffset: 24;
-    animation: ffCheckDraw 300ms var(--ff-ease-standard) 100ms forwards;
+    animation: ffCheckDraw 300ms var(--vd-ease-standard) 100ms forwards;
 }
 
 /* "Copied!" button success pulse */
 .btn--success {
-    animation: ffSuccessPulse 300ms var(--ff-ease-spring);
+    animation: ffSuccessPulse 300ms var(--vd-ease-spring);
 }
 
 @keyframes ffSuccessPulse {
@@ -354,7 +354,7 @@ The current `ffSlideIn` uses `ease-out` with 8px translateY. The upgrade: larger
 }
 
 /* Usage:
-   <svg class="ff-check-icon" viewBox="0 0 16 16">
+   <svg class="vd-check-icon" viewBox="0 0 16 16">
        <path d="M3.5 8.5L6.5 11.5L12.5 4.5"/>
    </svg>
 */
@@ -374,8 +374,8 @@ The current implementation uses `translateX(20px)` with `ease`. The upgrade adds
     opacity: 0;
     transform: translateX(24px) scale(0.985);
     transition:
-        opacity var(--ff-duration-normal) var(--ff-ease-exit),
-        transform var(--ff-duration-normal) var(--ff-ease-exit);
+        opacity var(--vd-duration-normal) var(--vd-ease-exit),
+        transform var(--vd-duration-normal) var(--vd-ease-exit);
     pointer-events: none;
     position: absolute;
     width: 100%;
@@ -390,8 +390,8 @@ The current implementation uses `translateX(20px)` with `ease`. The upgrade adds
     position: relative;
     visibility: visible;
     transition:
-        opacity var(--ff-duration-normal) var(--ff-ease-emphasize),
-        transform var(--ff-duration-normal) var(--ff-ease-spring);
+        opacity var(--vd-duration-normal) var(--vd-ease-emphasize),
+        transform var(--vd-duration-normal) var(--vd-ease-spring);
 }
 
 .panel-section.slide-out-left {
@@ -399,8 +399,8 @@ The current implementation uses `translateX(20px)` with `ease`. The upgrade adds
     transform: translateX(-16px) scale(0.99);
     pointer-events: none;
     transition:
-        opacity 180ms var(--ff-ease-exit),
-        transform 180ms var(--ff-ease-exit);
+        opacity 180ms var(--vd-ease-exit),
+        transform 180ms var(--vd-ease-exit);
 }
 ```
 
@@ -410,13 +410,13 @@ When sections expand/collapse (disclosure panels, quiz feedback), use CSS `inter
 
 ```css
 /* ── Disclosure smooth open/close ── */
-.ff-disclosure {
+.vd-disclosure {
     overflow: hidden;
 }
 
-.ff-disclosure-body {
+.vd-disclosure-body {
     padding: 10px 0 4px 0;
-    animation: ffExpandDown 300ms var(--ff-ease-emphasize);
+    animation: ffExpandDown 300ms var(--vd-ease-emphasize);
     transform-origin: top;
 }
 
@@ -435,7 +435,7 @@ When sections expand/collapse (disclosure panels, quiz feedback), use CSS `inter
 
 /* Quiz feedback expand */
 .quiz-feedback {
-    animation: ffExpandDown 250ms var(--ff-ease-emphasize);
+    animation: ffExpandDown 250ms var(--vd-ease-emphasize);
 }
 ```
 
@@ -454,8 +454,8 @@ When going "back," the animation should reverse direction (slide from left).
     opacity: 1;
     transform: translateX(0) scale(1);
     transition:
-        opacity var(--ff-duration-normal) var(--ff-ease-emphasize),
-        transform var(--ff-duration-normal) var(--ff-ease-spring);
+        opacity var(--vd-duration-normal) var(--vd-ease-emphasize),
+        transform var(--vd-duration-normal) var(--vd-ease-spring);
 }
 ```
 
@@ -483,18 +483,18 @@ Replace the current linear-fall confetti with varied shapes, rotation, horizonta
     100% {
         transform:
             translateY(calc(100vh + 40px))
-            translateX(var(--ff-confetti-drift, 0px))
-            rotateZ(var(--ff-confetti-spin, 720deg))
-            rotateY(var(--ff-confetti-tumble, 360deg))
+            translateX(var(--vd-confetti-drift, 0px))
+            rotateZ(var(--vd-confetti-spin, 720deg))
+            rotateY(var(--vd-confetti-tumble, 360deg))
             scale(0.4);
         opacity: 0;
     }
 }
 
-.ff-confetti-piece {
+.vd-confetti-piece {
     position: absolute;
     top: -10px;
-    animation: ffConfettiPhysics var(--ff-confetti-duration, 2s) var(--ff-ease-standard) forwards;
+    animation: ffConfettiPhysics var(--vd-confetti-duration, 2s) var(--vd-ease-standard) forwards;
     /* Shape variants set via inline style: */
     /* circle: border-radius: 50%; */
     /* rect: border-radius: 2px; */
@@ -509,7 +509,7 @@ Replace the current linear-fall confetti with varied shapes, rotation, horizonta
 function launchConfetti() {
     if (prefersReducedMotion) return;
     const container = document.createElement('div');
-    container.className = 'ff-confetti-container';
+    container.className = 'vd-confetti-container';
     document.body.appendChild(container);
 
     const colors = ['#eebb00', '#3794ff', '#f14c4c', '#89d185', '#06b6d4', '#c084fc'];
@@ -518,7 +518,7 @@ function launchConfetti() {
 
     for (let i = 0; i < count; i++) {
         const piece = document.createElement('div');
-        piece.className = 'ff-confetti-piece';
+        piece.className = 'vd-confetti-piece';
 
         // Varied sizing
         const size = 5 + Math.random() * 8;
@@ -549,10 +549,10 @@ function launchConfetti() {
         const duration = 1.5 + Math.random() * 1.5;  // 1.5s - 3s fall time
         const delay = Math.random() * 0.3;            // 0-300ms stagger
 
-        piece.style.setProperty('--ff-confetti-drift', drift + 'px');
-        piece.style.setProperty('--ff-confetti-spin', spin + 'deg');
-        piece.style.setProperty('--ff-confetti-tumble', tumble + 'deg');
-        piece.style.setProperty('--ff-confetti-duration', duration + 's');
+        piece.style.setProperty('--vd-confetti-drift', drift + 'px');
+        piece.style.setProperty('--vd-confetti-spin', spin + 'deg');
+        piece.style.setProperty('--vd-confetti-tumble', tumble + 'deg');
+        piece.style.setProperty('--vd-confetti-duration', duration + 's');
         piece.style.animationDelay = delay + 's';
 
         container.appendChild(piece);
@@ -584,9 +584,9 @@ function launchConfetti() {
 }
 
 .quiz-option.correct {
-    border-color: var(--ff-success);
+    border-color: var(--vd-success);
     border-left-width: 4px;
-    animation: ffCorrectPulse 500ms var(--ff-ease-spring);
+    animation: ffCorrectPulse 500ms var(--vd-ease-spring);
     background: rgba(137, 209, 133, 0.08);
 }
 
@@ -600,7 +600,7 @@ function launchConfetti() {
 }
 
 .quiz-option.incorrect {
-    animation: ffShake 400ms var(--ff-ease-snap);
+    animation: ffShake 400ms var(--vd-ease-snap);
 }
 ```
 
@@ -623,19 +623,19 @@ function launchConfetti() {
     }
 }
 
-.ff-checklist.all-done .ff-check-item {
-    animation: ffCheckWave 400ms var(--ff-ease-spring) backwards;
+.vd-checklist.all-done .vd-check-item {
+    animation: ffCheckWave 400ms var(--vd-ease-spring) backwards;
 }
 
-.ff-checklist.all-done .ff-check-item:nth-child(1) { animation-delay: 0ms; }
-.ff-checklist.all-done .ff-check-item:nth-child(2) { animation-delay: 80ms; }
-.ff-checklist.all-done .ff-check-item:nth-child(3) { animation-delay: 160ms; }
-.ff-checklist.all-done .ff-check-item:nth-child(4) { animation-delay: 240ms; }
-.ff-checklist.all-done .ff-check-item:nth-child(5) { animation-delay: 320ms; }
+.vd-checklist.all-done .vd-check-item:nth-child(1) { animation-delay: 0ms; }
+.vd-checklist.all-done .vd-check-item:nth-child(2) { animation-delay: 80ms; }
+.vd-checklist.all-done .vd-check-item:nth-child(3) { animation-delay: 160ms; }
+.vd-checklist.all-done .vd-check-item:nth-child(4) { animation-delay: 240ms; }
+.vd-checklist.all-done .vd-check-item:nth-child(5) { animation-delay: 320ms; }
 
 /* "All done" message entrance */
-.ff-check-done {
-    animation: ffElasticPop 400ms var(--ff-ease-spring) backwards;
+.vd-check-done {
+    animation: ffElasticPop 400ms var(--vd-ease-spring) backwards;
     animation-delay: 400ms;
 }
 ```
@@ -669,8 +669,8 @@ function launchConfetti() {
     }
 }
 
-.ff-achievement.unlocked.just-unlocked {
-    animation: ffAchievementUnlock 600ms var(--ff-ease-emphasize);
+.vd-achievement.unlocked.just-unlocked {
+    animation: ffAchievementUnlock 600ms var(--vd-ease-emphasize);
 }
 
 /* Achievement icon shimmer on unlock */
@@ -680,8 +680,8 @@ function launchConfetti() {
     100% { filter: brightness(1); }
 }
 
-.ff-achievement.just-unlocked .ff-achievement-icon {
-    animation: ffIconShimmer 800ms var(--ff-ease-standard) 300ms;
+.vd-achievement.just-unlocked .vd-achievement-icon {
+    animation: ffIconShimmer 800ms var(--vd-ease-standard) 300ms;
 }
 ```
 
@@ -695,7 +695,7 @@ The current shimmer is a linear gradient sweep. The upgrade: add a subtle cyan t
 
 ```css
 /* ── Branded skeleton with wave shimmer ── */
-.ff-skeleton-line {
+.vd-skeleton-line {
     height: 14px;
     border-radius: 6px;
     background: linear-gradient(
@@ -707,7 +707,7 @@ The current shimmer is a linear gradient sweep. The upgrade: add a subtle cyan t
         var(--vscode-textCodeBlock-background, rgba(127, 127, 127, 0.1)) 100%
     );
     background-size: 300% 100%;
-    animation: ffSkeletonWave 2s var(--ff-ease-standard) infinite;
+    animation: ffSkeletonWave 2s var(--vd-ease-standard) infinite;
 }
 
 @keyframes ffSkeletonWave {
@@ -716,17 +716,17 @@ The current shimmer is a linear gradient sweep. The upgrade: add a subtle cyan t
 }
 
 /* Stagger skeleton groups for a "thinking" effect */
-.ff-skeleton-group:nth-child(1) .ff-skeleton-line { animation-delay: 0ms; }
-.ff-skeleton-group:nth-child(2) .ff-skeleton-line { animation-delay: 200ms; }
-.ff-skeleton-group:nth-child(3) .ff-skeleton-line { animation-delay: 400ms; }
+.vd-skeleton-group:nth-child(1) .vd-skeleton-line { animation-delay: 0ms; }
+.vd-skeleton-group:nth-child(2) .vd-skeleton-line { animation-delay: 200ms; }
+.vd-skeleton-group:nth-child(3) .vd-skeleton-line { animation-delay: 400ms; }
 
 /* Add subtle entrance animation to skeleton itself */
-.ff-skeleton-group {
-    animation: ffEnterUp 300ms var(--ff-ease-emphasize) backwards;
+.vd-skeleton-group {
+    animation: ffEnterUp 300ms var(--vd-ease-emphasize) backwards;
 }
 
-.ff-skeleton-group:nth-child(2) { animation-delay: 100ms; }
-.ff-skeleton-group:nth-child(3) { animation-delay: 200ms; }
+.vd-skeleton-group:nth-child(2) { animation-delay: 100ms; }
+.vd-skeleton-group:nth-child(3) { animation-delay: 200ms; }
 ```
 
 ### 6b. Typing Indicator (Humanized "Thinking")
@@ -735,7 +735,7 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 
 ```css
 /* ── Typing indicator: three dots with wave ── */
-.ff-typing-indicator {
+.vd-typing-indicator {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -745,17 +745,17 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
     border: 1px solid var(--vscode-widget-border);
 }
 
-.ff-typing-dot {
+.vd-typing-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: rgba(6, 182, 212, 0.6);
-    animation: ffTypingBounce 1.2s var(--ff-ease-spring) infinite;
+    animation: ffTypingBounce 1.2s var(--vd-ease-spring) infinite;
 }
 
-.ff-typing-dot:nth-child(1) { animation-delay: 0ms; }
-.ff-typing-dot:nth-child(2) { animation-delay: 150ms; }
-.ff-typing-dot:nth-child(3) { animation-delay: 300ms; }
+.vd-typing-dot:nth-child(1) { animation-delay: 0ms; }
+.vd-typing-dot:nth-child(2) { animation-delay: 150ms; }
+.vd-typing-dot:nth-child(3) { animation-delay: 300ms; }
 
 @keyframes ffTypingBounce {
     0%, 60%, 100% {
@@ -769,10 +769,10 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 }
 
 /* Usage:
-   <div class="ff-typing-indicator" aria-label="Analyzing error...">
-       <span class="ff-typing-dot"></span>
-       <span class="ff-typing-dot"></span>
-       <span class="ff-typing-dot"></span>
+   <div class="vd-typing-indicator" aria-label="Analyzing error...">
+       <span class="vd-typing-dot"></span>
+       <span class="vd-typing-dot"></span>
+       <span class="vd-typing-dot"></span>
    </div>
 */
 ```
@@ -781,7 +781,7 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 
 ```css
 /* ── Branded progress bar with shimmer overlay ── */
-.ff-progress-bar {
+.vd-progress-bar {
     height: 4px;
     border-radius: 4px;
     background: var(--vscode-textCodeBlock-background, rgba(127, 127, 127, 0.15));
@@ -789,7 +789,7 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
     position: relative;
 }
 
-.ff-progress-bar-fill {
+.vd-progress-bar-fill {
     height: 100%;
     border-radius: 4px;
     background: linear-gradient(
@@ -800,7 +800,7 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
     );
     background-size: 200% 100%;
     animation: ffProgressShimmer 2s linear infinite;
-    transition: width 500ms var(--ff-ease-emphasize);
+    transition: width 500ms var(--vd-ease-emphasize);
     position: relative;
 }
 
@@ -810,11 +810,11 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 }
 
 /* Indeterminate state: oscillating bar */
-.ff-progress-bar-fill.indeterminate {
+.vd-progress-bar-fill.indeterminate {
     width: 40% !important;
     animation:
         ffProgressShimmer 2s linear infinite,
-        ffProgressSlide 1.5s var(--ff-ease-standard) infinite alternate;
+        ffProgressSlide 1.5s var(--vd-ease-standard) infinite alternate;
 }
 
 @keyframes ffProgressSlide {
@@ -841,13 +841,13 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
     }
 }
 
-.ff-btn--playing {
-    animation: ffBreathe 2s var(--ff-ease-standard) infinite;
+.vd-btn--playing {
+    animation: ffBreathe 2s var(--vd-ease-standard) infinite;
 }
 
 /* Success dot subtle pulse */
-.ff-success-dot {
-    animation: ffBreathe 2.5s var(--ff-ease-standard) infinite;
+.vd-success-dot {
+    animation: ffBreathe 2.5s var(--vd-ease-standard) infinite;
 }
 ```
 
@@ -864,8 +864,8 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
     }
 }
 
-.ff-empty-svg {
-    animation: ffFloat 3s var(--ff-ease-standard) infinite;
+.vd-empty-svg {
+    animation: ffFloat 3s var(--vd-ease-standard) infinite;
 }
 
 /* Subtle rotation for "code" text in SVG */
@@ -881,9 +881,9 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 /* ── Card hover: subtle lift with shadow depth ── */
 .card {
     transition:
-        border-color var(--ff-duration-instant) var(--ff-ease-snap),
-        box-shadow var(--ff-duration-fast) var(--ff-ease-snap),
-        transform var(--ff-duration-fast) var(--ff-ease-spring);
+        border-color var(--vd-duration-instant) var(--vd-ease-snap),
+        box-shadow var(--vd-duration-fast) var(--vd-ease-snap),
+        transform var(--vd-duration-fast) var(--vd-ease-spring);
 }
 
 .card:hover {
@@ -895,7 +895,7 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 
 /* Stat card: number color transition on hover */
 .stat-item {
-    transition: transform var(--ff-duration-fast) var(--ff-ease-spring);
+    transition: transform var(--vd-duration-fast) var(--vd-ease-spring);
 }
 
 .stat-card:hover .stat-item {
@@ -922,8 +922,8 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
     }
 }
 
-.count-badge.ff-pulse {
-    animation: ffBadgePulse 350ms var(--ff-ease-spring) 2;
+.count-badge.vd-pulse {
+    animation: ffBadgePulse 350ms var(--vd-ease-spring) 2;
 }
 ```
 
@@ -933,8 +933,8 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 
 ```css
 /* ── Enhanced toast: spring entrance with icon ── */
-.ff-toast {
-    animation: ffToastSpring 400ms var(--ff-ease-spring) forwards;
+.vd-toast {
+    animation: ffToastSpring 400ms var(--vd-ease-spring) forwards;
 }
 
 @keyframes ffToastSpring {
@@ -952,8 +952,8 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
     }
 }
 
-.ff-toast.ff-toast--out {
-    animation: ffToastExit 200ms var(--ff-ease-exit) forwards;
+.vd-toast.vd-toast--out {
+    animation: ffToastExit 200ms var(--vd-ease-exit) forwards;
 }
 
 @keyframes ffToastExit {
@@ -968,10 +968,10 @@ Replace the blinking cursor with a three-dot "typing" indicator that feels like 
 }
 
 /* Success toast gets a brief green flash */
-.ff-toast--success {
+.vd-toast--success {
     animation:
-        ffToastSpring 400ms var(--ff-ease-spring) forwards,
-        ffToastSuccessFlash 600ms var(--ff-ease-standard);
+        ffToastSpring 400ms var(--vd-ease-spring) forwards,
+        ffToastSuccessFlash 600ms var(--vd-ease-standard);
 }
 
 @keyframes ffToastSuccessFlash {
@@ -988,18 +988,18 @@ The current rotating conic gradient is attention-grabbing. Refine it to be smoot
 
 ```css
 /* ── Refined gradient border: slower, subtler ── */
-.ff-section--error {
+.vd-section--error {
     animation: ffGradientSpin 6s linear infinite;  /* slower: 6s instead of 4s */
 }
 
 /* Add a subtle inner glow that breathes */
-.ff-section--error::after {
+.vd-section--error::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: 6px;
     pointer-events: none;
-    animation: ffInnerGlow 3s var(--ff-ease-standard) infinite;
+    animation: ffInnerGlow 3s var(--vd-ease-standard) infinite;
 }
 
 @keyframes ffInnerGlow {
