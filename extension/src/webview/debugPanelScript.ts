@@ -75,6 +75,13 @@ function $(id: string): HTMLElement | null {
   return document.getElementById(id);
 }
 
+function shortenPath(location: string): string {
+  return location.replace(/(?:[A-Za-z]:)?(?:\/[\w.\-@]+){4,}/g, (match) => {
+    const parts = match.split('/').filter(Boolean);
+    return parts.slice(-3).join('/');
+  });
+}
+
 function announce(msg: string): void {
   const el = $("status-live");
   if (el) el.textContent = msg;
@@ -318,7 +325,7 @@ function updateErrorPanel(data: ErrorData): void {
   }
 
   $("error-location")!.textContent =
-    data.location || (data.raw && data.raw.file + ":" + data.raw.line) || "";
+    shortenPath(data.location || (data.raw && data.raw.file + ":" + data.raw.line) || "");
   const errorMsg = data.errorMessage || (data.raw && data.raw.message) || "";
   $("error-message")!.textContent = errorMsg;
 

@@ -1464,6 +1464,10 @@ img, canvas, video { max-width: 100%; height: auto; }
     margin-bottom: var(--sp-2);
     line-height: 1;
 }
+.ff-achievement-icon svg {
+    width: 28px;
+    height: 28px;
+}
 
 .ff-achievement-name {
     font-size: var(--text-xs);

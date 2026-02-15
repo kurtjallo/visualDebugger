@@ -296,7 +296,7 @@ Respond with a JSON object containing:
   - Logic Error: Code runs without crashing but produces wrong results. Wrong operator, bad condition, off-by-one.
   - Runtime Error: Code parses and starts running but crashes mid-execution. Null references, type errors, missing properties.
 
-- "location": File name and line number(s) where the bug is. Format: "line N, filename.ext"
+- "location": File name and line number(s) where the bug is. Format: "line N, filename.ext". Use just the filename (not the full path) in the location field. Example: "line 5, BrokenSyntax.tsx" not "line 5, /full/path/to/BrokenSyntax.tsx".
 
 - "tldr": One sentence under 15 words summarizing the root issue.
 
@@ -310,12 +310,13 @@ Respond with a JSON object containing:
 
 - "keyTerms": 1-3 key words or short phrases from the error to highlight.
 
-- "suggestedPrompt": Generate a detailed, well-crafted debugging prompt that the student SHOULD have written instead of "fix the bug". This prompt teaches students what a good debugging prompt looks like. Format it as a ready-to-copy prompt with:
-  1. A clear one-line description of the error with file and line reference
-  2. A "Context:" section listing 2-3 bullet points about what the code does and why the error occurs
-  3. A "What to fix:" section with 1-2 specific actionable bullet points
-  4. An "Explain:" section with 2-3 bullet points asking for understanding (why, what, how to verify)
-  Use newlines for readability. Do NOT use markdown headers — use plain text labels followed by colons. Keep total length under 200 words.
+- "suggestedPrompt": Generate a well-crafted debugging prompt that the student SHOULD have written instead of "fix the bug". This prompt teaches students what a good debugging prompt looks like. The prompt must focus on LOGIC AND BEHAVIOUR, not code specifics. Format it as a ready-to-copy prompt with:
+  1. A clear one-line description of the observable problem (what goes wrong from the user's perspective)
+  2. A "Behaviour:" section listing 2-3 bullet points about what the app does vs what it should do
+  3. A "Root cause:" section with 1-2 bullet points explaining the logical reasoning behind the bug
+  4. A "Verify:" section with 1-2 bullet points on how to confirm the fix works
+  IMPORTANT: Do NOT include file paths or directories. Do NOT reference specific code constructs, API names, or framework-specific terms. Describe the problem in terms of behaviour and logic, not implementation details.
+  Use newlines for readability. Do NOT use markdown headers — use plain text labels followed by colons. Keep total length under 150 words.
 
 - "quiz": A multiple-choice question (4 options, one correct) testing whether the student understands WHY the error happened — not just what to do. The wrong options should be plausible but clearly wrong if you understood the explanation. Include a brief explanation of why the correct answer is right.
 
@@ -344,7 +345,7 @@ Output:
   "howToPrevent": "When you type an opening bracket or parenthesis, immediately type the closing one, then fill in the middle.",
   "bestPractices": "Use an editor with bracket matching enabled. Most editors highlight unmatched brackets in red.",
   "keyTerms": ["Unexpected token", "expected ','", "closing parenthesis"],
-  "suggestedPrompt": "Fix the SyntaxError in BrokenSyntax.tsx at line 17 where the return statement is missing a closing parenthesis.\\n\\nContext:\\n- The return( on line 12 opens a parenthesis for multi-line JSX\\n- The JSX block closes with </div> on line 16 but no ) follows\\n- The parser hits } on line 18 and expects ) first\\n\\nWhat to fix:\\n- Add a closing ) after the </div> on line 16 to match the ( on line 12\\n\\nExplain:\\n- Why the parser reports 'expected ,' instead of 'expected )'\\n- How bracket matching works in multi-line return statements\\n- How to verify all parentheses are balanced after fixing",
+  "suggestedPrompt": "The app fails to compile because a multi-line return block is never properly closed.\\n\\nBehaviour:\\n- The component should render a welcome message with a heading and paragraph\\n- Instead, the compiler throws an error about an unexpected token\\n- The closing delimiter for the return block is missing\\n\\nRoot cause:\\n- The return statement opens a grouping on one line but never closes it before the function body ends\\n\\nVerify:\\n- The component renders without compiler errors\\n- The welcome heading and paragraph both display correctly",
   "quiz": {
     "question": "What is the root cause of this SyntaxError?",
     "options": [
@@ -381,7 +382,7 @@ Output:
   "howToPrevent": "Remember: array indices go from 0 to length - 1. Always use '< length' (not '<= length') when looping through arrays.",
   "bestPractices": "Prefer .map() or for...of loops over manual index loops. They handle bounds automatically and eliminate off-by-one bugs.",
   "keyTerms": ["off-by-one", "<= items.length", "undefined item"],
-  "suggestedPrompt": "Fix the off-by-one bug in BrokenLogic.tsx at line 10 where the loop renders an extra undefined item.\\n\\nContext:\\n- items is a 3-element array with indices 0, 1, 2\\n- The for loop uses i <= items.length which iterates when i is 3\\n- items[3] is undefined, causing an extra empty <li> to render\\n\\nWhat to fix:\\n- Change the loop condition from i <= items.length to i < items.length\\n\\nExplain:\\n- Why arrays with N elements have valid indices 0 to N-1\\n- What happens when you access an index beyond the array bounds\\n- How to verify the fix by checking the rendered list count",
+  "suggestedPrompt": "The list renders one extra blank item at the end that shouldn't be there.\\n\\nBehaviour:\\n- The component should show exactly 3 fruit items in a list\\n- Instead it shows 4 items, with the last one being empty/undefined\\n- The loop iterates one time too many\\n\\nRoot cause:\\n- The loop condition allows the counter to reach a value equal to the total number of items, but item positions start at zero so the last valid position is one less than the total\\n\\nVerify:\\n- The list shows exactly 3 items with no blank entries\\n- No undefined values appear in the rendered output",
   "quiz": {
     "question": "Why does the loop render an extra undefined item?",
     "options": [
@@ -420,7 +421,7 @@ Output:
   "howToPrevent": "Always give useState a default value that matches how you use the variable. If you call .map(), initialize with [].",
   "bestPractices": "Use optional chaining (data?.map()) or nullish coalescing ((data ?? []).map()) to guard against undefined values in async data flows.",
   "keyTerms": ["Cannot read properties", "undefined", "map"],
-  "suggestedPrompt": "Fix the TypeError in BrokenRuntime.tsx at line 10 where data.map() fails because useState() has no initial value.\\n\\nContext:\\n- data is used with .map() to render a list of items\\n- useState() returns undefined by default when no argument is passed\\n- .map() is an array method — it throws when called on undefined\\n\\nWhat to fix:\\n- Add [] as the initial value: useState([])\\n- Add a guard check before calling .map() to handle loading states\\n\\nExplain:\\n- Why undefined causes this specific TypeError\\n- What initial values prevent this class of bug\\n- How to verify the fix works after applying it",
+  "suggestedPrompt": "The app crashes immediately on load when trying to display a list of items.\\n\\nBehaviour:\\n- The component should fetch data from an API and display it as a list\\n- On first render, before the data arrives, the app crashes with a TypeError\\n- The list rendering assumes data is always available, but it starts as nothing\\n\\nRoot cause:\\n- The initial state has no default value, so the variable is undefined on first render\\n- The code tries to iterate over undefined, which fails because only arrays can be iterated\\n\\nVerify:\\n- The app loads without crashing\\n- The list appears correctly once the data finishes loading",
   "quiz": {
     "question": "Why does calling .map() on 'data' throw a TypeError?",
     "options": [
