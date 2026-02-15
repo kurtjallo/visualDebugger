@@ -197,10 +197,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   // --- Track last error for Phase 2 correlation ---
   let lastError: CapturedError | undefined;
   let lastBugId: string | undefined;
+  let holdDiffReview = false;
+  let pendingDiffReview = false;
 
-  async function handlePhase1(error: CapturedError): Promise<void> {
+  async function handlePhase1(
+    error: CapturedError,
+    opts?: { trigger?: "auto" | "manual" }
+  ): Promise<void> {
+    const trigger = opts?.trigger ?? "auto";
+    if ((holdDiffReview || pendingDiffReview) && trigger === "auto") {
+      console.log(`${LOG} skipping auto Phase 1 while diff review is active`);
+      return;
+    }
+
     console.log(`${LOG} Phase 1: error detected - ${error.message}`);
     lastError = error;
+    holdDiffReview = false;
     // New error cycle starts here. Clear any stale Phase 2 review so users
     // don't see old fix explanations before a new diff is detected.
     debugPanel.postMessage({ type: "clear" });
@@ -219,6 +231,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         errorMessage: error.message,
         codeContext: error.codeContext,
       });
+
+      // Guard against race: an auto Phase 1 request may have started before
+      // diff review was pinned and completed after it.
+      if ((holdDiffReview || pendingDiffReview) && trigger === "auto") {
+        console.log(`${LOG} dropping stale auto Phase 1 result while diff review is active`);
+        return;
+      }
 
       debugPanel.postMessage({
         type: "showError",
@@ -261,6 +280,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     switch (message.type) {
       case "ready":
         console.log(`${LOG} ${source} panel ready`);
+        return;
+      case "diffReviewClosed":
+        holdDiffReview = false;
+        console.log(`${LOG} diff review unpinned by user`);
         return;
       case "quizAnswer":
         console.log(`${LOG} quiz answered from ${source} panel: ${message.answer}`);
@@ -327,7 +350,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           timestamp: Date.now(),
         };
 
-        void handlePhase1(captured);
+        void handlePhase1(captured, { trigger: "manual" });
       } else {
         void handleWebviewMessage("error", debugPanel, msg);
       }
@@ -337,11 +360,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     })
   );
 
-  errorListener.onErrorDetected((error) => handlePhase1(error));
+  errorListener.onErrorDetected((error) => {
+    console.log(`${LOG} errorListener fired: ${error.message} at ${error.file}:${error.line}`);
+    void handlePhase1(error, { trigger: "auto" });
+  });
 
   diffEngine.onDiffDetected(async (diff) => {
     console.log(`${LOG} Phase 2: diff detected in ${diff.file}`);
 
+    pendingDiffReview = true;
     updateStatus("analyzingDiff");
 
     try {
@@ -350,6 +377,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       }
 
       const originalError = lastError?.message ?? "unknown error";
+      console.log(`${LOG} Phase 2: calling analyzeDiff for ${diff.file}...`);
       const diffExplanation = await analyzeDiff({
         language: diff.language,
         filename: diff.file,
@@ -357,10 +385,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         diff: diff.unifiedDiff,
       });
 
+      console.log(`${LOG} Phase 2: analyzeDiff succeeded, posting showDiff`);
       debugPanel.postMessage({
         type: "showDiff",
         data: { ...diffExplanation, diff },
       });
+      holdDiffReview = true;
+      pendingDiffReview = false;
 
       const bugs = await storage.getAll();
       const byLastId = lastBugId
@@ -388,7 +419,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       updateStatus("diffReviewed");
     } catch (err) {
-      console.error(`${LOG} Phase 2 failed:`, err);
+      pendingDiffReview = false;
+      const errStr = err instanceof Error ? `${err.message}\n${err.stack}` : String(err);
+      console.error(`${LOG} Phase 2 failed: ${errStr}`);
       updateStatus("analysisFailed");
 
       if (err instanceof FlowFixerError) {
@@ -528,7 +561,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           timestamp: Date.now(),
         };
 
-        await handlePhase1(captured);
+        await handlePhase1(captured, { trigger: "manual" });
       } else {
         const errorMsg = await vscode.window.showInputBox({
           prompt: "No compiler errors found. Describe the bug (e.g., 'renders an extra item', 'TypeError: Cannot read properties of undefined')",
@@ -558,7 +591,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           timestamp: Date.now(),
         };
 
-        await handlePhase1(captured);
+        await handlePhase1(captured, { trigger: "manual" });
       }
     }),
     vscode.commands.registerCommand("flowfixer.explainCodeLensError", async (file: string, line: number, message: string) => {
@@ -583,7 +616,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         timestamp: Date.now(),
       };
 
-      await handlePhase1(captured);
+      await handlePhase1(captured, { trigger: "manual" });
     }),
     vscode.commands.registerCommand("flowfixer.fixCodeLensError", async (file: string, line: number, message: string) => {
       const action = await vscode.window.showInformationMessage(
