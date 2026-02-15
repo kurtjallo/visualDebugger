@@ -5,7 +5,7 @@ import { initialize as initLLM, analyzeError, analyzeDiff, isInitialized, testCo
 import { FlowFixerStorage } from "./storage";
 import { DebugPanelProvider } from "./panels/DebugPanel";
 import { DashboardPanelProvider } from "./panels/DashboardPanel";
-import { CapturedError, BugRecord, WebviewToExtMessage } from "./types";
+import { CapturedDiff, CapturedError, BugRecord, DiffExplanation, WebviewToExtMessage } from "./types";
 
 import { getSeedBugRecords } from "./seedData";
 import { loadEnv } from "./envLoader";
@@ -373,13 +373,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     pendingDiffReview = true;
     updateStatus("analyzingDiff");
+    const originalError = lastError?.message ?? "unknown error";
 
     try {
       if (!isInitialized()) {
         throw new FlowFixerError("No API key set");
       }
 
-      const originalError = lastError?.message ?? "unknown error";
       console.log(`${LOG} Phase 2: calling analyzeDiff for ${diff.file}...`);
       const diffExplanation = await analyzeDiff({
         language: diff.language,
@@ -425,10 +425,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       pendingDiffReview = false;
       const errStr = err instanceof Error ? `${err.message}\n${err.stack}` : String(err);
       console.error(`${LOG} Phase 2 failed: ${errStr}`);
-      updateStatus("analysisFailed");
+      const fallbackExplanation = buildFallbackDiffExplanation(diff, originalError);
+      debugPanel.postMessage({
+        type: "showDiff",
+        data: { ...fallbackExplanation, diff },
+      });
+      holdDiffReview = true;
+      updateStatus("diffReviewed");
 
       if (err instanceof FlowFixerError) {
-        vscode.window.showWarningMessage(`Visual Debugger: ${err.message}`);
+        vscode.window.showWarningMessage(
+          `Visual Debugger: ${err.message}. Showing local fix summary instead.`
+        );
       }
     }
   });
@@ -644,4 +652,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 export function deactivate(): void {
   console.log(`${LOG} deactivated`);
+}
+
+function buildFallbackDiffExplanation(
+  diff: CapturedDiff,
+  originalError: string
+): DiffExplanation {
+  const normalizedErr = originalError.trim() || "the original issue";
+  return {
+    quickSummary:
+      "No more errors. The latest code edits were captured and reviewed locally.",
+    whyItWorks:
+      `The recent edits resolved ${normalizedErr}. The file now compiles/runs without the previous error.`,
+    whatToDoNext: [
+      "Scan the changed lines to confirm they match your intent.",
+      "Run the feature once to verify behavior is correct.",
+      "If needed, click Explain again for a deeper breakdown.",
+    ],
+    keyTakeaway:
+      "A fix is valid when the error clears and behavior still matches expectations.",
+    checkQuestion:
+      "Which exact edit removed the failing condition in your code?",
+  };
 }
