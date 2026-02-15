@@ -488,9 +488,9 @@ describe("llmClient", () => {
 
       expect(prompt).toContain("suggestedPrompt");
       expect(prompt).toContain("well-crafted debugging prompt");
-      expect(prompt).toContain("Context:");
-      expect(prompt).toContain("What to fix:");
-      expect(prompt).toContain("Explain:");
+      expect(prompt).toContain("Behaviour:");
+      expect(prompt).toContain("Root cause:");
+      expect(prompt).toContain("Verify:");
     });
   });
 
