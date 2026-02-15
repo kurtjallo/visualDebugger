@@ -72,7 +72,7 @@ describe("createMessageHandler", () => {
 
       expect(target.postMessage).toHaveBeenCalledWith({
         type: "ttsError",
-        data: { message: "ElevenLabs key not set. Using browser voice fallback." },
+        data: { message: "ElevenLabs key not set. Check .env file." },
       });
     });
 
@@ -84,7 +84,7 @@ describe("createMessageHandler", () => {
 
       await handler("error", target, { type: "requestTts", text: "Hello world" });
 
-      expect(mockFetchTtsAudio).toHaveBeenCalledWith("Hello world", "test-key");
+      expect(mockFetchTtsAudio).toHaveBeenCalledWith("Hello world", "test-key", "female");
       expect(target.postMessage).toHaveBeenCalledWith({
         type: "playAudio",
         data: { base64Audio: "base64data", mimeType: "audio/mpeg" },
@@ -102,7 +102,7 @@ describe("createMessageHandler", () => {
 
       expect(target.postMessage).toHaveBeenCalledWith({
         type: "ttsError",
-        data: { message: "TTS request failed. Using browser voice fallback." },
+        data: { message: "TTS is temporarily unavailable. Using browser voice fallback." },
       });
       errorSpy.mockRestore();
     });

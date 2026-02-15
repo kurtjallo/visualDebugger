@@ -53,7 +53,7 @@ export class DebugPanelProvider implements vscode.WebviewViewProvider {
         'src="config.js"': "config.js",
       }, {
         extraConnectSrc: ["https://api.elevenlabs.io", "blob:"],
-        extraMediaSrc: ["blob:"],
+        extraMediaSrc: ["blob:", "data:"],
         extraFontSrc: ["https://fonts.googleapis.com", "https://fonts.gstatic.com"],
       });
     } catch (e) {

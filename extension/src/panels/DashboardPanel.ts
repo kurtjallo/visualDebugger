@@ -47,7 +47,7 @@ export class DashboardPanelProvider implements vscode.WebviewViewProvider {
       }, {
         extraScriptSrc: ["https://cdn.jsdelivr.net"],
         extraConnectSrc: ["https://api.elevenlabs.io", "blob:"],
-        extraMediaSrc: ["blob:"],
+        extraMediaSrc: ["blob:", "data:"],
         extraFontSrc: ["https://fonts.googleapis.com", "https://fonts.gstatic.com"],
       });
     } catch (e) {
